@@ -1,0 +1,529 @@
+/* === STROOMVOL — COMPONENTS === */
+
+/* Cards */
+.sv-adv .card {
+  background: var(--sv-bg-card);
+  border-radius: var(--sv-radius);
+  padding: 32px;
+  margin-bottom: 16px;
+}
+
+.sv-adv .card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.sv-adv .card-icon {
+  width: 36px;
+  height: 36px;
+  background: var(--sv-accent-bg);
+  border-radius: var(--sv-radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.sv-adv .card-title {
+  font-family: var(--sv-font-heading);
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: -.3px;
+}
+
+.sv-adv .card-subtitle {
+  font-size: 13px;
+  color: var(--sv-text-muted);
+  font-weight: 300;
+}
+
+/* Form fields */
+.sv-adv .field {
+  margin-bottom: 18px;
+}
+
+.sv-adv .field:last-child {
+  margin-bottom: 0;
+}
+
+.sv-adv .field-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--sv-text);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.sv-adv .req {
+  color: var(--sv-accent);
+  font-size: 14px;
+}
+
+.sv-adv .field-hint {
+  font-size: 12px;
+  color: var(--sv-text-muted);
+  font-weight: 300;
+  margin-top: 4px;
+  line-height: 1.5;
+}
+
+.sv-adv .field-error {
+  font-size: 12px;
+  color: var(--sv-red);
+  font-weight: 400;
+  margin-top: 4px;
+  display: none;
+}
+
+/* Inputs */
+.sv-adv input[type=number],
+.sv-adv input[type=text],
+.sv-adv input[type=date],
+.sv-adv select {
+  width: 100%;
+  padding: 13px 16px;
+  border: 1.5px solid var(--sv-border);
+  border-radius: var(--sv-radius-sm);
+  font-family: var(--sv-font-body);
+  font-size: 14px;
+  font-weight: 300;
+  color: var(--sv-text);
+  background: var(--sv-bg-input);
+  outline: none;
+  transition: border-color .15s;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.sv-adv input:focus,
+.sv-adv select:focus {
+  border-color: var(--sv-accent);
+  background: var(--sv-bg-card);
+}
+
+.sv-adv input::placeholder {
+  color: var(--sv-text-placeholder);
+}
+
+.sv-adv input.error {
+  border-color: var(--sv-red);
+}
+
+/* Unit wrapper */
+.sv-adv .uw {
+  position: relative;
+}
+
+.sv-adv .uw input {
+  padding-right: 55px;
+}
+
+.sv-adv .us {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 13px;
+  color: var(--sv-text-light);
+  pointer-events: none;
+}
+
+/* Toggle buttons */
+.sv-adv .tg {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.sv-adv .tb {
+  padding: 10px 18px;
+  border: 1.5px solid var(--sv-border);
+  border-radius: var(--sv-radius-xs);
+  background: var(--sv-bg-input);
+  font-family: var(--sv-font-body);
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--sv-text-sub);
+  cursor: pointer;
+  transition: all .12s;
+}
+
+.sv-adv .tb:hover {
+  border-color: var(--sv-border-dark);
+  color: var(--sv-text);
+}
+
+.sv-adv .tb.on {
+  border-color: var(--sv-accent);
+  background: var(--sv-accent-bg);
+  color: var(--sv-text);
+  font-weight: 500;
+}
+
+/* Checkbox items */
+.sv-adv .chk-row {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sv-adv .chk-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1.5px solid var(--sv-border);
+  border-radius: var(--sv-radius-sm);
+  cursor: pointer;
+  transition: all .12s;
+  background: var(--sv-bg-input);
+  font-size: 14px;
+}
+
+.sv-adv .chk-item:hover {
+  border-color: var(--sv-border-dark);
+}
+
+.sv-adv .chk-item.on {
+  border-color: var(--sv-accent);
+  background: rgba(255, 220, 60, .08);
+}
+
+.sv-adv .chk-dot {
+  width: 18px;
+  height: 18px;
+  border: 2px solid #DDD;
+  border-radius: 4px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all .12s;
+}
+
+.sv-adv .chk-item.on .chk-dot {
+  background: var(--sv-accent);
+  border-color: var(--sv-accent);
+}
+
+.sv-adv .chk-dot svg {
+  display: none;
+}
+
+.sv-adv .chk-item.on .chk-dot svg {
+  display: block;
+}
+
+/* Stepper */
+.sv-adv .stepper {
+  display: flex;
+  align-items: center;
+  border: 1.5px solid var(--sv-border);
+  border-radius: var(--sv-radius-sm);
+  overflow: hidden;
+  background: var(--sv-bg-input);
+}
+
+.sv-adv .stepper-btn {
+  width: 52px;
+  height: 52px;
+  background: transparent;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  color: var(--sv-text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all .12s;
+}
+
+.sv-adv .stepper-btn:hover {
+  background: var(--sv-border);
+  color: var(--sv-text);
+}
+
+.sv-adv .stepper-mid {
+  flex: 1;
+  text-align: center;
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--sv-text);
+}
+
+.sv-adv .stepper-sub {
+  font-size: 12px;
+  color: var(--sv-text-light);
+  display: block;
+}
+
+/* Contract cards */
+.sv-adv .contract-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+}
+
+.sv-adv .cc {
+  background: var(--sv-bg-input);
+  border: 1.5px solid var(--sv-border);
+  border-radius: 12px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all .15s;
+  text-align: center;
+}
+
+.sv-adv .cc:hover {
+  border-color: var(--sv-border-dark);
+}
+
+.sv-adv .cc.on {
+  border-color: var(--sv-accent);
+  background: rgba(255, 220, 60, .10);
+  box-shadow: 0 0 0 1px var(--sv-accent);
+}
+
+.sv-adv .cc-icon {
+  font-size: 24px;
+  margin-bottom: 6px;
+}
+
+.sv-adv .cc-name {
+  font-family: var(--sv-font-heading);
+  font-size: 14px;
+  font-weight: 800;
+  margin-bottom: 3px;
+}
+
+.sv-adv .cc-desc {
+  font-size: 11px;
+  color: var(--sv-text-muted);
+  font-weight: 300;
+  line-height: 1.4;
+}
+
+/* Info box */
+.sv-adv .info-box {
+  background: var(--sv-accent-bg);
+  border: 1px solid var(--sv-accent-border);
+  border-radius: var(--sv-radius-sm);
+  padding: 14px 16px;
+  font-size: 13px;
+  font-weight: 300;
+  color: var(--sv-text);
+  line-height: 1.6;
+  margin-top: 12px;
+}
+
+.sv-adv .info-box strong {
+  font-weight: 600;
+}
+
+/* Grid helpers */
+.sv-adv .r2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.sv-adv .r3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+}
+
+/* Strategy cards */
+.sv-adv .strat-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.sv-adv .strat-card {
+  background: var(--sv-bg-input);
+  border: 1.5px solid var(--sv-border);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.sv-adv .strat-card.active-strat {
+  border-color: rgba(34, 197, 94, .4);
+  background: rgba(34, 197, 94, .06);
+}
+
+.sv-adv .strat-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--sv-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+
+.sv-adv .strat-val {
+  font-family: var(--sv-font-heading);
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -.5px;
+}
+
+.sv-adv .strat-desc {
+  font-size: 12px;
+  color: var(--sv-text-muted);
+  font-weight: 300;
+  margin-top: 4px;
+  line-height: 1.4;
+}
+
+/* Bathtub chart wrapper */
+.sv-adv .bathtub-wrap {
+  background: var(--sv-black);
+  border-radius: 14px;
+  padding: 24px 20px 16px;
+  margin-top: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.sv-adv .bathtub-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 220, 60, .03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 220, 60, .03) 1px, transparent 1px);
+  background-size: 30px 30px;
+  pointer-events: none;
+}
+
+.sv-adv .bathtub-wrap > * {
+  position: relative;
+}
+
+.sv-adv .bathtub-title {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--sv-accent);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.sv-adv .bathtub-sub {
+  font-size: 13px;
+  color: rgba(255, 255, 255, .4);
+  font-weight: 300;
+  margin-bottom: 16px;
+}
+
+.sv-adv .bathtub-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.sv-adv .bathtub-legend {
+  display: flex;
+  gap: 16px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.sv-adv .bathtub-leg-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, .5);
+}
+
+.sv-adv .bathtub-leg-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+/* Buttons */
+.sv-adv .btn-next {
+  background: var(--sv-accent);
+  border: none;
+  border-radius: var(--sv-radius-sm);
+  padding: 14px 32px;
+  font-family: var(--sv-font-body);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--sv-black);
+  cursor: pointer;
+  transition: background .12s;
+}
+
+.sv-adv .btn-next:hover {
+  background: #FFD000;
+}
+
+.sv-adv .btn-next:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+.sv-adv .btn-back {
+  background: transparent;
+  border: 1.5px solid var(--sv-border);
+  border-radius: var(--sv-radius-sm);
+  padding: 14px 24px;
+  font-family: var(--sv-font-body);
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--sv-text-muted);
+  cursor: pointer;
+}
+
+.sv-adv .btn-back:hover {
+  border-color: var(--sv-border-dark);
+  color: var(--sv-text-sub);
+}
+
+.sv-adv .btn-dark {
+  background: #0A0A0A;
+  border: none;
+  border-radius: var(--sv-radius-sm);
+  padding: 14px 32px;
+  font-family: var(--sv-font-body);
+  font-size: 14px;
+  font-weight: 700;
+  color: white;
+  cursor: pointer;
+}
+
+.sv-adv .btn-dark:hover {
+  background: #222;
+}
+
+.sv-adv .btn-pdf {
+  background: var(--sv-accent);
+  border: none;
+  border-radius: var(--sv-radius-sm);
+  padding: 14px 32px;
+  font-family: var(--sv-font-body);
+  font-size: 14px;
+  font-weight: 700;
+  color: #0A0A0A;
+  cursor: pointer;
+  transition: all .12s;
+}
+
+.sv-adv .btn-pdf:hover {
+  background: #FFD000;
+}
+
+.sv-adv .btn-pdf:disabled {
+  opacity: .6;
+  cursor: wait;
+}

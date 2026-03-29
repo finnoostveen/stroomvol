@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stroomvol Adviseurstool</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+/* __CSS_BUNDLE__ */
+</style>
+</head>
+<body>
+<div class="sv-adv">
+<div class="container">
+  <div class="header">
+    <div class="logo">STROOM<span>VOL</span></div>
+    <div class="header-sub">Batterijadvies op maat</div>
+    <div class="header-badge">Adviseurstool</div>
+  </div>
+
+  <!-- ========== PHASE 1: INPUT ========== -->
+  <div class="phase active" id="phase-input">
+    <div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+
+    <!-- KLANT & ADVISEUR -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">👤</div>
+        <div><div class="card-title">Klant & Adviseur</div><div class="card-subtitle">Gegevens voor het adviesrapport</div></div>
+      </div>
+      <div class="r2">
+        <div class="field">
+          <div class="field-label">Klantnaam <span class="req">*</span></div>
+          <input type="text" id="in-klant-naam" placeholder="Volledige naam">
+        </div>
+        <div class="field">
+          <div class="field-label">Adres</div>
+          <input type="text" id="in-klant-adres" placeholder="Straat + huisnummer">
+        </div>
+      </div>
+      <div class="r2" style="margin-top:12px;">
+        <div class="field">
+          <div class="field-label">Postcode + Plaats</div>
+          <input type="text" id="in-klant-plaats" placeholder="1234 AB Amsterdam">
+        </div>
+        <div class="field">
+          <div class="field-label">Datum</div>
+          <input type="date" id="in-datum">
+        </div>
+      </div>
+      <div class="r2" style="margin-top:12px;">
+        <div class="field">
+          <div class="field-label">Naam adviseur</div>
+          <input type="text" id="in-adviseur" placeholder="Uw naam">
+        </div>
+        <div class="field">
+          <div class="field-label">Bedrijfsnaam</div>
+          <input type="text" id="in-bedrijf" placeholder="Stroomvol" value="Stroomvol">
+        </div>
+      </div>
+    </div>
+
+    <!-- ILLUSTRATION -->
+    <div class="illus"><svg viewBox="0 0 200 24" xmlns="http://www.w3.org/2000/svg"><circle cx="92" cy="12" r="3" fill="#FFDC3C"/><circle cx="100" cy="12" r="5" fill="#FFDC3C" opacity=".4"/><circle cx="108" cy="12" r="3" fill="#FFDC3C"/><line x1="30" y1="12" x2="84" y2="12" stroke="#E8E8E0" stroke-width="1.5"/><line x1="116" y1="12" x2="170" y2="12" stroke="#E8E8E0" stroke-width="1.5"/></svg></div>
+
+    <!-- ENERGIECONTRACT -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">📋</div>
+        <div><div class="card-title">Energiecontract</div><div class="card-subtitle">Het contracttype bepaalt de rekenwijze en batterijstrategie</div></div>
+      </div>
+      <div class="field">
+        <div class="field-label">Type energiecontract <span class="req">*</span></div>
+        <div class="contract-cards" id="contract-cards">
+          <div class="cc" data-contract="vast">
+            <div class="cc-icon">🔒</div>
+            <div class="cc-name">Vast</div>
+            <div class="cc-desc">Vaste kWh-prijs gedurende contractperiode</div>
+          </div>
+          <div class="cc" data-contract="variabel">
+            <div class="cc-icon">📊</div>
+            <div class="cc-name">Variabel</div>
+            <div class="cc-desc">Prijs volgt markt, maandelijks aangepast</div>
+          </div>
+          <div class="cc" data-contract="dynamisch">
+            <div class="cc-icon">⚡</div>
+            <div class="cc-name">Dynamisch</div>
+            <div class="cc-desc">Uurprijs op basis van EPEX day-ahead</div>
+          </div>
+        </div>
+      </div>
+      <!-- VAST / VARIABEL fields -->
+      <div id="contract-fixed" style="display:none;">
+        <div class="r2">
+          <div class="field"><div class="field-label">Inkooptarief (all-in) <span class="req">*</span></div><div class="uw"><input type="number" id="in-tarief-vast" value="0.28" step="0.01" min="0" max="1"><span class="us">€/kWh</span></div><div class="field-hint">Totaalprijs incl. belasting en netbeheer</div></div>
+          <div class="field"><div class="field-label">Teruglevertarief</div><div class="uw"><input type="number" id="in-terug-vast" value="0.07" step="0.01" min="0" max="1"><span class="us">€/kWh</span></div><div class="field-hint">Na afbouw saldering</div></div>
+        </div>
+        <div class="info-box" id="info-vast">Selecteer een contracttype voor toelichting op de strategie.</div>
+      </div>
+      <div id="contract-var-extra" style="display:none;">
+        <div class="field" style="margin-top:12px;"><div class="field-label">Verwachte jaarlijkse prijsstijging</div><div class="uw" style="max-width:200px;"><input type="number" id="in-var-stijg" value="4" step="0.5" min="0" max="15"><span class="us">%</span></div></div>
+      </div>
+      <!-- DYNAMISCH fields -->
+      <div id="contract-dyn" style="display:none;">
+        <div class="r3">
+          <div class="field"><div class="field-label">Gem. dalprijs <span class="req">*</span></div><div class="uw"><input type="number" id="in-dyn-dal" value="0.05" step="0.01" min="-0.10" max="0.50"><span class="us">€/kWh</span></div><div class="field-hint">Nacht + middag</div></div>
+          <div class="field"><div class="field-label">Gem. piekprijs <span class="req">*</span></div><div class="uw"><input type="number" id="in-dyn-piek" value="0.35" step="0.01" min="0" max="1.00"><span class="us">€/kWh</span></div><div class="field-hint">Ochtend + avond</div></div>
+          <div class="field"><div class="field-label">Gem. dagprijs</div><div class="uw"><input type="number" id="in-dyn-gem" value="0.15" step="0.01" min="0" max="1.00"><span class="us">€/kWh</span></div><div class="field-hint">Volume-gewogen</div></div>
+        </div>
+        <div class="bathtub-wrap"><div class="bathtub-grid"></div><div class="bathtub-title">Badkuipmodel — typische dagprijscurve</div><div class="bathtub-sub">EPEX day-ahead: goedkoop 's nachts en rond het middaguur, duur 's ochtends en 's avonds</div><svg class="bathtub-svg" viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg" id="bathtub-svg"></svg><div class="bathtub-legend"><div class="bathtub-leg-item"><div class="bathtub-leg-dot" style="background:#22C55E"></div>Laden (goedkoop)</div><div class="bathtub-leg-item"><div class="bathtub-leg-dot" style="background:#EF4444"></div>Ontladen (duur)</div><div class="bathtub-leg-item"><div class="bathtub-leg-dot" style="background:rgba(255,220,60,.6)"></div>Prijscurve</div></div></div>
+        <div class="info-box" style="margin-top:12px;"><strong>Batterijstrategie bij dynamisch tarief:</strong> Dubbele verdienlaag. (1) Zelfconsumptie, en (2) <strong>actieve arbitrage</strong>: laden bij lage uurprijs, ontladen bij hoge uurprijs.</div>
+        <div class="strat-cards" id="dyn-strats">
+          <div class="strat-card"><div class="strat-label">Zelfconsumptie</div><div class="strat-val" id="dv-zelf">—</div><div class="strat-desc">Eigen zonnestroom 's avonds verbruiken</div></div>
+          <div class="strat-card"><div class="strat-label">Arbitrage spread</div><div class="strat-val" id="dv-spread">—</div><div class="strat-desc">Laden bij dal, ontladen bij piek</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ILLUSTRATION -->
+    <div class="illus"><svg viewBox="0 0 200 24" xmlns="http://www.w3.org/2000/svg"><rect x="70" y="8" width="60" height="8" rx="4" fill="#FFDC3C" opacity=".18"/><circle cx="100" cy="12" r="2.5" fill="#FFDC3C"/></svg></div>
+
+    <!-- VERBRUIK -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">⚡</div>
+        <div><div class="card-title">Stroomverbruik</div><div class="card-subtitle">Jaaropgave of slimme meter</div></div>
+      </div>
+      <div class="field">
+        <div class="field-label">Jaarlijks verbruik <span class="req">*</span></div>
+        <div class="uw"><input type="number" id="in-verbruik" placeholder="bijv. 3500" min="0" max="99999"><span class="us">kWh</span></div>
+        <div class="field-error" id="err-verbruik">Vul een jaarverbruik in</div>
+      </div>
+      <div class="field" style="margin-top:12px;">
+        <div class="field-label">Verbruiksprofiel</div>
+        <div class="tg" id="tg-profiel">
+          <button class="tb" data-val="standaard">Standaard</button>
+          <button class="tb" data-val="avond-zwaar">Avondzwaar</button>
+          <button class="tb" data-val="overdag">Overdag thuis</button>
+          <button class="tb" data-val="ev-nacht">EV nachtladen</button>
+        </div>
+        <div class="field-hint">Bepaalt wanneer de klant de meeste stroom verbruikt.</div>
+      </div>
+    </div>
+
+    <!-- ILLUSTRATION -->
+    <div class="illus"><svg viewBox="0 0 200 24" xmlns="http://www.w3.org/2000/svg"><circle cx="92" cy="12" r="3" fill="#FFDC3C"/><circle cx="100" cy="12" r="5" fill="#FFDC3C" opacity=".4"/><circle cx="108" cy="12" r="3" fill="#FFDC3C"/><line x1="30" y1="12" x2="84" y2="12" stroke="#E8E8E0" stroke-width="1.5"/><line x1="116" y1="12" x2="170" y2="12" stroke="#E8E8E0" stroke-width="1.5"/></svg></div>
+
+    <!-- ZONNEPANELEN -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">☀️</div>
+        <div><div class="card-title">Zonnepanelen</div><div class="card-subtitle">Controleer ter plekke</div></div>
+      </div>
+      <div class="field">
+        <div class="field-label">Zonnepanelen aanwezig? <span class="req">*</span></div>
+        <div class="tg" id="tg-zon">
+          <button class="tb" data-val="ja">Ja</button>
+          <button class="tb" data-val="nee">Nee</button>
+          <button class="tb" data-val="gepland">Gepland</button>
+        </div>
+      </div>
+      <div id="zon-detail" style="display:none;">
+        <div class="r2" style="margin-top:12px;">
+          <div class="field"><div class="field-label">Aantal panelen</div><div class="stepper"><button class="stepper-btn" data-step="panelen" data-dir="-1">−</button><div class="stepper-mid"><span id="v-panelen">10</span><span class="stepper-sub">panelen</span></div><button class="stepper-btn" data-step="panelen" data-dir="1">+</button></div></div>
+          <div class="field"><div class="field-label">Wp per paneel</div><div class="uw"><input type="number" id="in-wp" value="400" step="10" min="100" max="600"><span class="us">Wp</span></div><div class="field-hint">Check label achter paneel</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ILLUSTRATION -->
+    <div class="illus"><svg viewBox="0 0 200 24" xmlns="http://www.w3.org/2000/svg"><rect x="70" y="8" width="60" height="8" rx="4" fill="#FFDC3C" opacity=".18"/><circle cx="100" cy="12" r="2.5" fill="#FFDC3C"/></svg></div>
+
+    <!-- OMVORMER + NET -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">🔌</div>
+        <div><div class="card-title">Omvormer & Net</div><div class="card-subtitle">Check meterkast en omvormer</div></div>
+      </div>
+      <div class="r2">
+        <div class="field"><div class="field-label">Omvormertype</div><div class="tg" id="tg-omv"><button class="tb" data-val="hybride">Hybride</button><button class="tb" data-val="standaard">Standaard</button><button class="tb" data-val="micro">Micro</button></div></div>
+        <div class="field"><div class="field-label">Netaansluiting</div><div class="tg" id="tg-net"><button class="tb" data-val="1x25">1×25A</button><button class="tb" data-val="1x35">1×35A</button><button class="tb" data-val="3x25">3×25A</button><button class="tb" data-val="3x63">3×63A</button></div></div>
+      </div>
+    </div>
+
+    <!-- ILLUSTRATION -->
+    <div class="illus"><svg viewBox="0 0 200 24" xmlns="http://www.w3.org/2000/svg"><circle cx="92" cy="12" r="3" fill="#FFDC3C"/><circle cx="100" cy="12" r="5" fill="#FFDC3C" opacity=".4"/><circle cx="108" cy="12" r="3" fill="#FFDC3C"/><line x1="30" y1="12" x2="84" y2="12" stroke="#E8E8E0" stroke-width="1.5"/><line x1="116" y1="12" x2="170" y2="12" stroke="#E8E8E0" stroke-width="1.5"/></svg></div>
+
+    <!-- GROOTVERBRUIKERS + DOELEN -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">🏠</div>
+        <div><div class="card-title">Grootverbruikers & Doelen</div><div class="card-subtitle">Wat staat er in huis? Wat wil de klant?</div></div>
+      </div>
+      <div class="field">
+        <div class="field-label">Grootverbruikers</div>
+        <div class="chk-row" id="chk-gv">
+          <div class="chk-item" data-val="ev"><div class="chk-dot"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 5L4 7.5L8.5 2.5" stroke="#0A0A0A" stroke-width="1.5" stroke-linecap="round"/></svg></div>Elektrische auto + thuislader</div>
+          <div class="chk-item" data-val="wp"><div class="chk-dot"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 5L4 7.5L8.5 2.5" stroke="#0A0A0A" stroke-width="1.5" stroke-linecap="round"/></svg></div>Warmtepomp (volledig elektrisch)</div>
+          <div class="chk-item" data-val="hwp"><div class="chk-dot"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 5L4 7.5L8.5 2.5" stroke="#0A0A0A" stroke-width="1.5" stroke-linecap="round"/></svg></div>Hybride warmtepomp</div>
+          <div class="chk-item" data-val="ac"><div class="chk-dot"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 5L4 7.5L8.5 2.5" stroke="#0A0A0A" stroke-width="1.5" stroke-linecap="round"/></svg></div>Airconditioning</div>
+        </div>
+      </div>
+      <div class="field" style="margin-top:16px;">
+        <div class="field-label">Doelen</div>
+        <div class="chk-row" id="chk-doel">
+          <div class="chk-item" data-val="zelf"><div class="chk-dot"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 5L4 7.5L8.5 2.5" stroke="#0A0A0A" stroke-width="1.5" stroke-linecap="round"/></svg></div>Zelfconsumptie verhogen</div>
+          <div class="chk-item" data-val="handel"><div class="chk-dot"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 5L4 7.5L8.5 2.5" stroke="#0A0A0A" stroke-width="1.5" stroke-linecap="round"/></svg></div>Slim handelen (arbitrage)</div>
+          <div class="chk-item" data-val="peak"><div class="chk-dot"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 5L4 7.5L8.5 2.5" stroke="#0A0A0A" stroke-width="1.5" stroke-linecap="round"/></svg></div>Piekverbruik beperken</div>
+          <div class="chk-item" data-val="nood"><div class="chk-dot"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 5L4 7.5L8.5 2.5" stroke="#0A0A0A" stroke-width="1.5" stroke-linecap="round"/></svg></div>Noodstroom</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ILLUSTRATION -->
+    <div class="illus"><svg viewBox="0 0 200 24" xmlns="http://www.w3.org/2000/svg"><rect x="70" y="8" width="60" height="8" rx="4" fill="#FFDC3C" opacity=".18"/><circle cx="100" cy="12" r="2.5" fill="#FFDC3C"/></svg></div>
+
+    <!-- INSTALLATIE -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">🔧</div>
+        <div><div class="card-title">Installatie quickcheck</div><div class="card-subtitle">Ter plekke controleren</div></div>
+      </div>
+      <div class="r2">
+        <div class="field"><div class="field-label">Locatie batterij</div><div class="tg" id="tg-loc"><button class="tb" data-val="binnen">Binnen</button><button class="tb" data-val="buiten">Buiten</button></div></div>
+        <div class="field"><div class="field-label">Eigendom</div><div class="tg" id="tg-eig"><button class="tb" data-val="koop">Koop</button><button class="tb" data-val="huur">Huur</button></div></div>
+      </div>
+      <div class="r2" style="margin-top:12px;">
+        <div class="field"><div class="field-label">Afstand meterkast</div><div class="tg" id="tg-afst"><button class="tb" data-val="<10m">&lt;10m</button><button class="tb" data-val=">10m">&gt;10m</button></div></div>
+        <div class="field"><div class="field-label">Muren doorboren</div><div class="tg" id="tg-muur"><button class="tb" data-val="0-2">0–2</button><button class="tb" data-val="3+">3+</button></div></div>
+      </div>
+    </div>
+
+    <div class="nav">
+      <div></div>
+      <button class="btn-next" id="btn-generate">Genereer advies →</button>
+    </div>
+  </div>
+
+  <!-- ========== PHASE 2: RESULT ========== -->
+  <div class="phase" id="phase-result">
+
+    <!-- Klant reference bar -->
+    <div class="klant-bar" id="r-klant-bar"></div>
+
+    <div class="result-hero"><div class="result-hero-grid"></div><div class="r-label">Capaciteitsadvies</div><div class="r-cap" id="r-cap">10 <span>kWh</span></div><div class="r-tier" id="r-tier"></div><div class="r-hero-text" id="r-hero-text"></div><div id="r-contract-badge-wrap"></div><div class="r-tags" id="r-tags"></div></div>
+
+    <div class="metrics">
+      <div class="mc"><div class="mc-icon">💰</div><div class="mc-val" id="r-invest">—</div><div class="mc-label">Geschatte investering</div></div>
+      <div class="mc"><div class="mc-icon">📉</div><div class="mc-val" id="r-tvt">—</div><div class="mc-label">Terugverdientijd (realistisch)</div></div>
+      <div class="mc"><div class="mc-icon">☀️</div><div class="mc-val" id="r-zelf">—</div><div class="mc-label">Zelfconsumptie met batterij</div></div>
+      <div class="mc"><div class="mc-icon">💡</div><div class="mc-val" id="r-besp">—</div><div class="mc-label">Jaarlijkse besparing (realistisch)</div></div>
+    </div>
+
+    <div class="illus"><svg viewBox="0 0 200 24" xmlns="http://www.w3.org/2000/svg"><circle cx="92" cy="12" r="3" fill="#FFDC3C"/><circle cx="100" cy="12" r="5" fill="#FFDC3C" opacity=".4"/><circle cx="108" cy="12" r="3" fill="#FFDC3C"/><line x1="30" y1="12" x2="84" y2="12" stroke="#E8E8E0" stroke-width="1.5"/><line x1="116" y1="12" x2="170" y2="12" stroke="#E8E8E0" stroke-width="1.5"/></svg></div>
+
+    <div class="bdown" id="r-strat-wrap"><div class="bdown-title">Batterijstrategie — slimme aansturing</div><div id="r-strat-body"></div></div>
+
+    <div class="bathtub-result" id="r-bathtub-wrap" style="display:none;"><div class="bathtub-result-title">Dagelijks laad/ontlaadschema</div><div class="bathtub-result-sub">Hoe de batterij slim meedraait met het prijsprofiel</div><svg viewBox="0 0 600 220" xmlns="http://www.w3.org/2000/svg" id="r-bathtub-svg" style="width:100%;height:auto;"></svg></div>
+
+    <!-- GOALS -->
+    <div class="goals-card" id="r-goals-wrap" style="display:none;">
+      <div class="goals-title">Jouw doelen — wat de batterij bereikt</div>
+      <div class="goals-sub">Per doel laten we zien hoeveel dichter je komt met deze batterijconfiguratie.</div>
+      <div id="r-goals-body"></div>
+    </div>
+
+    <div class="illus"><svg viewBox="0 0 200 24" xmlns="http://www.w3.org/2000/svg"><rect x="70" y="8" width="60" height="8" rx="4" fill="#FFDC3C" opacity=".18"/><circle cx="100" cy="12" r="2.5" fill="#FFDC3C"/></svg></div>
+
+    <!-- CUMULATIVE SAVINGS CHART -->
+    <div class="cumul-card" id="r-cumul-wrap">
+      <div class="cumul-title">Cumulatieve besparing over 15 jaar</div>
+      <div class="cumul-sub">De lijn kruist de investeringsdrempel bij de terugverdientijd.</div>
+      <svg viewBox="0 0 600 250" xmlns="http://www.w3.org/2000/svg" id="r-cumul-svg" style="width:100%;height:auto;"></svg>
+    </div>
+
+    <div class="sc-card"><div class="sc-header">Terugverdienscenario's</div><div class="sc-sub" id="r-sc-sub"></div><div class="sc-scroll"><table class="sc-table"><thead><tr><th>Scenario</th><th>Besparing / jaar</th><th>Terugverdientijd</th><th>Totale besparing 15 jr</th><th>Netto winst</th></tr></thead><tbody id="r-sc-body"></tbody></table></div></div>
+
+    <div class="bdown"><div class="bdown-title">Besparingsopbouw & netto rendement</div><div id="r-bd-rows"></div></div>
+
+    <div class="assumptions"><div class="assumptions-title">Aannames in deze berekening</div><div class="assumptions-list" id="r-assume"></div></div>
+
+    <div class="illus"><svg viewBox="0 0 200 24" xmlns="http://www.w3.org/2000/svg"><circle cx="92" cy="12" r="3" fill="#FFDC3C"/><circle cx="100" cy="12" r="5" fill="#FFDC3C" opacity=".4"/><circle cx="108" cy="12" r="3" fill="#FFDC3C"/><line x1="30" y1="12" x2="84" y2="12" stroke="#E8E8E0" stroke-width="1.5"/><line x1="116" y1="12" x2="170" y2="12" stroke="#E8E8E0" stroke-width="1.5"/></svg></div>
+
+    <div class="params-card"><div class="params-title">Parameters aanpassen</div><div class="params-sub">Pas aan en herbereken direct.</div>
+      <div class="pr"><span class="pr-label">Kosten per kWh (geïnstalleerd)</span><input type="number" class="pr-input" id="p-cpk" value="500" step="25"><span class="pr-unit">€/kWh</span></div>
+      <div class="pr"><span class="pr-label">Batterijdegradatie per jaar</span><input type="number" class="pr-input" id="p-deg" value="2" step="0.5"><span class="pr-unit">%</span></div>
+      <div class="pr"><span class="pr-label">Batterij DoD (depth of discharge)</span><input type="number" class="pr-input" id="p-dod" value="90" step="5"><span class="pr-unit">%</span></div>
+      <div class="pr"><span class="pr-label">Roundtrip efficiency</span><input type="number" class="pr-input" id="p-eff" value="92" step="1"><span class="pr-unit">%</span></div>
+      <div style="margin-top:16px;"><button class="btn-next" id="btn-recalc" style="width:100%;">Herbereken advies</button></div>
+    </div>
+
+    <div class="notes-card"><div class="card-header" style="margin-bottom:12px;"><div class="card-icon">📝</div><div><div class="card-title">Adviseur notities</div><div class="card-subtitle">Bijzonderheden voor het dossier</div></div></div><textarea id="in-notities" placeholder="Bijv. 'Dak op zuidwest, 6m kabellengte. Klant overweegt overstap naar dynamisch contract.'"></textarea></div>
+
+    <div class="nav">
+      <button class="btn-back" id="btn-back">← Terug naar invoer</button>
+      <div style="display:flex;gap:8px;">
+        <button class="btn-dark" id="btn-print">Print advies</button>
+        <button class="btn-pdf" id="btn-pdf">Download PDF</button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- PDF rendering container (hidden) -->
+<div id="pdf-container" class="sv-pdf-container"></div>
+
+<script>
+/* __JS_BUNDLE__ */
+</script>
+</body>
+</html>

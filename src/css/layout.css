@@ -1,0 +1,72 @@
+/* === STROOMVOL — LAYOUT === */
+
+/* Navigation */
+.sv-adv .nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+  background: var(--sv-bg-card);
+  border-radius: var(--sv-radius);
+  padding: 16px 20px;
+}
+
+/* Klant info bar (resultaat) */
+.sv-adv .klant-bar {
+  background: var(--sv-bg-card);
+  border-radius: var(--sv-radius);
+  padding: 16px 24px;
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  color: var(--sv-text-muted);
+  font-weight: 300;
+}
+
+.sv-adv .klant-bar strong {
+  color: var(--sv-text);
+  font-weight: 500;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .sv-adv {
+    padding: 16px 12px;
+  }
+
+  .sv-adv .card {
+    padding: 24px 20px;
+  }
+
+  .sv-adv .r2,
+  .sv-adv .strat-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .sv-adv .r3,
+  .sv-adv .contract-cards {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+
+  .sv-adv .btn-next {
+    padding: 14px 22px;
+    font-size: 13px;
+  }
+
+  .sv-adv .btn-back {
+    padding: 14px 16px;
+    font-size: 13px;
+  }
+
+  .sv-adv .nav {
+    padding: 12px 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .sv-adv .contract-cards {
+    grid-template-columns: 1fr;
+  }
+}

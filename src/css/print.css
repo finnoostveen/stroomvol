@@ -1,0 +1,182 @@
+/* === STROOMVOL — PRINT / PDF === */
+
+@media print {
+  .sv-adv .nav,
+  .sv-adv .btn-next,
+  .sv-adv .btn-back,
+  .sv-adv .btn-dark,
+  .sv-adv .btn-pdf,
+  .sv-adv .params-card,
+  .sv-adv .notes-card,
+  .sv-adv .progress-bar {
+    display: none !important;
+  }
+
+  .sv-adv .phase {
+    display: block !important;
+  }
+
+  .sv-adv .phase:not(#phase-result) {
+    display: none !important;
+  }
+
+  #phase-result {
+    display: block !important;
+  }
+
+  .sv-adv {
+    padding: 0;
+  }
+
+  .sv-adv .card,
+  .sv-adv .result-hero,
+  .sv-adv .mc,
+  .sv-adv .sc-card,
+  .sv-adv .bdown,
+  .sv-adv .goals-card,
+  .sv-adv .bathtub-result,
+  .sv-adv .cumul-card,
+  .sv-adv .assumptions {
+    break-inside: avoid;
+  }
+}
+
+/* PDF-specific: hidden container used by pdf.js for rendering */
+.sv-pdf-container {
+  position: fixed;
+  left: -9999px;
+  top: 0;
+  width: 794px; /* A4 width at 96dpi */
+  background: white;
+  font-family: 'DM Sans', Arial, sans-serif;
+  color: #0A0A0A;
+}
+
+.sv-pdf-page {
+  width: 794px;
+  min-height: 1123px; /* A4 height at 96dpi */
+  padding: 48px 56px;
+  background: white;
+  position: relative;
+}
+
+.sv-pdf-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 32px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #FFDC3C;
+}
+
+.sv-pdf-logo {
+  font-family: 'Syne', sans-serif;
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -1px;
+}
+
+.sv-pdf-logo span {
+  color: #FFDC3C;
+}
+
+.sv-pdf-meta {
+  text-align: right;
+  font-size: 11px;
+  color: #888;
+  line-height: 1.6;
+}
+
+.sv-pdf-meta strong {
+  color: #0A0A0A;
+  font-weight: 500;
+}
+
+.sv-pdf-footer {
+  position: absolute;
+  bottom: 24px;
+  left: 56px;
+  right: 56px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 9px;
+  color: #BBB;
+  border-top: 1px solid #E8E8E0;
+  padding-top: 8px;
+}
+
+/* PDF cover page */
+.sv-pdf-cover {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 1000px;
+  text-align: center;
+}
+
+.sv-pdf-cover-logo {
+  font-family: 'Syne', sans-serif;
+  font-size: 48px;
+  font-weight: 800;
+  letter-spacing: -2px;
+  margin-bottom: 8px;
+}
+
+.sv-pdf-cover-logo span {
+  color: #FFDC3C;
+}
+
+.sv-pdf-cover-subtitle {
+  font-size: 18px;
+  color: #888;
+  font-weight: 300;
+  margin-bottom: 48px;
+}
+
+.sv-pdf-cover-badge {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 500;
+  color: #FFDC3C;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  background: rgba(255, 220, 60, .12);
+  padding: 6px 20px;
+  border-radius: 20px;
+  margin-bottom: 48px;
+}
+
+.sv-pdf-cover-info {
+  font-size: 16px;
+  line-height: 2;
+  color: #555;
+}
+
+.sv-pdf-cover-info strong {
+  color: #0A0A0A;
+  font-weight: 600;
+}
+
+.sv-pdf-cover-date {
+  margin-top: 32px;
+  font-size: 13px;
+  color: #AAA;
+}
+
+/* PDF section titles */
+.sv-pdf-section-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 20px;
+  font-weight: 800;
+  margin-bottom: 16px;
+  letter-spacing: -.5px;
+}
+
+.sv-pdf-section-sub {
+  font-size: 13px;
+  color: #888;
+  font-weight: 300;
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
