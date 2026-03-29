@@ -18,10 +18,16 @@ SV.pdf = {
       btn.textContent = 'PDF genereren...';
     }
 
+    // Check CDN dependencies
+    if (typeof html2canvas === 'undefined' || typeof window.jspdf === 'undefined') {
+      alert('PDF-bibliotheken worden nog geladen. Probeer het over een paar seconden opnieuw.');
+      SV.pdf.cleanup();
+      return;
+    }
+
     var c = SV.state.lastCalc;
     if (!c) {
-      SV.pdf.generating = false;
-      if (btn) { btn.disabled = false; btn.textContent = 'Download PDF'; }
+      SV.pdf.cleanup();
       return;
     }
 
@@ -30,26 +36,39 @@ SV.pdf = {
     container.innerHTML = '';
 
     // Build PDF pages (6 pages)
-    var pages = [];
-    pages.push(SV.pdf.buildCoverPage(c, S));
-    pages.push(SV.pdf.buildPersonalPage(c, S));
-    pages.push(SV.pdf.buildAdvicePage(c, S));
-    pages.push(SV.pdf.buildScenariosPage(c, S));
-    pages.push(SV.pdf.buildRoadmapPage(c, S));
-    pages.push(SV.pdf.buildAppendixPage(c, S));
+    try {
+      var pages = [];
+      pages.push(SV.pdf.buildCoverPage(c, S));
+      pages.push(SV.pdf.buildPersonalPage(c, S));
+      pages.push(SV.pdf.buildAdvicePage(c, S));
+      pages.push(SV.pdf.buildScenariosPage(c, S));
+      pages.push(SV.pdf.buildRoadmapPage(c, S));
+      pages.push(SV.pdf.buildAppendixPage(c, S));
 
-    // Append all pages to container
-    pages.forEach(function(page) { container.appendChild(page); });
+      // Append all pages to container
+      pages.forEach(function(page) { container.appendChild(page); });
 
-    // Render each page to canvas, then to PDF
-    setTimeout(function() {
-      SV.pdf.renderPages(pages, c, S);
-    }, 300);
+      // Render each page to canvas, then to PDF
+      setTimeout(function() {
+        SV.pdf.renderPages(pages, c, S);
+      }, 300);
+    } catch (e) {
+      console.error('PDF build error:', e);
+      alert('Er ging iets mis bij het genereren van de PDF: ' + e.message);
+      SV.pdf.cleanup();
+    }
   },
 
   renderPages: function(pages, c, S) {
-    var jsPDF = window.jspdf.jsPDF;
-    var pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+    try {
+      var jsPDF = window.jspdf.jsPDF;
+      var pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+    } catch (e) {
+      console.error('jsPDF init error:', e);
+      alert('Kon PDF-bibliotheek niet laden. Controleer uw internetverbinding en probeer het opnieuw.');
+      SV.pdf.cleanup();
+      return;
+    }
     var pageWidth = 210;
     var pageHeight = 297;
 
@@ -90,7 +109,8 @@ SV.pdf = {
         pdf.text('Gegenereerd door Stroomvol Adviseurstool', pageWidth - 15, pageHeight - 8, { align: 'right' });
 
         renderNext(idx + 1);
-      }).catch(function() {
+      }).catch(function(err) {
+        console.error('html2canvas error on page ' + (idx + 1) + ':', err);
         renderNext(idx + 1);
       });
     }

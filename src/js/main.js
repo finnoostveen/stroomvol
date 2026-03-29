@@ -77,7 +77,11 @@ SV.init = function() {
   if (btnBack) btnBack.addEventListener('click', SV.ui.backToInput);
 
   var btnPrint = document.getElementById('btn-print');
-  if (btnPrint) btnPrint.addEventListener('click', function() { window.print(); });
+  if (btnPrint) btnPrint.addEventListener('click', function() {
+    var notitiesEl = document.getElementById('in-notities');
+    if (notitiesEl) SV.state.notities = notitiesEl.value;
+    SV.pdf.generate();
+  });
 
   var btnPdf = document.getElementById('btn-pdf');
   if (btnPdf) btnPdf.addEventListener('click', function() {
