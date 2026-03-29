@@ -18,6 +18,12 @@ const cssFiles = [
   'css/print.css',
 ];
 
+// Vendor libraries (inlined, no CDN dependency)
+const libFiles = [
+  'lib/jspdf.umd.min.js',
+  'lib/html2canvas.min.js',
+];
+
 // JS bestanden in volgorde (afhankelijkheden eerst)
 const jsFiles = [
   'js/state.js',
@@ -40,8 +46,9 @@ function build() {
   // Bundle CSS
   const css = cssFiles.map(f => readFile(f)).join('\n');
 
-  // Bundle JS
-  const js = jsFiles.map(f => readFile(f)).join('\n\n');
+  // Bundle vendor libs + app JS
+  const libs = libFiles.map(f => readFile(f)).join('\n');
+  const js = libs + '\n\n' + jsFiles.map(f => readFile(f)).join('\n\n');
 
   // Replace placeholders in index.html
   html = html.replace('/* __CSS_BUNDLE__ */', css);
