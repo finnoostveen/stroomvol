@@ -450,6 +450,79 @@
   flex-shrink: 0;
 }
 
+/* Info tooltip */
+.sv-adv .info-tip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1.5px solid var(--sv-border);
+  background: var(--sv-bg-input);
+  font-family: var(--sv-font-body);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--sv-text-muted);
+  cursor: pointer;
+  position: relative;
+  flex-shrink: 0;
+  transition: all .15s;
+  padding: 0;
+  line-height: 1;
+  vertical-align: middle;
+}
+
+.sv-adv .info-tip:hover {
+  border-color: var(--sv-accent);
+  color: var(--sv-text);
+}
+
+.sv-adv .info-tip.open {
+  border-color: var(--sv-accent);
+  background: var(--sv-accent-bg);
+  color: var(--sv-text);
+}
+
+.sv-adv .info-tip-popup {
+  display: none;
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: 320px;
+  background: var(--sv-bg-card);
+  border: 1px solid var(--sv-border);
+  border-radius: var(--sv-radius-sm);
+  padding: 12px 14px;
+  font-size: 12px;
+  font-weight: 300;
+  color: var(--sv-text-sub);
+  line-height: 1.6;
+  box-shadow: 0 4px 20px rgba(0,0,0,.08);
+  z-index: 100;
+  pointer-events: auto;
+}
+
+.sv-adv .info-tip.open .info-tip-popup {
+  display: block;
+}
+
+.sv-adv .info-tip-popup strong {
+  font-weight: 600;
+  color: var(--sv-text);
+}
+
+@media (max-width: 600px) {
+  .sv-adv .info-tip-popup {
+    left: auto;
+    right: -8px;
+    transform: none;
+    max-width: calc(100vw - 48px);
+  }
+}
+
 /* Buttons */
 .sv-adv .btn-next {
   background: var(--sv-accent);

@@ -87,6 +87,9 @@ SV.init = function() {
     SV.pdf.generate();
   });
 
+  // Init tooltips
+  SV.ui.initTooltips();
+
   // Init Wix integration
   SV.wix.init();
 };

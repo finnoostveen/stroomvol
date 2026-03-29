@@ -72,7 +72,7 @@
         <div><div class="card-title">Energiecontract</div><div class="card-subtitle">Het contracttype bepaalt de rekenwijze en batterijstrategie</div></div>
       </div>
       <div class="field">
-        <div class="field-label">Type energiecontract <span class="req">*</span></div>
+        <div class="field-label">Type energiecontract <span class="req">*</span> <button class="info-tip" data-tip="contract">i<div class="info-tip-popup"><strong>Vast:</strong> Vaste kWh-prijs gedurende de contractperiode. Geen prijsvoordeel door slim laden — focus op zelfconsumptie.<br><strong>Variabel:</strong> Prijs wordt maandelijks aangepast aan de markt. Besparing groeit mee bij stijgende tarieven.<br><strong>Dynamisch:</strong> Uurprijzen op basis van EPEX day-ahead. Dubbele verdienlaag: zelfconsumptie \u00e9n arbitrage (laden bij dal, ontladen bij piek).</div></button></div>
         <div class="contract-cards" id="contract-cards">
           <div class="cc" data-contract="vast">
             <div class="cc-icon">🔒</div>
@@ -133,7 +133,7 @@
         <div class="field-error" id="err-verbruik">Vul een jaarverbruik in</div>
       </div>
       <div class="field" style="margin-top:12px;">
-        <div class="field-label">Verbruiksprofiel</div>
+        <div class="field-label">Verbruiksprofiel <button class="info-tip" data-tip="profiel">i<div class="info-tip-popup"><strong>Standaard:</strong> Gelijkmatig verdeeld, licht meer 's avonds.<br><strong>Avondzwaar:</strong> Overdag weinig, piek tussen 17:00–22:00. Meer baat bij batterij.<br><strong>Overdag thuis:</strong> Thuiswerker — hogere directe zelfconsumptie overdag.<br><strong>EV nachtladen:</strong> Nachtverbruik hoger door laden elektrische auto.</div></button></div>
         <div class="tg" id="tg-profiel">
           <button class="tb" data-val="standaard">Standaard</button>
           <button class="tb" data-val="avond-zwaar">Avondzwaar</button>
@@ -154,7 +154,7 @@
         <div><div class="card-title">Zonnepanelen</div><div class="card-subtitle">Controleer ter plekke</div></div>
       </div>
       <div class="field">
-        <div class="field-label">Zonnepanelen aanwezig? <span class="req">*</span></div>
+        <div class="field-label">Zonnepanelen aanwezig? <span class="req">*</span> <button class="info-tip" data-tip="zon">i<div class="info-tip-popup">Zonnepanelen zijn de belangrijkste driver voor batterijbesparing. De batterij slaat overdag opgewekte stroom op voor 's avonds. Zonder panelen is de batterij vooral nuttig bij een <strong>dynamisch contract</strong> (arbitrage).</div></button></div>
         <div class="tg" id="tg-zon">
           <button class="tb" data-val="ja">Ja</button>
           <button class="tb" data-val="nee">Nee</button>
@@ -180,7 +180,7 @@
       </div>
       <div class="r2">
         <div class="field"><div class="field-label">Omvormertype</div><div class="tg" id="tg-omv"><button class="tb" data-val="hybride">Hybride</button><button class="tb" data-val="standaard">Standaard</button><button class="tb" data-val="micro">Micro</button></div></div>
-        <div class="field"><div class="field-label">Netaansluiting</div><div class="tg" id="tg-net"><button class="tb" data-val="1x25">1×25A</button><button class="tb" data-val="1x35">1×35A</button><button class="tb" data-val="3x25">3×25A</button><button class="tb" data-val="3x63">3×63A</button></div></div>
+        <div class="field"><div class="field-label">Netaansluiting <button class="info-tip" data-tip="net">i<div class="info-tip-popup">De netaansluiting begrenst het maximale vermogen van de batterij. Een <strong>1×25A</strong> aansluiting levert max ~5,75 kW — de batterij wordt hierop afgestemd. Een zwaardere aansluiting (3×25A, 3×63A) geeft ruimte voor een grotere batterij en sneller laden/ontladen.</div></button></div><div class="tg" id="tg-net"><button class="tb" data-val="1x25">1×25A</button><button class="tb" data-val="1x35">1×35A</button><button class="tb" data-val="3x25">3×25A</button><button class="tb" data-val="3x63">3×63A</button></div></div>
       </div>
     </div>
 
@@ -194,7 +194,7 @@
         <div><div class="card-title">Grootverbruikers & Doelen</div><div class="card-subtitle">Wat staat er in huis? Wat wil de klant?</div></div>
       </div>
       <div class="field">
-        <div class="field-label">Grootverbruikers</div>
+        <div class="field-label">Grootverbruikers <button class="info-tip" data-tip="gv">i<div class="info-tip-popup">Grootverbruikers verhogen het jaarverbruik en beïnvloeden de batterijdimensionering. <strong>EV:</strong> +2500 kWh/jr, batterij +3 kWh. <strong>Warmtepomp:</strong> +3500 kWh/jr (winter), batterij +2 kWh. <strong>Hybride WP:</strong> +1200 kWh/jr. <strong>Airco:</strong> +600 kWh/jr (zomer).</div></button></div>
         <div class="chk-row" id="chk-gv">
           <div class="chk-item" data-val="ev"><div class="chk-dot"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 5L4 7.5L8.5 2.5" stroke="#0A0A0A" stroke-width="1.5" stroke-linecap="round"/></svg></div>Elektrische auto + thuislader</div>
           <div class="chk-item" data-val="wp"><div class="chk-dot"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 5L4 7.5L8.5 2.5" stroke="#0A0A0A" stroke-width="1.5" stroke-linecap="round"/></svg></div>Warmtepomp (volledig elektrisch)</div>
@@ -203,7 +203,7 @@
         </div>
       </div>
       <div class="field" style="margin-top:16px;">
-        <div class="field-label">Doelen</div>
+        <div class="field-label">Doelen <button class="info-tip" data-tip="doelen">i<div class="info-tip-popup"><strong>Zelfconsumptie:</strong> Meer eigen stroom verbruiken i.p.v. terugleveren.<br><strong>Slim handelen:</strong> Actief verdienen op prijsverschillen (vereist dynamisch contract).<br><strong>Piekverbruik beperken:</strong> Bespaart op capaciteitstarief door pieken op te vangen.<br><strong>Noodstroom:</strong> Stroom bij netuitval voor essentiële apparaten.</div></button></div>
         <div class="chk-row" id="chk-doel">
           <div class="chk-item" data-val="zelf"><div class="chk-dot"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 5L4 7.5L8.5 2.5" stroke="#0A0A0A" stroke-width="1.5" stroke-linecap="round"/></svg></div>Zelfconsumptie verhogen</div>
           <div class="chk-item" data-val="handel"><div class="chk-dot"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 5L4 7.5L8.5 2.5" stroke="#0A0A0A" stroke-width="1.5" stroke-linecap="round"/></svg></div>Slim handelen (arbitrage)</div>
@@ -248,8 +248,8 @@
 
     <div class="metrics">
       <div class="mc"><div class="mc-icon">💰</div><div class="mc-val" id="r-invest">—</div><div class="mc-label">Geschatte investering</div></div>
-      <div class="mc"><div class="mc-icon">📉</div><div class="mc-val" id="r-tvt">—</div><div class="mc-label">Terugverdientijd (realistisch)</div></div>
-      <div class="mc"><div class="mc-icon">☀️</div><div class="mc-val" id="r-zelf">—</div><div class="mc-label">Zelfconsumptie met batterij</div></div>
+      <div class="mc"><div class="mc-icon">📉</div><div class="mc-val" id="r-tvt">—</div><div class="mc-label">Terugverdientijd (realistisch) <button class="info-tip" data-tip="tvt">i<div class="info-tip-popup">De terugverdientijd is gebaseerd op het <strong>realistische scenario</strong>: verwachte prijsstijging en standaard batterijdegradatie op basis van gebruikscycli. Het conservatieve scenario rekent met 25% snellere degradatie, het optimistische met 20% tragere.</div></button></div></div>
+      <div class="mc"><div class="mc-icon">☀️</div><div class="mc-val" id="r-zelf">—</div><div class="mc-label">Zelfconsumptie met batterij <button class="info-tip" data-tip="zelf">i<div class="info-tip-popup">Zelfconsumptie = het percentage van je totale verbruik dat je direct of via de batterij uit eigen zonnestroom haalt. Hoe hoger, hoe minder je van het net afneemt. De batterij slaat overdag op wat je 's avonds verbruikt.</div></button></div></div>
       <div class="mc"><div class="mc-icon">💡</div><div class="mc-val" id="r-besp">—</div><div class="mc-label">Jaarlijkse besparing (realistisch)</div></div>
     </div>
 
@@ -275,7 +275,7 @@
       <svg viewBox="0 0 600 250" xmlns="http://www.w3.org/2000/svg" id="r-cumul-svg" style="width:100%;height:auto;"></svg>
     </div>
 
-    <div class="sc-card"><div class="sc-header">Terugverdienscenario's</div><div class="sc-sub" id="r-sc-sub"></div><div class="sc-scroll"><table class="sc-table"><thead><tr><th>Scenario</th><th>Besparing / jaar</th><th>Terugverdientijd</th><th>Totale besparing 15 jr</th><th>Netto winst</th></tr></thead><tbody id="r-sc-body"></tbody></table></div></div>
+    <div class="sc-card"><div class="sc-header">Terugverdienscenario's <button class="info-tip" data-tip="scenarios">i<div class="info-tip-popup"><strong>Conservatief:</strong> Lagere prijsstijging + 25% snellere batterijdegradatie. Voorzichtige inschatting.<br><strong>Realistisch:</strong> Verwachte prijsontwikkeling + standaard degradatie op basis van gebruikscycli (LFP: ~5000 cycli tot 80%).<br><strong>Optimistisch:</strong> Hogere prijsstijging + 20% tragere degradatie. Gunstige marktomstandigheden.</div></button></div><div class="sc-sub" id="r-sc-sub"></div><div class="sc-scroll"><table class="sc-table"><thead><tr><th>Scenario</th><th>Besparing / jaar</th><th>Terugverdientijd</th><th>Totale besparing 15 jr</th><th>Netto winst</th></tr></thead><tbody id="r-sc-body"></tbody></table></div></div>
 
     <div class="bdown"><div class="bdown-title">Besparingsopbouw & netto rendement</div><div id="r-bd-rows"></div></div>
 
@@ -285,7 +285,6 @@
 
     <div class="params-card"><div class="params-title">Parameters aanpassen</div><div class="params-sub">Pas aan en herbereken direct.</div>
       <div class="pr"><span class="pr-label">Kosten per kWh (geïnstalleerd)</span><input type="number" class="pr-input" id="p-cpk" value="500" step="25"><span class="pr-unit">€/kWh</span></div>
-      <div class="pr"><span class="pr-label">Batterijdegradatie per jaar</span><input type="number" class="pr-input" id="p-deg" value="2" step="0.5"><span class="pr-unit">%</span></div>
       <div class="pr"><span class="pr-label">Batterij DoD (depth of discharge)</span><input type="number" class="pr-input" id="p-dod" value="90" step="5"><span class="pr-unit">%</span></div>
       <div class="pr"><span class="pr-label">Roundtrip efficiency</span><input type="number" class="pr-input" id="p-eff" value="92" step="1"><span class="pr-unit">%</span></div>
       <div style="margin-top:16px;"><button class="btn-next" id="btn-recalc" style="width:100%;">Herbereken advies</button></div>

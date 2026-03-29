@@ -1,6 +1,6 @@
 # Stroomvol Adviseurstool — Rekenmodel Referentie v2
 
-Versie: maart 2026
+Versie: maart 2026 (update 2)
 Dit document is de enige bron van waarheid voor het rekenmodel. Claude Code implementeert wat hier staat.
 
 -----
@@ -13,7 +13,7 @@ Het rekenmodel is een pure functie: `calc(input) → output`. Geen side effects,
 Input (formulier) → calc() → Output (object) → render(output) → UI + PDF
 ```
 
-Het model rekent per maand (12 iteraties) in plaats van als daggemiddelde. Dat is de kernverbetering ten opzichte van v1.
+Het model rekent per maand (12 iteraties) in plaats van als daggemiddelde.
 
 -----
 
@@ -53,16 +53,28 @@ const ZELFCONSUMPTIE_FACTOR = {
 };
 ```
 
-### 2.4 Salderingsafbouw
+### 2.4 Saldering
 
 ```javascript
 const SALDERING = {
-  afbouwPerJaar: [1.00, 0.64, 0.28, 0.00],
+  // Saldering volledig afgeschaft per 1/1/2027
+  // Teruglevertarief is het vaste lage tarief (geen saldering meer)
   terugFractieNaSaldering: 0.25,
 };
 ```
 
-### 2.5 Netaansluiting
+### 2.5 Batterij levenscyclus
+
+```javascript
+const BATTERIJ_LIFECYCLE = {
+  lfp: {
+    cycliTot80Pct: 5000,        // LFP: ~5000 cycli tot 80% capaciteit
+    degradatiePerCyclus: 0.004, // 0.004% capaciteitsverlies per cyclus
+  }
+};
+```
+
+### 2.6 Netaansluiting
 
 ```javascript
 const NET_VERMOGEN = {
@@ -73,7 +85,7 @@ const NET_VERMOGEN = {
 };
 ```
 
-### 2.6 Grootverbruikers
+### 2.7 Grootverbruikers
 
 ```javascript
 const GROOTVERBRUIK = {
@@ -84,7 +96,7 @@ const GROOTVERBRUIK = {
 };
 ```
 
-### 2.7 EPEX Shape
+### 2.8 EPEX Shape
 
 ```javascript
 const EPEX_SHAPE = {
@@ -97,31 +109,96 @@ const EPEX_SHAPE = {
 
 ## 3. Berekening stap voor stap
 
-Zie `src/js/calc.js` voor de volledige implementatie. Samenvatting:
+### Stap 1: Zonne-opbrengst per maand
+KNMI-verdeling × totaal Wp × derating × zonuren.
 
-1. **Zonne-opbrengst** per maand (KNMI-verdeling)
-2. **Totaalverbruik** per maand (basis + gewogen grootverbruikers)
-3. **Zelfconsumptie** per maand zonder batterij (seizoensfactoren)
-4. **Batterij sizing** (surplus, doelen, netbegrenzing)
-5. **Zelfconsumptie** per maand met batterij (gedegradeerd)
-6. **Besparingsberekening** per jaar (15 jaar) met salderingsafbouw, prijsstijging, degradatie
-7. **Scenario's** (conservatief / realistisch / optimistisch)
+### Stap 2: Totaalverbruik per maand
+Basisverbruik × maandprofiel + gewogen grootverbruikers per seizoen.
+
+### Stap 3: Zelfconsumptie zonder batterij
+Per maand: `min(dagSolar × zcFactor, dagVerbruik)`. Surplus = rest.
+
+### Stap 4: Batterij sizing
+Op basis van surplus, doelen, grootverbruikers, netbegrenzing. Afgerond op 5 kWh, min 5, max 30.
+
+### Stap 5: Zelfconsumptie met batterij
+Per maand: `min(zelfZonder + min(usableKwh × eff, surplus), verbruik)`.
+
+### Stap 5b: Curtailment tracking
+Per maand: `max(0, dagSurplus - min(usableKwh × eff, dagSurplus))` × dagen.
+Totaal curtailment als kWh/jaar en als % van zonneopbrengst.
+
+### Stap 5c: Cycle-based degradatie
+```
+battKwhPerJaar = (zelfMet - zelfZonder) + arbitrageCycli × usableKwh × eff
+cycliPerJaar = battKwhPerJaar / usableKwh
+degradatiePerJaarPct = cycliPerJaar × 0.004  (per cyclus)
+jarenTot80Pct = 5000 / cycliPerJaar
+```
+
+### Stap 6: Besparingsberekening per jaar (15 jaar)
+Per component: zelfconsumptie, arbitrage, EV slim laden, WP buffering, peak shaving.
+
+**Degradatie per jaar** (cycle-based met scenarioFactor):
+```
+effectiefDegPerJaar = degradatiePerJaarPct × scenarioFactor / 100
+effectiefKwh = usableKwh × (1 - effectiefDegPerJaar)^(jaar-1)
+```
+
+**Saldering**: volledig afgeschaft. Teruglevertarief = vast laag tarief × prijsfactor.
+
+### Stap 7: Scenario's
+
+| Scenario | prijsStijging | scenarioFactor |
+|----------|--------------|----------------|
+| Conservatief | laag (25% van opgegeven stijging) | 1.25 (25% snellere degradatie) |
+| Realistisch | opgegeven stijging | 1.00 (standaard) |
+| Optimistisch | hoog (+2% bovenop) | 0.80 (20% tragere degradatie) |
 
 -----
 
-## 4. Doelmetrics
+## 4. Output velden (nieuw/gewijzigd)
+
+```javascript
+{
+  // Bestaand...
+  curtailmentMaand: [],    // kWh curtailment per maand
+  curtailmentJaar: 0,      // totaal kWh/jaar
+  curtailmentPct: 0,       // % van zonneopbrengst
+
+  cycliPerJaar: 0,         // geschatte cycli/jaar
+  jarenTot80Pct: 0,        // jaren tot 80% capaciteit
+  degradatiePerJaarPct: 0, // %/jaar op basis van cycli
+
+  // Verwijderd: degPct (was handmatig instelbare degradatie)
+}
+```
+
+-----
+
+## 5. Doelmetrics
 
 - Zelfconsumptie: badge groen ≥70%, geel 45-70%, grijs <45%
 - Noodstroom: badge groen ≥8u, geel 4-8u, grijs <4u
 - Slim handelen: alleen actief bij dynamisch contract
-- Peak shaving: op basis van capaciteitstarief x kW-reductie
+- Peak shaving: op basis van capaciteitstarief × kW-reductie
+- **Batterijlevensduur** (altijd): badge groen ≥20jr, geel 12-20jr, grijs <12jr
+- **Curtailment** (bij zonnepanelen): badge groen ≤5%, geel 5-15%, grijs >15%
 
 -----
 
-## 5. PDF Positieve framing
+## 6. PDF Positieve framing
 
 Hero-tekst prioriteit:
 1. `hasSolar && zelfPctMet >= 60` → zelfconsumptie
 2. `contract === 'dynamisch'` → arbitrage
 3. `doelen.has('nood')` → noodstroom
 4. fallback → "slimmere manier om energie te gebruiken"
+
+-----
+
+## 7. Info Tooltips
+
+Tooltips met (i) knoppen naast labels en conclusies. Plaatsing:
+- Invoerfase: contracttype, verbruiksprofiel, zonnepanelen, netaansluiting, grootverbruikers, doelen
+- Resultaatfase: terugverdientijd, zelfconsumptie, scenario's, levensduur, curtailment

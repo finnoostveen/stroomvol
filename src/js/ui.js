@@ -144,4 +144,23 @@ SV.ui = {
     window.scrollTo({ top: 0, behavior: 'smooth' });
     SV.wix.updateHeight();
   },
+
+  // Info tooltip handler
+  initTooltips: function() {
+    document.addEventListener('click', function(e) {
+      var tip = e.target.closest('.info-tip');
+      if (tip) {
+        e.preventDefault();
+        e.stopPropagation();
+        var wasOpen = tip.classList.contains('open');
+        // Close all open tooltips
+        document.querySelectorAll('.info-tip.open').forEach(function(t) { t.classList.remove('open'); });
+        // Toggle clicked one
+        if (!wasOpen) tip.classList.add('open');
+      } else {
+        // Click outside — close all
+        document.querySelectorAll('.info-tip.open').forEach(function(t) { t.classList.remove('open'); });
+      }
+    });
+  },
 };

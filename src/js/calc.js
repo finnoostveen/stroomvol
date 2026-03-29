@@ -28,8 +28,15 @@ SV.ZELFCONSUMPTIE_FACTOR = {
 };
 
 SV.SALDERING = {
-  afbouwPerJaar: [1.00, 0.64, 0.28, 0.00],
+  // Saldering volledig afgeschaft per 1/1/2027
   terugFractieNaSaldering: 0.25,
+};
+
+SV.BATTERIJ_LIFECYCLE = {
+  lfp: {
+    cycliTot80Pct: 5000,
+    degradatiePerCyclus: 0.004, // 0.004% per cyclus
+  },
 };
 
 SV.NET_VERMOGEN = {
@@ -63,7 +70,6 @@ SV.calc = function() {
   var contract = S.contract || 'vast';
   var verbruik = SV.elVal('in-verbruik', 3500);
   var cpk = SV.elVal('p-cpk', 500);
-  var degPct = SV.elVal('p-deg', 2);
   var dod = SV.elVal('p-dod', 90) / 100;
   var eff = SV.elVal('p-eff', 92) / 100;
   var profiel = S.profiel || 'standaard';
@@ -190,16 +196,36 @@ SV.calc = function() {
   var zelfPctZonder = hasSolar ? Math.round(zelfZonderJaar / totaalJaar * 100) : 0;
   var zelfPctMet = hasSolar ? Math.round(zelfMetJaar / totaalJaar * 100) : 0;
 
+  // === STAP 5b: Curtailment tracking ===
+  var curtailmentMaand = [];
+  for (m = 0; m < 12; m++) {
+    var dagSurplusCurt = surplusMaand[m] / dagenInMaand(m);
+    var dagBattOpslagCurt = Math.min(usableKwh * eff, dagSurplusCurt);
+    var dagCurtailment = Math.max(0, dagSurplusCurt - dagBattOpslagCurt);
+    curtailmentMaand.push(dagCurtailment * dagenInMaand(m));
+  }
+  var curtailmentJaar = som(curtailmentMaand);
+  var curtailmentPct = solarKwhJaar > 0 ? Math.round(curtailmentJaar / solarKwhJaar * 100) : 0;
+
+  // === STAP 5c: Cycle-based degradatie ===
+  var battKwhPerJaar = zelfMetJaar - zelfZonderJaar; // extra kWh door batterij
+  if (contract === 'dynamisch') {
+    var arbCycliJaar = hasSolar ? 50 : 300;
+    battKwhPerJaar += arbCycliJaar * usableKwh * eff;
+  }
+  var cycliPerJaar = usableKwh > 0 ? battKwhPerJaar / usableKwh : 0;
+  var degradatiePerJaarPct = cycliPerJaar * SV.BATTERIJ_LIFECYCLE.lfp.degradatiePerCyclus;
+  var jarenTot80Pct = cycliPerJaar > 0 ? SV.BATTERIJ_LIFECYCLE.lfp.cycliTot80Pct / cycliPerJaar : 99;
+
   // === STAP 6: Besparingsberekening per jaar ===
   function berekenJaarBesparing(jaar, scenario) {
-    var effectiefKwh = usableKwh * Math.pow(1 - scenario.degradatiePct, jaar - 1);
+    var effectiefDegPerJaar = degradatiePerJaarPct * scenario.scenarioFactor / 100;
+    var effectiefKwh = usableKwh * Math.pow(1 - effectiefDegPerJaar, jaar - 1);
     var prijsFactor = Math.pow(1 + scenario.prijsStijging, jaar - 1);
     var huidigTarief = tarief * prijsFactor;
 
-    // Salderingsafbouw
-    var salderingIdx = Math.min(jaar, SV.SALDERING.afbouwPerJaar.length - 1);
-    var salderingsPct = SV.SALDERING.afbouwPerJaar[salderingIdx];
-    var effectiefTerug = (salderingsPct * huidigTarief) + ((1 - salderingsPct) * huidigTarief * SV.SALDERING.terugFractieNaSaldering);
+    // Saldering volledig afgeschaft per 1/1/2027 — teruglevertarief is vast
+    var effectiefTerug = terug * prijsFactor;
 
     // Component 1: Zelfconsumptie
     var jaarBesparingZelf = 0;
@@ -264,9 +290,9 @@ SV.calc = function() {
 
   // === STAP 7: Scenario's (15 jaar) ===
   var scenarios = {
-    conservatief: { prijsStijging: contract === 'vast' ? 0 : stijgPct * 0.25 / 100, degradatiePct: degPct / 100 + 0.005 },
-    realistisch:  { prijsStijging: contract === 'vast' ? 0 : stijgPct / 100, degradatiePct: degPct / 100 },
-    optimistisch: { prijsStijging: contract === 'vast' ? 0.01 : stijgPct / 100 + 0.02, degradatiePct: Math.max(0, degPct / 100 - 0.005) },
+    conservatief: { prijsStijging: contract === 'vast' ? 0 : stijgPct * 0.25 / 100, scenarioFactor: 1.25 },
+    realistisch:  { prijsStijging: contract === 'vast' ? 0 : stijgPct / 100, scenarioFactor: 1.00 },
+    optimistisch: { prijsStijging: contract === 'vast' ? 0.01 : stijgPct / 100 + 0.02, scenarioFactor: 0.80 },
   };
 
   function berekenScenario(scenario) {
@@ -326,7 +352,6 @@ SV.calc = function() {
     cpk: cpk,
     dod: dod,
     eff: eff,
-    degPct: degPct,
     net: net,
 
     profiel: profiel,
@@ -341,6 +366,13 @@ SV.calc = function() {
     zelfZonderMaand: zelfZonderMaand,
     zelfMetMaand: zelfMetMaand,
     surplusMaand: surplusMaand,
+    curtailmentMaand: curtailmentMaand,
+    curtailmentJaar: Math.round(curtailmentJaar),
+    curtailmentPct: curtailmentPct,
+
+    cycliPerJaar: Math.round(cycliPerJaar * 10) / 10,
+    jarenTot80Pct: Math.round(jarenTot80Pct * 10) / 10,
+    degradatiePerJaarPct: Math.round(degradatiePerJaarPct * 100) / 100,
 
     cons: cons,
     real: real,

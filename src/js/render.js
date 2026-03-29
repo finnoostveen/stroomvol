@@ -118,9 +118,8 @@ SV.renderStrategy = function(c) {
 SV.renderGoals = function(c) {
   var S = SV.state, n = SV.n, fmt = SV.fmt;
   var goalsWrap = document.getElementById('r-goals-wrap');
-  var hasGoals = S.doel.size > 0 || S.gv.size > 0;
-  goalsWrap.style.display = hasGoals ? 'block' : 'none';
-  if (!hasGoals) return;
+  // Always show — levensduur + curtailment are always relevant
+  goalsWrap.style.display = 'block';
 
   var y1 = c.real.perJaar[0];
   var gH = '';
@@ -187,6 +186,24 @@ SV.renderGoals = function(c) {
       + '<div class="goal-detail">De airco voegt ~<strong>' + fmt(SV.GROOTVERBRUIK.ac.defaultKwhJaar) + ' kWh/jaar</strong> toe, voornamelijk in de zomer. De batterij is +1 kWh groter gedimensioneerd.</div></div>';
   }
 
+  // Batterijlevensduur (altijd tonen)
+  var lvBadge = c.jarenTot80Pct >= 20 ? 'goal-badge-green' : c.jarenTot80Pct >= 12 ? 'goal-badge-yellow' : 'goal-badge-gray';
+  var lvTxt = c.jarenTot80Pct >= 20 ? 'Uitstekend' : c.jarenTot80Pct >= 12 ? 'Goed' : 'Intensief';
+  var lvBarPct = Math.min(Math.round(c.jarenTot80Pct / 25 * 100), 100);
+  gH += '<div class="goal-item"><div class="goal-head"><div class="goal-name"><span class="goal-icon">\uD83D\uDD0B</span>Batterijlevensduur <button class="info-tip" data-tip="levensduur">i<div class="info-tip-popup">De levensduur is berekend op basis van <strong>gebruikscycli</strong>. LFP-batterijen gaan ~5000 cycli mee tot 80% capaciteit. Bij ~' + c.cycliPerJaar + ' cycli/jaar komt dat neer op ~' + c.jarenTot80Pct + ' jaar. Na 80% werkt de batterij nog, maar met minder capaciteit.</div></button><span class="goal-badge ' + lvBadge + '">' + lvTxt + '</span></div><div class="goal-val">~' + c.jarenTot80Pct + ' jr</div></div>'
+    + '<div class="goal-bar-wrap"><div class="goal-bar ' + (c.jarenTot80Pct >= 12 ? 'goal-bar-green' : 'goal-bar-yellow') + '" style="width:' + lvBarPct + '%"></div></div>'
+    + '<div class="goal-detail">Geschatte <strong>' + c.cycliPerJaar + ' cycli/jaar</strong> \u2192 degradatie ~<strong>' + c.degradatiePerJaarPct + '%/jaar</strong>. Na ~' + c.jarenTot80Pct + ' jaar is de batterij op 80% van de oorspronkelijke capaciteit.</div></div>';
+
+  // Curtailment (alleen bij zonnepanelen)
+  if (c.hasSolar && c.curtailmentJaar > 0) {
+    var curtBadge = c.curtailmentPct <= 5 ? 'goal-badge-green' : c.curtailmentPct <= 15 ? 'goal-badge-yellow' : 'goal-badge-gray';
+    var curtTxt = c.curtailmentPct <= 5 ? 'Minimaal' : c.curtailmentPct <= 15 ? 'Matig' : 'Hoog';
+    var curtBarPct = Math.min(c.curtailmentPct, 100);
+    gH += '<div class="goal-item"><div class="goal-head"><div class="goal-name"><span class="goal-icon">\u2600\uFE0F</span>Curtailment (verlies) <button class="info-tip" data-tip="curtailment">i<div class="info-tip-popup"><strong>Curtailment</strong> = zonne-energie die niet benut wordt: niet direct verbruikt, niet in de batterij past, en teruglevering levert weinig op. Een grotere batterij of meer verbruik overdag vermindert curtailment.</div></button><span class="goal-badge ' + curtBadge + '">' + curtTxt + '</span></div><div class="goal-val">' + c.curtailmentPct + '%</div></div>'
+      + '<div class="goal-bar-wrap"><div class="goal-bar ' + (c.curtailmentPct <= 10 ? 'goal-bar-green' : 'goal-bar-yellow') + '" style="width:' + curtBarPct + '%"></div></div>'
+      + '<div class="goal-detail">Jaarlijks ~<strong>' + fmt(c.curtailmentJaar) + ' kWh</strong> (' + c.curtailmentPct + '% van zonneopbrengst) gaat verloren door curtailment \u2014 surplus dat niet in de batterij past.</div></div>';
+  }
+
   document.getElementById('r-goals-body').innerHTML = gH;
 };
 
@@ -245,10 +262,12 @@ SV.renderAssumptions = function(c) {
     'Contract: ' + c.contract + (c.contract === 'dynamisch' ? ' \u2014 dal \u20AC' + n(c.dynDal).toFixed(2) + ', piek \u20AC' + n(c.dynPiek).toFixed(2) + ', gem. \u20AC' + n(c.dynGem).toFixed(2) : ' \u2014 inkoop \u20AC' + n(c.tarief).toFixed(2) + '/kWh, terug \u20AC' + n(c.terug).toFixed(2) + '/kWh'),
     'Installatiekosten: \u20AC' + c.cpk + '/kWh \u2192 \u20AC' + fmt(c.investering) + ' totaal',
     'Batterij: ' + c.aanbevolenKwh + ' kWh nom., ' + n(c.usableKwh).toFixed(1) + ' kWh bruikbaar (DoD ' + Math.round(n(c.dod) * 100) + '%, eff. ' + Math.round(n(c.eff) * 100) + '%)',
-    'Degradatie: ' + c.degPct + '%/jaar',
+    'Degradatie: cycle-based (~' + c.degradatiePerJaarPct + '%/jaar bij ~' + c.cycliPerJaar + ' cycli/jaar, LFP 5000 cycli tot 80%)',
+    'Levensduur: ~' + c.jarenTot80Pct + ' jaar tot 80% capaciteit',
     c.contract !== 'vast' ? 'Energieprijsstijging: ' + c.stijgPct + '%/jaar' : 'Vast: geen prijsstijging tijdens contract',
     c.hasSolar ? 'Zelfconsumptie: ' + c.zelfPctZonder + '% \u2192 ' + c.zelfPctMet + '% met batterij' : '',
-    'Saldering: afbouw per 2027 ingecalculeerd (64% \u2192 28% \u2192 0%)',
+    c.hasSolar && c.curtailmentJaar > 0 ? 'Curtailment: ~' + fmt(c.curtailmentJaar) + ' kWh/jaar (' + c.curtailmentPct + '% van zonneopbrengst)' : '',
+    'Saldering: volledig afgeschaft per 1/1/2027',
     'Netaansluiting: ' + c.net + ' (max ' + (SV.NET_VERMOGEN[c.net] ? SV.NET_VERMOGEN[c.net].maxKw : '?') + ' kW)',
   ].filter(Boolean);
   document.getElementById('r-assume').innerHTML = aL.join('<br>');
