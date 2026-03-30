@@ -48,10 +48,10 @@ function build() {
 
   // Bundle vendor libs + app JS
   const libs = libFiles.map(f => readFile(f)).join('\n');
-  // Escape </script> literals inside inlined JS to prevent HTML parser from
-  // prematurely closing the <script> block
+  // Escape <script> and </script> literals inside inlined JS to prevent
+  // the HTML parser from seeing them as real tags
   const js = (libs + '\n\n' + jsFiles.map(f => readFile(f)).join('\n\n'))
-    .replace(/<\/script>/gi, '<\\/script>');
+    .replace(/<(\/?)script([> ])/gi, '<$1scr"+"ipt$2');
 
   // Replace placeholders in index.html
   html = html.replace('/* __CSS_BUNDLE__ */', css);
