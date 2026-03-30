@@ -1,12 +1,13 @@
 /**
  * Stroomvol Adviseurstool — PDF Generation
- * Uses jsPDF + html2canvas (loaded via CDN)
+ * Uses jsPDF v2.5.2 + html2canvas 1.4.1 (inlined, no CDN)
  * 6-page commercial PDF with warm, advisory tone
  */
 var SV = SV || {};
 
 SV.pdf = {
   generating: false,
+  _safetyTimeout: null,
 
   generate: function() {
     if (SV.pdf.generating) return;
@@ -18,9 +19,16 @@ SV.pdf = {
       btn.textContent = 'PDF genereren...';
     }
 
-    // Check CDN dependencies
+    // Safety timeout: reset na 30s als er iets misgaat
+    SV.pdf._safetyTimeout = setTimeout(function() {
+      console.error('PDF generation timed out after 30s');
+      SV.pdf.cleanup();
+    }, 30000);
+
+    // Check dependencies (inlined, should always be available)
     if (typeof html2canvas === 'undefined' || typeof window.jspdf === 'undefined') {
-      alert('PDF-bibliotheken worden nog geladen. Probeer het over een paar seconden opnieuw.');
+      console.error('PDF libs missing. html2canvas:', typeof html2canvas, 'jspdf:', typeof window.jspdf);
+      alert('PDF-bibliotheken konden niet geladen worden. Herlaad de pagina en probeer opnieuw.');
       SV.pdf.cleanup();
       return;
     }
@@ -119,6 +127,10 @@ SV.pdf = {
   },
 
   cleanup: function() {
+    if (SV.pdf._safetyTimeout) {
+      clearTimeout(SV.pdf._safetyTimeout);
+      SV.pdf._safetyTimeout = null;
+    }
     SV.pdf.generating = false;
     var btn = document.getElementById('btn-pdf');
     if (btn) { btn.disabled = false; btn.textContent = 'Download PDF'; }
