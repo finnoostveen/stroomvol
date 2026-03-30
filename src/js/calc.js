@@ -69,7 +69,7 @@ SV.calc = function() {
 
   var contract = S.contract || 'vast';
   var verbruik = SV.elVal('in-verbruik', 3500);
-  var cpk = SV.elVal('p-cpk', 500);
+  var cpk = SV.elVal('p-cpk', 400);
   var dod = SV.elVal('p-dod', 90) / 100;
   var eff = SV.elVal('p-eff', 92) / 100;
   var profiel = S.profiel || 'standaard';
