@@ -10,7 +10,23 @@ SV.pdf = {
   _safetyTimeout: null,
 
   generate: function() {
-    if (SV.pdf.generating) return;
+    // Debug: zichtbare status op scherm
+    var dbg = document.getElementById('pdf-debug');
+    if (!dbg) {
+      dbg = document.createElement('div');
+      dbg.id = 'pdf-debug';
+      dbg.style.cssText = 'position:fixed;bottom:0;left:0;right:0;background:#111;color:#0f0;font:12px monospace;padding:8px 12px;z-index:9999;max-height:200px;overflow:auto;';
+      document.body.appendChild(dbg);
+    }
+    function log(msg) {
+      dbg.innerHTML += msg + '<br>';
+      dbg.scrollTop = dbg.scrollHeight;
+      console.log('[PDF]', msg);
+    }
+
+    log('generate() called');
+
+    if (SV.pdf.generating) { log('BLOCKED: generating=true (stuck from previous attempt)'); SV.pdf.generating = false; }
     SV.pdf.generating = true;
 
     var btn = document.getElementById('btn-pdf');
@@ -21,23 +37,26 @@ SV.pdf = {
 
     // Safety timeout: reset na 30s als er iets misgaat
     SV.pdf._safetyTimeout = setTimeout(function() {
-      console.error('PDF generation timed out after 30s');
+      log('TIMEOUT: 30s verstreken, reset');
       SV.pdf.cleanup();
     }, 30000);
 
-    // Check dependencies (inlined, should always be available)
+    // Check dependencies
+    log('html2canvas: ' + typeof html2canvas + ', jspdf: ' + typeof window.jspdf);
     if (typeof html2canvas === 'undefined' || typeof window.jspdf === 'undefined') {
-      console.error('PDF libs missing. html2canvas:', typeof html2canvas, 'jspdf:', typeof window.jspdf);
-      alert('PDF-bibliotheken konden niet geladen worden. Herlaad de pagina en probeer opnieuw.');
+      log('ERROR: libraries niet gevonden!');
+      alert('PDF-bibliotheken niet beschikbaar. Herlaad de pagina.');
       SV.pdf.cleanup();
       return;
     }
 
     var c = SV.state.lastCalc;
     if (!c) {
+      log('ERROR: geen berekening beschikbaar (lastCalc is null)');
       SV.pdf.cleanup();
       return;
     }
+    log('lastCalc OK, aanbevolen: ' + c.aanbevolenKwh + ' kWh');
 
     var S = SV.state;
     var container = document.getElementById('pdf-container');
@@ -46,34 +65,48 @@ SV.pdf = {
     // Build PDF pages (6 pages)
     try {
       var pages = [];
+      log('Building cover...');
       pages.push(SV.pdf.buildCoverPage(c, S));
+      log('Building personal...');
       pages.push(SV.pdf.buildPersonalPage(c, S));
+      log('Building advice...');
       pages.push(SV.pdf.buildAdvicePage(c, S));
+      log('Building scenarios...');
       pages.push(SV.pdf.buildScenariosPage(c, S));
+      log('Building roadmap...');
       pages.push(SV.pdf.buildRoadmapPage(c, S));
+      log('Building appendix...');
       pages.push(SV.pdf.buildAppendixPage(c, S));
+      log(pages.length + ' pages built OK');
 
       // Append all pages to container
       pages.forEach(function(page) { container.appendChild(page); });
 
       // Render each page to canvas, then to PDF
+      log('Starting render in 300ms...');
       setTimeout(function() {
-        SV.pdf.renderPages(pages, c, S);
+        SV.pdf.renderPages(pages, c, S, log);
       }, 300);
     } catch (e) {
-      console.error('PDF build error:', e);
-      alert('Er ging iets mis bij het genereren van de PDF: ' + e.message);
+      log('BUILD ERROR: ' + e.message);
+      alert('PDF build fout: ' + e.message);
       SV.pdf.cleanup();
     }
   },
 
-  renderPages: function(pages, c, S) {
+  renderPages: function(pages, c, S, log) {
+    log = log || function() {};
+    log('renderPages called, ' + pages.length + ' pages');
+
+    var jsPDF, pdf;
     try {
-      var jsPDF = window.jspdf.jsPDF;
-      var pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+      jsPDF = window.jspdf.jsPDF;
+      log('jsPDF constructor: ' + typeof jsPDF);
+      pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+      log('jsPDF instance created OK');
     } catch (e) {
-      console.error('jsPDF init error:', e);
-      alert('Kon PDF-bibliotheek niet laden. Controleer uw internetverbinding en probeer het opnieuw.');
+      log('jsPDF INIT ERROR: ' + e.message);
+      alert('jsPDF fout: ' + e.message);
       SV.pdf.cleanup();
       return;
     }
@@ -82,22 +115,26 @@ SV.pdf = {
 
     function renderNext(idx) {
       if (idx >= pages.length) {
+        log('All pages rendered, saving PDF...');
         var fileName = 'Stroomvol-Advies';
         if (S.klantNaam) fileName += '-' + S.klantNaam.replace(/[^a-zA-Z0-9]/g, '-');
         if (S.datum) fileName += '-' + S.datum;
         fileName += '.pdf';
 
         pdf.save(fileName);
+        log('PDF saved: ' + fileName);
         SV.pdf.cleanup();
         return;
       }
 
+      log('Rendering page ' + (idx + 1) + '/' + pages.length + '...');
       html2canvas(pages[idx], {
         scale: 2,
         useCORS: true,
         logging: false,
         backgroundColor: '#FFFFFF',
       }).then(function(canvas) {
+        log('Page ' + (idx + 1) + ' canvas: ' + canvas.width + 'x' + canvas.height);
         if (idx > 0) pdf.addPage();
 
         var imgData = canvas.toDataURL('image/jpeg', 0.95);
@@ -118,7 +155,7 @@ SV.pdf = {
 
         renderNext(idx + 1);
       }).catch(function(err) {
-        console.error('html2canvas error on page ' + (idx + 1) + ':', err);
+        log('html2canvas ERROR page ' + (idx + 1) + ': ' + (err.message || err));
         renderNext(idx + 1);
       });
     }
