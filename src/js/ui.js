@@ -145,6 +145,13 @@ SV.ui = {
     SV.wix.updateHeight();
   },
 
+  // Accordion toggle
+  toggleAccordion: function(e) {
+    var head = e.target.closest('.sv-accordion-head');
+    if (!head) return;
+    head.parentElement.classList.toggle('closed');
+  },
+
   // Info tooltip handler
   initTooltips: function() {
     document.addEventListener('click', function(e) {

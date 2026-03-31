@@ -1,5 +1,48 @@
 /* === STROOMVOL — RESULTS === */
 
+/* Accordion */
+.sv-adv .sv-accordion { margin-bottom: 16px; }
+.sv-adv .sv-accordion-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 24px;
+  cursor: pointer;
+  user-select: none;
+  background: var(--sv-bg-card);
+  border-radius: var(--sv-radius);
+  font-family: var(--sv-font-heading);
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: -.3px;
+  margin-bottom: 12px;
+  transition: background .15s;
+}
+.sv-adv .sv-accordion-head:hover { background: var(--sv-bg-input); }
+.sv-adv .sv-accordion-head .acc-icon { font-size: 20px; margin-right: 12px; }
+.sv-adv .sv-accordion-head .acc-chevron {
+  font-size: 12px; color: var(--sv-text-muted); transition: transform .2s;
+}
+.sv-adv .sv-accordion.closed .acc-chevron { transform: rotate(-90deg); }
+.sv-adv .sv-accordion-body {
+  overflow: hidden;
+  max-height: 5000px;
+  transition: max-height .4s ease;
+}
+.sv-adv .sv-accordion.closed .sv-accordion-body {
+  max-height: 0;
+}
+
+/* Side-by-side row */
+.sv-adv .sv-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+  align-items: start;
+}
+.sv-adv .sv-row > .sv-row-full { grid-column: 1 / -1; }
+
 /* Result hero */
 .sv-adv .result-hero {
   background: #0A0A0A;
@@ -701,7 +744,14 @@
   font-size: 11px; color: rgba(255,255,255,.3); text-align: center; font-weight: 300;
 }
 
-/* Responsive results */
+/* Responsive results — tablet */
+@media (max-width: 768px) {
+  .sv-adv .sv-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Responsive results — mobile */
 @media (max-width: 600px) {
   .sv-adv .metrics {
     grid-template-columns: 1fr;

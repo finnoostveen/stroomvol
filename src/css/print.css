@@ -28,6 +28,19 @@
     padding: 0;
   }
 
+  .sv-adv .sv-accordion.closed .sv-accordion-body {
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  .sv-adv .sv-accordion-head .acc-chevron {
+    display: none;
+  }
+
+  .sv-adv .sv-row {
+    grid-template-columns: 1fr 1fr;
+  }
+
   .sv-adv .card,
   .sv-adv .result-hero,
   .sv-adv .mc,

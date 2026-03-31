@@ -78,7 +78,7 @@
 }
 
 .sv-adv .container {
-  max-width: 640px;
+  max-width: 960px;
   margin: 0 auto;
 }
 
@@ -842,6 +842,49 @@
 
 /* === STROOMVOL — RESULTS === */
 
+/* Accordion */
+.sv-adv .sv-accordion { margin-bottom: 16px; }
+.sv-adv .sv-accordion-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 24px;
+  cursor: pointer;
+  user-select: none;
+  background: var(--sv-bg-card);
+  border-radius: var(--sv-radius);
+  font-family: var(--sv-font-heading);
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: -.3px;
+  margin-bottom: 12px;
+  transition: background .15s;
+}
+.sv-adv .sv-accordion-head:hover { background: var(--sv-bg-input); }
+.sv-adv .sv-accordion-head .acc-icon { font-size: 20px; margin-right: 12px; }
+.sv-adv .sv-accordion-head .acc-chevron {
+  font-size: 12px; color: var(--sv-text-muted); transition: transform .2s;
+}
+.sv-adv .sv-accordion.closed .acc-chevron { transform: rotate(-90deg); }
+.sv-adv .sv-accordion-body {
+  overflow: hidden;
+  max-height: 5000px;
+  transition: max-height .4s ease;
+}
+.sv-adv .sv-accordion.closed .sv-accordion-body {
+  max-height: 0;
+}
+
+/* Side-by-side row */
+.sv-adv .sv-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+  align-items: start;
+}
+.sv-adv .sv-row > .sv-row-full { grid-column: 1 / -1; }
+
 /* Result hero */
 .sv-adv .result-hero {
   background: #0A0A0A;
@@ -1543,7 +1586,14 @@
   font-size: 11px; color: rgba(255,255,255,.3); text-align: center; font-weight: 300;
 }
 
-/* Responsive results */
+/* Responsive results — tablet */
+@media (max-width: 768px) {
+  .sv-adv .sv-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Responsive results — mobile */
 @media (max-width: 600px) {
   .sv-adv .metrics {
     grid-template-columns: 1fr;
@@ -1604,6 +1654,19 @@
 
   .sv-adv {
     padding: 0;
+  }
+
+  .sv-adv .sv-accordion.closed .sv-accordion-body {
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  .sv-adv .sv-accordion-head .acc-chevron {
+    display: none;
+  }
+
+  .sv-adv .sv-row {
+    grid-template-columns: 1fr 1fr;
   }
 
   .sv-adv .card,
@@ -2126,74 +2189,85 @@
   <!-- ========== PHASE 2: RESULT ========== -->
   <div class="phase" id="phase-result">
 
-    <!-- Klant reference bar -->
+    <!-- === ALTIJD ZICHTBAAR: Advies headline === -->
     <div class="klant-bar" id="r-klant-bar"></div>
 
     <div class="result-hero"><div class="result-hero-grid"></div><div class="r-label">Capaciteitsadvies</div><div class="r-cap" id="r-cap">10 <span>kWh</span></div><div class="r-tier" id="r-tier"></div><div class="r-hero-text" id="r-hero-text"></div><div id="r-contract-badge-wrap"></div><div class="r-tags" id="r-tags"></div></div>
 
     <div class="metrics">
-      <div class="mc"><div class="mc-icon">💰</div><div class="mc-val" id="r-invest">—</div><div class="mc-label">Geschatte investering</div></div>
-      <div class="mc"><div class="mc-icon">📉</div><div class="mc-val" id="r-tvt">—</div><div class="mc-label">Terugverdientijd (realistisch) <button class="info-tip" data-tip="tvt">i<div class="info-tip-popup">De terugverdientijd is gebaseerd op het <strong>realistische scenario</strong>: verwachte prijsstijging en standaard batterijdegradatie op basis van gebruikscycli. Het conservatieve scenario rekent met 25% snellere degradatie, het optimistische met 20% tragere.</div></button></div></div>
-      <div class="mc"><div class="mc-icon">☀️</div><div class="mc-val" id="r-zelf">—</div><div class="mc-label">Zelfconsumptie met batterij <button class="info-tip" data-tip="zelf">i<div class="info-tip-popup">Zelfconsumptie = het percentage van je totale verbruik dat je direct of via de batterij uit eigen zonnestroom haalt. Hoe hoger, hoe minder je van het net afneemt. De batterij slaat overdag op wat je 's avonds verbruikt.</div></button></div></div>
-      <div class="mc"><div class="mc-icon">💡</div><div class="mc-val" id="r-besp">—</div><div class="mc-label">Jaarlijkse besparing (realistisch)</div></div>
+      <div class="mc"><div class="mc-icon">&#x1F4B0;</div><div class="mc-val" id="r-invest">&mdash;</div><div class="mc-label">Geschatte investering</div></div>
+      <div class="mc"><div class="mc-icon">&#x1F4C9;</div><div class="mc-val" id="r-tvt">&mdash;</div><div class="mc-label">Terugverdientijd (realistisch) <button class="info-tip" data-tip="tvt">i<div class="info-tip-popup">De terugverdientijd is gebaseerd op het <strong>realistische scenario</strong>: verwachte prijsstijging en standaard batterijdegradatie op basis van gebruikscycli. Het conservatieve scenario rekent met 25% snellere degradatie, het optimistische met 20% tragere.</div></button></div></div>
+      <div class="mc"><div class="mc-icon">&#x2600;&#xFE0F;</div><div class="mc-val" id="r-zelf">&mdash;</div><div class="mc-label">Zelfconsumptie met batterij <button class="info-tip" data-tip="zelf">i<div class="info-tip-popup">Zelfconsumptie = het percentage van je totale verbruik dat je direct of via de batterij uit eigen zonnestroom haalt. Hoe hoger, hoe minder je van het net afneemt. De batterij slaat overdag op wat je 's avonds verbruikt.</div></button></div></div>
+      <div class="mc"><div class="mc-icon">&#x1F4A1;</div><div class="mc-val" id="r-besp">&mdash;</div><div class="mc-label">Jaarlijkse besparing (realistisch)</div></div>
     </div>
 
-    <div class="illus"><svg viewBox="0 0 200 24" xmlns="http://www.w3.org/2000/svg"><circle cx="92" cy="12" r="3" fill="#FFDC3C"/><circle cx="100" cy="12" r="5" fill="#FFDC3C" opacity=".4"/><circle cx="108" cy="12" r="3" fill="#FFDC3C"/><line x1="30" y1="12" x2="84" y2="12" stroke="#E8E8E0" stroke-width="1.5"/><line x1="116" y1="12" x2="170" y2="12" stroke="#E8E8E0" stroke-width="1.5"/></svg></div>
+    <!-- === FASE 1: Hoe werkt het? === -->
+    <div class="sv-accordion" id="acc-werking">
+      <div class="sv-accordion-head" onclick="SV.ui.toggleAccordion(event)"><span><span class="acc-icon">&#x26A1;</span>Hoe werkt het?</span><span class="acc-chevron">&#x25BE;</span></div>
+      <div class="sv-accordion-body">
+        <div class="sv-row" id="row-strat-bath">
+          <div class="bdown" id="r-strat-wrap"><div class="bdown-title">Batterijstrategie &mdash; slimme aansturing</div><div id="r-strat-body"></div></div>
+          <div class="bathtub-result" id="r-bathtub-wrap" style="display:none;"><div class="bathtub-result-title">Dagelijks laad/ontlaadschema</div><div class="bathtub-result-sub">Hoe de batterij slim meedraait met het prijsprofiel</div><svg viewBox="0 0 600 220" xmlns="http://www.w3.org/2000/svg" id="r-bathtub-svg" style="width:100%;height:auto;"></svg></div>
+        </div>
 
-    <div class="bdown" id="r-strat-wrap"><div class="bdown-title">Batterijstrategie — slimme aansturing</div><div id="r-strat-body"></div></div>
+        <div class="goals-card" id="r-goals-wrap" style="display:none;">
+          <div class="goals-title">Jouw doelen &mdash; wat de batterij bereikt</div>
+          <div class="goals-sub">Per doel laten we zien hoeveel dichter je komt met deze batterijconfiguratie.</div>
+          <div id="r-goals-body"></div>
+        </div>
 
-    <div class="bathtub-result" id="r-bathtub-wrap" style="display:none;"><div class="bathtub-result-title">Dagelijks laad/ontlaadschema</div><div class="bathtub-result-sub">Hoe de batterij slim meedraait met het prijsprofiel</div><svg viewBox="0 0 600 220" xmlns="http://www.w3.org/2000/svg" id="r-bathtub-svg" style="width:100%;height:auto;"></svg></div>
-
-    <!-- GOALS -->
-    <div class="goals-card" id="r-goals-wrap" style="display:none;">
-      <div class="goals-title">Jouw doelen — wat de batterij bereikt</div>
-      <div class="goals-sub">Per doel laten we zien hoeveel dichter je komt met deze batterijconfiguratie.</div>
-      <div id="r-goals-body"></div>
+        <div class="sv-row" id="row-onafh-stress">
+          <div class="card" id="r-onafh-wrap" style="display:none"></div>
+          <div class="card" id="r-stress-wrap" style="display:none"></div>
+        </div>
+      </div>
     </div>
 
-    <!-- ENERGIE ONAFHANKELIJKHEID -->
-    <div class="card" id="r-onafh-wrap" style="display:none"></div>
+    <!-- === FASE 2: De financiele onderbouwing === -->
+    <div class="sv-accordion" id="acc-financieel">
+      <div class="sv-accordion-head" onclick="SV.ui.toggleAccordion(event)"><span><span class="acc-icon">&#x1F4B0;</span>De financi&#235;le onderbouwing</span><span class="acc-chevron">&#x25BE;</span></div>
+      <div class="sv-accordion-body">
+        <div class="sv-row" id="row-cumul-sc">
+          <div class="cumul-card" id="r-cumul-wrap">
+            <div class="cumul-title">Cumulatieve besparing over 15 jaar</div>
+            <div class="cumul-sub">De lijn kruist de investeringsdrempel bij de terugverdientijd.</div>
+            <svg viewBox="0 0 600 250" xmlns="http://www.w3.org/2000/svg" id="r-cumul-svg" style="width:100%;height:auto;"></svg>
+          </div>
+          <div class="sc-card"><div class="sc-header">Terugverdienscenario's <button class="info-tip" data-tip="scenarios">i<div class="info-tip-popup"><strong>Conservatief:</strong> Lagere prijsstijging + 25% snellere batterijdegradatie. Voorzichtige inschatting.<br><strong>Realistisch:</strong> Verwachte prijsontwikkeling + standaard degradatie op basis van gebruikscycli (LFP: ~5000 cycli tot 80%).<br><strong>Optimistisch:</strong> Hogere prijsstijging + 20% tragere degradatie. Gunstige marktomstandigheden.</div></button></div><div class="sc-sub" id="r-sc-sub"></div><div class="sc-scroll"><table class="sc-table"><thead><tr><th>Scenario</th><th>Besparing / jaar</th><th>Terugverdientijd</th><th>Totale besparing 15 jr</th><th>Netto winst</th></tr></thead><tbody id="r-sc-body"></tbody></table></div></div>
+        </div>
 
-    <!-- STRESS TEST -->
-    <div class="card" id="r-stress-wrap" style="display:none"></div>
+        <div class="bdown"><div class="bdown-title">Besparingsopbouw &amp; netto rendement</div><div id="r-bd-rows"></div></div>
 
-    <div class="illus"><svg viewBox="0 0 200 24" xmlns="http://www.w3.org/2000/svg"><rect x="70" y="8" width="60" height="8" rx="4" fill="#FFDC3C" opacity=".18"/><circle cx="100" cy="12" r="2.5" fill="#FFDC3C"/></svg></div>
-
-    <!-- CUMULATIVE SAVINGS CHART -->
-    <div class="cumul-card" id="r-cumul-wrap">
-      <div class="cumul-title">Cumulatieve besparing over 15 jaar</div>
-      <div class="cumul-sub">De lijn kruist de investeringsdrempel bij de terugverdientijd.</div>
-      <svg viewBox="0 0 600 250" xmlns="http://www.w3.org/2000/svg" id="r-cumul-svg" style="width:100%;height:auto;"></svg>
+        <div class="sv-row" id="row-spaar-niets">
+          <div class="card" id="r-spaar-wrap" style="display:none"></div>
+          <div id="r-niets-wrap" style="display:none"></div>
+        </div>
+      </div>
     </div>
 
-    <div class="sc-card"><div class="sc-header">Terugverdienscenario's <button class="info-tip" data-tip="scenarios">i<div class="info-tip-popup"><strong>Conservatief:</strong> Lagere prijsstijging + 25% snellere batterijdegradatie. Voorzichtige inschatting.<br><strong>Realistisch:</strong> Verwachte prijsontwikkeling + standaard degradatie op basis van gebruikscycli (LFP: ~5000 cycli tot 80%).<br><strong>Optimistisch:</strong> Hogere prijsstijging + 20% tragere degradatie. Gunstige marktomstandigheden.</div></button></div><div class="sc-sub" id="r-sc-sub"></div><div class="sc-scroll"><table class="sc-table"><thead><tr><th>Scenario</th><th>Besparing / jaar</th><th>Terugverdientijd</th><th>Totale besparing 15 jr</th><th>Netto winst</th></tr></thead><tbody id="r-sc-body"></tbody></table></div></div>
+    <!-- === FASE 3: Details & instellingen === -->
+    <div class="sv-accordion closed" id="acc-details">
+      <div class="sv-accordion-head" onclick="SV.ui.toggleAccordion(event)"><span><span class="acc-icon">&#x2699;&#xFE0F;</span>Details &amp; instellingen</span><span class="acc-chevron">&#x25BE;</span></div>
+      <div class="sv-accordion-body">
+        <div class="assumptions"><div class="assumptions-title">Aannames in deze berekening</div><div class="assumptions-list" id="r-assume"></div></div>
 
-    <div class="bdown"><div class="bdown-title">Besparingsopbouw & netto rendement</div><div id="r-bd-rows"></div></div>
+        <div class="sv-row">
+          <div class="params-card"><div class="params-title">Parameters aanpassen</div><div class="params-sub">Pas aan en herbereken direct.</div>
+            <div class="pr"><span class="pr-label">Kosten per kWh (ge&#239;nstalleerd)</span><input type="number" class="pr-input" id="p-cpk" value="400" step="25"><span class="pr-unit">&#x20AC;/kWh</span></div>
+            <div class="pr"><span class="pr-label">Batterij DoD (depth of discharge)</span><input type="number" class="pr-input" id="p-dod" value="90" step="5"><span class="pr-unit">%</span></div>
+            <div class="pr"><span class="pr-label">Roundtrip efficiency</span><input type="number" class="pr-input" id="p-eff" value="92" step="1"><span class="pr-unit">%</span></div>
+            <div style="margin-top:16px;"><button class="btn-next" id="btn-recalc" style="width:100%;">Herbereken advies</button></div>
+          </div>
+          <div class="notes-card"><div class="card-header" style="margin-bottom:12px;"><div class="card-icon">&#x1F4DD;</div><div><div class="card-title">Adviseur notities</div><div class="card-subtitle">Bijzonderheden voor het dossier</div></div></div><textarea id="in-notities" placeholder="Bijv. 'Dak op zuidwest, 6m kabellengte. Klant overweegt overstap naar dynamisch contract.'"></textarea></div>
+        </div>
 
-    <!-- BATTERIJ VS SPAARREKENING -->
-    <div class="card" id="r-spaar-wrap" style="display:none"></div>
-
-    <!-- WAT ALS JE NIETS DOET -->
-    <div id="r-niets-wrap" style="display:none"></div>
-
-    <div class="assumptions"><div class="assumptions-title">Aannames in deze berekening</div><div class="assumptions-list" id="r-assume"></div></div>
-
-    <div class="illus"><svg viewBox="0 0 200 24" xmlns="http://www.w3.org/2000/svg"><circle cx="92" cy="12" r="3" fill="#FFDC3C"/><circle cx="100" cy="12" r="5" fill="#FFDC3C" opacity=".4"/><circle cx="108" cy="12" r="3" fill="#FFDC3C"/><line x1="30" y1="12" x2="84" y2="12" stroke="#E8E8E0" stroke-width="1.5"/><line x1="116" y1="12" x2="170" y2="12" stroke="#E8E8E0" stroke-width="1.5"/></svg></div>
-
-    <div class="params-card"><div class="params-title">Parameters aanpassen</div><div class="params-sub">Pas aan en herbereken direct.</div>
-      <div class="pr"><span class="pr-label">Kosten per kWh (geïnstalleerd)</span><input type="number" class="pr-input" id="p-cpk" value="400" step="25"><span class="pr-unit">€/kWh</span></div>
-      <div class="pr"><span class="pr-label">Batterij DoD (depth of discharge)</span><input type="number" class="pr-input" id="p-dod" value="90" step="5"><span class="pr-unit">%</span></div>
-      <div class="pr"><span class="pr-label">Roundtrip efficiency</span><input type="number" class="pr-input" id="p-eff" value="92" step="1"><span class="pr-unit">%</span></div>
-      <div style="margin-top:16px;"><button class="btn-next" id="btn-recalc" style="width:100%;">Herbereken advies</button></div>
-    </div>
-
-    <div class="notes-card"><div class="card-header" style="margin-bottom:12px;"><div class="card-icon">📝</div><div><div class="card-title">Adviseur notities</div><div class="card-subtitle">Bijzonderheden voor het dossier</div></div></div><textarea id="in-notities" placeholder="Bijv. 'Dak op zuidwest, 6m kabellengte. Klant overweegt overstap naar dynamisch contract.'"></textarea></div>
-
-    <div class="nav">
-      <button class="btn-back" id="btn-back">← Terug naar invoer</button>
-      <div style="display:flex;gap:8px;">
-        <button class="btn-dark" id="btn-print">Print advies</button>
-        <button class="btn-pdf" id="btn-pdf">Download PDF</button>
+        <div class="nav">
+          <button class="btn-back" id="btn-back">&#x2190; Terug naar invoer</button>
+          <div style="display:flex;gap:8px;">
+            <button class="btn-dark" id="btn-print">Print advies</button>
+            <button class="btn-pdf" id="btn-pdf">Download PDF</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -2848,6 +2922,13 @@ SV.ui = {
     SV.wix.updateHeight();
   },
 
+  // Accordion toggle
+  toggleAccordion: function(e) {
+    var head = e.target.closest('.sv-accordion-head');
+    if (!head) return;
+    head.parentElement.classList.toggle('closed');
+  },
+
   // Info tooltip handler
   initTooltips: function() {
     document.addEventListener('click', function(e) {
@@ -3253,26 +3334,32 @@ SV.render = function(c) {
   document.getElementById('r-zelf').textContent = c.hasSolar ? c.zelfPctMet + '%' : 'n.v.t.';
   document.getElementById('r-besp').textContent = '\u20AC' + fmt(c.real.savingY1);
 
+  // === FASE 1: Hoe werkt het? ===
+
   // Strategy
   SV.renderStrategy(c);
 
-  // Bathtub
+  // Bathtub (side-by-side with strategy)
   var btW = document.getElementById('r-bathtub-wrap');
+  var stratW = document.getElementById('r-strat-wrap');
   if (c.contract === 'dynamisch') {
     btW.style.display = 'block';
     SV.charts.drawBathtubResult();
+    stratW.style.gridColumn = '';
   } else {
     btW.style.display = 'none';
+    stratW.style.gridColumn = '1 / -1';
   }
 
   // Goals
   SV.renderGoals(c);
 
-  // Energie Onafhankelijkheid (na goals)
+  // Onafhankelijkheid + Stress Test (side-by-side)
   SV.renderOnafhankelijkheid(c);
-
-  // Stress Test (na onafhankelijkheid)
   SV.renderStressTest(c);
+  SV.fixRow('row-onafh-stress');
+
+  // === FASE 2: De financiele onderbouwing ===
 
   // Cumulative chart
   SV.charts.drawCumulChart(c);
@@ -3283,14 +3370,32 @@ SV.render = function(c) {
   // Breakdown
   SV.renderBreakdown(c);
 
-  // Batterij vs Spaarrekening (na financieel blok)
+  // Spaarrekening + Niets Doen (side-by-side)
   SV.renderSpaarrekening(c);
-
-  // Wat Als Je Niets Doet
   SV.renderNietsDoen(c);
+  SV.fixRow('row-spaar-niets');
 
-  // Assumptions
+  // === FASE 3: Details & instellingen ===
   SV.renderAssumptions(c);
+};
+
+// Helper: when one child in a .sv-row is hidden, make the other full-width
+SV.fixRow = function(rowId) {
+  var row = document.getElementById(rowId);
+  if (!row) return;
+  var children = row.children;
+  var visible = [];
+  for (var i = 0; i < children.length; i++) {
+    if (children[i].style.display !== 'none') {
+      visible.push(children[i]);
+    }
+  }
+  for (var j = 0; j < children.length; j++) {
+    children[j].style.gridColumn = '';
+  }
+  if (visible.length === 1) {
+    visible[0].style.gridColumn = '1 / -1';
+  }
 };
 
 SV.renderStrategy = function(c) {

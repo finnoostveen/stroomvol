@@ -64,26 +64,32 @@ SV.render = function(c) {
   document.getElementById('r-zelf').textContent = c.hasSolar ? c.zelfPctMet + '%' : 'n.v.t.';
   document.getElementById('r-besp').textContent = '\u20AC' + fmt(c.real.savingY1);
 
+  // === FASE 1: Hoe werkt het? ===
+
   // Strategy
   SV.renderStrategy(c);
 
-  // Bathtub
+  // Bathtub (side-by-side with strategy)
   var btW = document.getElementById('r-bathtub-wrap');
+  var stratW = document.getElementById('r-strat-wrap');
   if (c.contract === 'dynamisch') {
     btW.style.display = 'block';
     SV.charts.drawBathtubResult();
+    stratW.style.gridColumn = '';
   } else {
     btW.style.display = 'none';
+    stratW.style.gridColumn = '1 / -1';
   }
 
   // Goals
   SV.renderGoals(c);
 
-  // Energie Onafhankelijkheid (na goals)
+  // Onafhankelijkheid + Stress Test (side-by-side)
   SV.renderOnafhankelijkheid(c);
-
-  // Stress Test (na onafhankelijkheid)
   SV.renderStressTest(c);
+  SV.fixRow('row-onafh-stress');
+
+  // === FASE 2: De financiele onderbouwing ===
 
   // Cumulative chart
   SV.charts.drawCumulChart(c);
@@ -94,14 +100,32 @@ SV.render = function(c) {
   // Breakdown
   SV.renderBreakdown(c);
 
-  // Batterij vs Spaarrekening (na financieel blok)
+  // Spaarrekening + Niets Doen (side-by-side)
   SV.renderSpaarrekening(c);
-
-  // Wat Als Je Niets Doet
   SV.renderNietsDoen(c);
+  SV.fixRow('row-spaar-niets');
 
-  // Assumptions
+  // === FASE 3: Details & instellingen ===
   SV.renderAssumptions(c);
+};
+
+// Helper: when one child in a .sv-row is hidden, make the other full-width
+SV.fixRow = function(rowId) {
+  var row = document.getElementById(rowId);
+  if (!row) return;
+  var children = row.children;
+  var visible = [];
+  for (var i = 0; i < children.length; i++) {
+    if (children[i].style.display !== 'none') {
+      visible.push(children[i]);
+    }
+  }
+  for (var j = 0; j < children.length; j++) {
+    children[j].style.gridColumn = '';
+  }
+  if (visible.length === 1) {
+    visible[0].style.gridColumn = '1 / -1';
+  }
 };
 
 SV.renderStrategy = function(c) {
