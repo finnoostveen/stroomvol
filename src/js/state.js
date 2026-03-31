@@ -3,6 +3,19 @@
  */
 var SV = SV || {};
 
+// Diagnostiek: toon zichtbaar of JS uitvoert
+(function() {
+  var d = document.createElement('div');
+  d.id = 'sv-diag';
+  d.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#111;color:#0f0;font:13px monospace;padding:10px 16px;z-index:99999;';
+  d.textContent = 'JS LOADED OK | Build: ' + new Date().toISOString().slice(0,16);
+  document.documentElement.appendChild(d);
+  window.onerror = function(msg, src, line) {
+    d.style.background = '#600';
+    d.textContent = 'JS ERROR: ' + msg + ' (line ' + line + ')';
+  };
+})();
+
 SV.state = {
   // Klant & adviseur
   klantNaam: '',
