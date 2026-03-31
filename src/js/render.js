@@ -88,8 +88,20 @@ SV.render = function(c) {
   // Breakdown
   SV.renderBreakdown(c);
 
+  // Energie Onafhankelijkheid
+  SV.renderOnafhankelijkheid(c);
+
+  // Stress Test
+  SV.renderStressTest(c);
+
   // Assumptions
   SV.renderAssumptions(c);
+
+  // Batterij vs Spaarrekening (na financieel blok)
+  SV.renderSpaarrekening(c);
+
+  // Wat Als Je Niets Doet
+  SV.renderNietsDoen(c);
 };
 
 SV.renderStrategy = function(c) {
@@ -271,4 +283,253 @@ SV.renderAssumptions = function(c) {
     'Netaansluiting: ' + c.net + ' (max ' + (SV.NET_VERMOGEN[c.net] ? SV.NET_VERMOGEN[c.net].maxKw : '?') + ' kW)',
   ].filter(Boolean);
   document.getElementById('r-assume').innerHTML = aL.join('<br>');
+};
+
+// ============================================================
+// SECTIE: Energie Onafhankelijkheid
+// ============================================================
+
+SV.berekenOnafhankelijkheid = function(c) {
+  var totaal = c.totaalVerbruik;
+  var directZon = Math.round(c.zelfZonderJaar || 0);
+  var uitBatterij = Math.round((c.zelfMetJaar || 0) - (c.zelfZonderJaar || 0));
+  var vanNet = Math.round(totaal - (c.zelfMetJaar || 0));
+  var pctDirectZon = Math.round(directZon / totaal * 100);
+  var pctBatterij = Math.round(uitBatterij / totaal * 100);
+  var pctNet = 100 - pctDirectZon - pctBatterij;
+  return {
+    directZon: directZon, uitBatterij: uitBatterij, vanNet: vanNet,
+    pctDirectZon: pctDirectZon, pctBatterij: pctBatterij, pctNet: pctNet,
+    pctOnafhankelijk: pctDirectZon + pctBatterij,
+    zelfPctZonder: c.zelfPctZonder,
+  };
+};
+
+SV.renderOnafhankelijkheid = function(c) {
+  var wrap = document.getElementById('r-onafh-wrap');
+  if (!wrap) return;
+  if (!c.hasSolar) { wrap.style.display = 'none'; return; }
+
+  var d = SV.berekenOnafhankelijkheid(c);
+  var fmt = SV.fmt;
+
+  function bar(label, pct, color, kwh) {
+    return '<div class="onafh-bar"><div class="onafh-bar-head"><span>' + label + '</span><span class="onafh-bar-val">' + pct + '% &middot; ' + fmt(kwh) + ' kWh</span></div>'
+      + '<div class="onafh-bar-track"><div class="onafh-bar-fill" style="width:' + Math.max(pct, 2) + '%;background:' + color + '"></div></div></div>';
+  }
+
+  var h = '<div class="onafh-header"><div class="card-header"><div class="card-icon">\uD83C\uDF0D</div><div><div class="card-title">Jouw Energie Onafhankelijkheid</div><div class="card-subtitle">Jaargemiddelde — hoeveel van je verbruik uit eigen opwek komt</div></div></div></div>';
+  h += '<div class="onafh-grid">';
+  h += '<div class="onafh-donut" id="onafh-donut"></div>';
+  h += '<div class="onafh-bars">';
+  h += bar('Direct zonneverbruik', d.pctDirectZon, '#22C55E', d.directZon);
+  h += bar('Uit batterij', d.pctBatterij, '#0D9488', d.uitBatterij);
+  h += bar('Van het net', d.pctNet, '#D1D5DB', d.vanNet);
+  h += '</div></div>';
+
+  if (d.pctOnafhankelijk >= 20) {
+    h += '<div class="onafh-footer">' + d.pctOnafhankelijk + '% van je verbruik uit eigen opwek <span class="onafh-footer-sub">(was ' + d.zelfPctZonder + '% zonder batterij)</span></div>';
+  } else {
+    h += '<div class="onafh-footer onafh-footer-alt">Met een thuisbatterij benut je maximaal je eigen opwek. Overweeg meer zonnepanelen voor hogere onafhankelijkheid.</div>';
+  }
+
+  wrap.innerHTML = h;
+  wrap.style.display = 'block';
+  SV.charts.drawDonut('onafh-donut', d);
+};
+
+// ============================================================
+// SECTIE: Stress Test — Slechte Weer Week
+// ============================================================
+
+SV.berekenStressTest = function(c) {
+  var dagVerbruikDec = c.verbruikMaand[11] / 31;
+  var dagSolarDec = c.solarKwhMaand[11] / 31;
+  var dagSolarStress = dagSolarDec * 0.3;
+  var dagVerbruikStress = dagVerbruikDec * 1.2;
+  var weekVerbruik = dagVerbruikStress * 7;
+  var weekSolar = dagSolarStress * 7;
+  var weekNetNodig = Math.max(0, weekVerbruik - weekSolar);
+
+  var tariefStress;
+  if (c.contract === 'dynamisch') {
+    tariefStress = (c.dynGem + c.dynPiek) / 2;
+  } else {
+    tariefStress = c.tarief;
+  }
+  var kostenZonder = Math.round(weekNetNodig * tariefStress * 100) / 100;
+
+  var dagBattBesparing = c.usableKwh * (c.eff / 100);
+  var kostenMet;
+
+  if (c.contract === 'dynamisch') {
+    var dagArbitrageBesparing = dagBattBesparing * (c.dynPiek - c.dynDal) * 0.7;
+    var weekBesparing = dagArbitrageBesparing * 7;
+    kostenMet = Math.round(Math.max(0, kostenZonder - weekBesparing) * 100) / 100;
+  } else {
+    var weekZelfconsumptieBesparing = Math.min(dagBattBesparing, dagSolarStress) * 7 * (tariefStress - c.terug);
+    kostenMet = Math.round(Math.max(0, kostenZonder - weekZelfconsumptieBesparing) * 100) / 100;
+  }
+
+  var besparingPct = kostenZonder > 0 ? Math.round((1 - kostenMet / kostenZonder) * 100) : 0;
+
+  return {
+    scenario: 'Week in december met minimale zonnestraling, hoge energieprijzen en extra verwarming.',
+    kostenZonder: kostenZonder,
+    kostenMet: kostenMet,
+    besparingPct: besparingPct,
+    weekVerbruik: Math.round(weekVerbruik),
+  };
+};
+
+SV.renderStressTest = function(c) {
+  var wrap = document.getElementById('r-stress-wrap');
+  if (!wrap) return;
+  if (!c.hasSolar && c.contract !== 'dynamisch') { wrap.style.display = 'none'; return; }
+
+  var d = SV.berekenStressTest(c);
+  var fmt = SV.fmt;
+
+  var h = '<div class="card-header"><div class="card-icon">\u26C8\uFE0F</div><div><div class="card-title">Stress Test: Slechte Weer Week</div><div class="card-subtitle">Wat als het \u00e9cht tegenzit? Een koude, donkere decemberweek.</div></div></div>';
+  h += '<div class="stress-cards">';
+  h += '<div class="stress-card"><div class="stress-card-icon">\uD83C\uDF28\uFE0F</div><div class="stress-card-label">Scenario</div><div class="stress-card-desc">' + d.scenario + '</div><div class="stress-card-meta">' + d.weekVerbruik + ' kWh weekverbruik</div></div>';
+  h += '<div class="stress-card stress-card-red"><div class="stress-card-icon">\u274C</div><div class="stress-card-label">Zonder batterij</div><div class="stress-card-val">\u20AC' + fmt(d.kostenZonder) + '</div><div class="stress-card-meta">Energiekosten per week</div></div>';
+  h += '<div class="stress-card stress-card-green"><div class="stress-card-icon">\u2705</div><div class="stress-card-label">Met batterij</div><div class="stress-card-val">\u20AC' + fmt(d.kostenMet) + '</div>';
+  if (d.besparingPct >= 10) {
+    h += '<div class="stress-badge">' + d.besparingPct + '% besparing</div>';
+  }
+  h += '<div class="stress-card-meta">Energiekosten per week</div></div>';
+  h += '</div>';
+
+  wrap.innerHTML = h;
+  wrap.style.display = 'block';
+};
+
+// ============================================================
+// SECTIE: Batterij vs. Spaarrekening
+// ============================================================
+
+SV.berekenVergelijking = function(investering, perJaarData) {
+  var SPAARRENTE = 0.02;
+  var jaren = [];
+  var cumulatiefBatterij = 0;
+  var spaarSaldo = investering;
+
+  for (var j = 0; j < 15; j++) {
+    cumulatiefBatterij += perJaarData[j].totaal;
+    spaarSaldo *= (1 + SPAARRENTE);
+    jaren.push({
+      jaar: j + 1,
+      batterijWaarde: cumulatiefBatterij,
+      spaarWaarde: Math.round(spaarSaldo - investering),
+    });
+  }
+
+  var batterijTotaal = cumulatiefBatterij;
+  var spaarTotaal = Math.round(spaarSaldo - investering);
+  var verschil = batterijTotaal - spaarTotaal;
+  var factorBeter = Math.round(batterijTotaal / Math.max(spaarTotaal, 1) * 10) / 10;
+
+  return {
+    jaren: jaren, batterijTotaal: batterijTotaal, spaarTotaal: spaarTotaal,
+    verschil: verschil, factorBeter: factorBeter,
+  };
+};
+
+SV.renderSpaarrekening = function(c) {
+  var wrap = document.getElementById('r-spaar-wrap');
+  if (!wrap) return;
+
+  var d = SV.berekenVergelijking(c.investering, c.real.perJaar);
+  var fmt = SV.fmt;
+
+  var h = '<div class="card-header"><div class="card-icon">\uD83D\uDCB0</div><div><div class="card-title">Beter dan de bank: Batterij vs. Spaarrekening</div><div class="card-subtitle">Wat als je hetzelfde bedrag op een spaarrekening zou zetten? Met ~2% rente groeit je geld een stuk langzamer.</div></div></div>';
+  h += '<div class="spaar-chart" id="spaar-chart"></div>';
+  h += '<div class="spaar-compare">';
+  h += '<div class="spaar-card"><div class="spaar-card-val">\u20AC' + fmt(Math.round(d.batterijTotaal)) + '</div><div class="spaar-card-label">Totale waarde na 15 jaar</div><div class="spaar-card-sub">Met batterij investering</div></div>';
+  h += '<div class="spaar-card"><div class="spaar-card-val">\u20AC' + fmt(d.spaarTotaal) + '</div><div class="spaar-card-label">Totale waarde na 15 jaar</div><div class="spaar-card-sub">Met spaarrekening (2%)</div></div>';
+  h += '</div>';
+
+  if (d.batterijTotaal > d.spaarTotaal) {
+    h += '<div class="spaar-footer">\u20AC' + fmt(Math.round(d.verschil)) + ' meer rendement \u2014 Batterij investering levert ' + d.factorBeter + 'x meer op dan sparen</div>';
+  } else {
+    h += '<div class="spaar-footer spaar-footer-alt">De batterij biedt daarnaast comfort en onafhankelijkheid die een spaarrekening niet biedt.</div>';
+  }
+
+  wrap.innerHTML = h;
+  wrap.style.display = 'block';
+  SV.charts.drawComparisonChart('spaar-chart', d.jaren, c.investering);
+};
+
+// ============================================================
+// SECTIE: Wat Als Je Niets Doet
+// ============================================================
+
+SV.berekenNietsDoen = function(c) {
+  var stijging;
+  if (c.contract === 'vast') {
+    stijging = 0.03;
+  } else if (c.contract === 'variabel') {
+    stijging = c.stijgPct / 100;
+  } else {
+    stijging = 0.03;
+  }
+
+  var huidigJaarkosten = c.totaalVerbruik * c.tarief;
+  var periodes = [
+    { label: 'Vandaag', jaar: 0 },
+    { label: '2030', jaar: 4 },
+    { label: '2035', jaar: 9 },
+  ];
+
+  var projecties = periodes.map(function(p) {
+    var toekomstigTarief = c.tarief * Math.pow(1 + stijging, p.jaar);
+    var jaarkosten = Math.round(c.totaalVerbruik * toekomstigTarief);
+    return {
+      label: p.label,
+      tarief: Math.round(toekomstigTarief * 100) / 100,
+      jaarkosten: jaarkosten,
+    };
+  });
+
+  var cumulatiefExtra = 0;
+  for (var j = 1; j <= 10; j++) {
+    var toekomstigKosten = c.totaalVerbruik * c.tarief * Math.pow(1 + stijging, j);
+    cumulatiefExtra += toekomstigKosten - huidigJaarkosten;
+  }
+
+  return {
+    projecties: projecties,
+    stijgingPct: Math.round(stijging * 100),
+    cumulatiefExtra10Jaar: Math.round(cumulatiefExtra),
+    huidigJaarkosten: Math.round(huidigJaarkosten),
+  };
+};
+
+SV.renderNietsDoen = function(c) {
+  var wrap = document.getElementById('r-niets-wrap');
+  if (!wrap) return;
+
+  var d = SV.berekenNietsDoen(c);
+  var fmt = SV.fmt;
+
+  var subtitel = c.contract === 'vast'
+    ? 'Ook bij een vast contract stijgen de tarieven bij verlenging. Een batterij beschermt je structureel.'
+    : 'Energieprijzen stijgen structureel. Hoe hoger de prijzen, hoe meer je batterij verdient.';
+
+  var h = '<div class="niets-inner"><div class="niets-header"><div class="niets-icon">\uD83D\uDCC8</div><div class="niets-title">Toekomstbestendig investeren</div><div class="niets-sub">' + subtitel + '</div></div>';
+  h += '<div class="niets-cards">';
+  d.projecties.forEach(function(p) {
+    h += '<div class="niets-card"><div class="niets-card-icon">\uD83D\uDCC5</div><div class="niets-card-label">' + p.label + '</div><div class="niets-card-val">\u20AC' + p.tarief.toFixed(2) + '</div><div class="niets-card-sub">per kWh (verwacht)</div><div class="niets-card-kosten">Jaarkosten \u20AC' + fmt(p.jaarkosten) + '</div></div>';
+  });
+  h += '</div>';
+  h += '<div class="niets-info">';
+  h += '<div class="niets-info-block"><strong>Elektrificatie neemt toe</strong><br>Warmtepompen, EV\u2019s en inductie koken verhogen de vraag naar stroom. Dit drijft prijzen verder omhoog.</div>';
+  h += '<div class="niets-info-block"><strong>Netcongestie wordt erger</strong><br>Stroomnet zit vol. Thuisbatterijen worden essentieel \u2014 en mogelijk verplicht. Early adopters profiteren het meest.</div>';
+  h += '</div>';
+  h += '<div class="niets-disclaimer">Prijsprojecties gebaseerd op ' + d.stijgingPct + '% jaarlijkse stijging. Werkelijke prijzen kunnen hoger of lager uitvallen.</div>';
+  h += '</div>';
+
+  wrap.innerHTML = h;
+  wrap.style.display = 'block';
 };

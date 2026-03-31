@@ -69,10 +69,32 @@ SV.pdf = {
       pages.push(SV.pdf.buildCoverPage(c, S));
       log('Building personal...');
       pages.push(SV.pdf.buildPersonalPage(c, S));
+
+      // Energie Onafhankelijkheid (alleen bij solar)
+      if (c.hasSolar) {
+        log('Building onafhankelijkheid...');
+        pages.push(SV.pdf.buildOnafhPage(c, S));
+      }
+
+      // Stress Test (bij solar of dynamisch)
+      if (c.hasSolar || c.contract === 'dynamisch') {
+        log('Building stress test...');
+        pages.push(SV.pdf.buildStressPage(c, S));
+      }
+
       log('Building advice...');
       pages.push(SV.pdf.buildAdvicePage(c, S));
       log('Building scenarios...');
       pages.push(SV.pdf.buildScenariosPage(c, S));
+
+      // Batterij vs Spaarrekening
+      log('Building spaarrekening...');
+      pages.push(SV.pdf.buildSpaarPage(c, S));
+
+      // Wat Als Je Niets Doet
+      log('Building niets doet...');
+      pages.push(SV.pdf.buildNietsPage(c, S));
+
       log('Building roadmap...');
       pages.push(SV.pdf.buildRoadmapPage(c, S));
       log('Building appendix...');
@@ -444,6 +466,182 @@ SV.pdf = {
       + (S.notities ? '<div class="sv-pdf-section-title" style="font-size:16px;">Notities van uw adviseur</div><div style="font-size:12px;color:#555;line-height:1.6;background:#FAFAF8;border-radius:8px;padding:16px;white-space:pre-wrap;">' + SV.pdf.esc(S.notities) + '</div>' : '')
       + '<div style="margin-top:32px;padding-top:16px;border-top:1px solid #E8E8E0;font-size:10px;color:#BBB;line-height:1.6;">'
       + 'Dit advies is gegenereerd met de Stroomvol Adviseurstool en is indicatief. Werkelijke besparingen kunnen afwijken op basis van individueel verbruiksgedrag, weersomstandigheden en marktontwikkelingen. Raadpleeg een gecertificeerd installateur voor een definitieve offerte.'
+      + '</div>';
+
+    page.appendChild(content);
+    SV.pdf.addFooter(page);
+    return page;
+  },
+
+  // ===== NEW SECTION PAGES =====
+
+  // Energie Onafhankelijkheid
+  buildOnafhPage: function(c, S) {
+    var page = SV.pdf.createPage();
+    var fmt = SV.fmt;
+    SV.pdf.addHeader(page, S);
+
+    var d = SV.berekenOnafhankelijkheid(c);
+
+    // Build SVG donut inline
+    var size = 180, cx = 90, cy = 90, r = 65, sw = 24;
+    var circ = 2 * Math.PI * r;
+    var segs = [
+      { pct: d.pctDirectZon, color: '#22C55E' },
+      { pct: d.pctBatterij, color: '#0D9488' },
+      { pct: d.pctNet, color: '#D1D5DB' },
+    ];
+    var donutSvg = '<svg viewBox="0 0 ' + size + ' ' + size + '" xmlns="http://www.w3.org/2000/svg" width="' + size + '" height="' + size + '">';
+    donutSvg += '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="none" stroke="#F0F0EC" stroke-width="' + sw + '"/>';
+    var offset = 0;
+    segs.forEach(function(seg) {
+      if (seg.pct <= 0) return;
+      var dash = (seg.pct / 100) * circ;
+      donutSvg += '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="none" stroke="' + seg.color + '" stroke-width="' + sw + '" stroke-dasharray="' + dash + ' ' + (circ - dash) + '" stroke-dashoffset="' + (-offset) + '" transform="rotate(-90 ' + cx + ' ' + cy + ')"/>';
+      offset += dash;
+    });
+    donutSvg += '<text x="' + cx + '" y="' + (cy - 4) + '" text-anchor="middle" font-family="Syne,sans-serif" font-size="26" font-weight="800" fill="#0A0A0A">' + d.pctOnafhankelijk + '%</text>';
+    donutSvg += '<text x="' + cx + '" y="' + (cy + 14) + '" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="#888">Onafhankelijk</text>';
+    donutSvg += '</svg>';
+
+    function pdfBar(label, pct, color, kwh) {
+      return '<div style="margin-bottom:12px;"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span style="color:#555;">' + label + '</span><span style="font-weight:600;">' + pct + '% &middot; ' + fmt(kwh) + ' kWh</span></div>'
+        + '<div style="height:8px;background:#F0F0EC;border-radius:4px;overflow:hidden;"><div style="height:100%;width:' + Math.max(pct, 2) + '%;background:' + color + ';border-radius:4px;"></div></div></div>';
+    }
+
+    var content = document.createElement('div');
+    content.innerHTML = '<div class="sv-pdf-section-title">Jouw Energie Onafhankelijkheid</div>'
+      + '<div class="sv-pdf-section-sub">Hoeveel van je verbruik komt uit eigen opwek? (jaargemiddelde)</div>'
+      + '<div style="display:grid;grid-template-columns:180px 1fr;gap:32px;align-items:center;margin-bottom:24px;">'
+      + '<div>' + donutSvg + '</div>'
+      + '<div>' + pdfBar('Direct zonneverbruik', d.pctDirectZon, '#22C55E', d.directZon)
+      + pdfBar('Uit batterij', d.pctBatterij, '#0D9488', d.uitBatterij)
+      + pdfBar('Van het net', d.pctNet, '#D1D5DB', d.vanNet) + '</div></div>'
+      + '<div style="background:rgba(34,197,94,.08);border-radius:10px;padding:14px 20px;text-align:center;font-size:13px;color:#166534;font-weight:600;">'
+      + d.pctOnafhankelijk + '% van uw verbruik uit eigen opwek <span style="font-weight:300;color:#888;margin-left:4px;">(was ' + d.zelfPctZonder + '% zonder batterij)</span></div>';
+
+    page.appendChild(content);
+    SV.pdf.addFooter(page);
+    return page;
+  },
+
+  // Stress Test
+  buildStressPage: function(c, S) {
+    var page = SV.pdf.createPage();
+    var fmt = SV.fmt;
+    SV.pdf.addHeader(page, S);
+
+    var d = SV.berekenStressTest(c);
+    var badgeHtml = d.besparingPct >= 10 ? '<div style="display:inline-block;background:#22C55E;color:white;font-size:11px;font-weight:600;padding:3px 10px;border-radius:12px;margin-top:6px;">' + d.besparingPct + '% besparing</div>' : '';
+
+    var content = document.createElement('div');
+    content.innerHTML = '<div class="sv-pdf-section-title">Stress Test: Slechte Weer Week</div>'
+      + '<div class="sv-pdf-section-sub">Wat als het \u00e9cht tegenzit? Een koude, donkere decemberweek met minimale zon, hoge energieprijzen en extra verwarming.</div>'
+      + '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:24px;">'
+      + '<div style="background:#FAFAF8;border:1px solid #E8E8E0;border-radius:10px;padding:20px;text-align:center;"><div style="font-size:24px;margin-bottom:8px;">\uD83C\uDF28\uFE0F</div><div style="font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:1px;color:#888;margin-bottom:8px;">Scenario</div><div style="font-size:12px;color:#555;line-height:1.5;">' + d.scenario + '</div><div style="font-size:11px;color:#888;margin-top:6px;">' + d.weekVerbruik + ' kWh weekverbruik</div></div>'
+      + '<div style="background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);border-radius:10px;padding:20px;text-align:center;"><div style="font-size:24px;margin-bottom:8px;">\u274C</div><div style="font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:1px;color:#888;margin-bottom:8px;">Zonder batterij</div><div style="font-family:Syne,sans-serif;font-size:24px;font-weight:800;">\u20AC' + fmt(d.kostenZonder) + '</div><div style="font-size:11px;color:#888;margin-top:4px;">Energiekosten per week</div></div>'
+      + '<div style="background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.2);border-radius:10px;padding:20px;text-align:center;"><div style="font-size:24px;margin-bottom:8px;">\u2705</div><div style="font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:1px;color:#888;margin-bottom:8px;">Met batterij</div><div style="font-family:Syne,sans-serif;font-size:24px;font-weight:800;">\u20AC' + fmt(d.kostenMet) + '</div>' + badgeHtml + '<div style="font-size:11px;color:#888;margin-top:4px;">Energiekosten per week</div></div>'
+      + '</div>';
+
+    page.appendChild(content);
+    SV.pdf.addFooter(page);
+    return page;
+  },
+
+  // Batterij vs. Spaarrekening
+  buildSpaarPage: function(c, S) {
+    var page = SV.pdf.createPage();
+    var fmt = SV.fmt;
+    SV.pdf.addHeader(page, S);
+
+    var d = SV.berekenVergelijking(c.investering, c.real.perJaar);
+
+    // Build SVG comparison chart inline
+    var W = 680, H = 240, pL = 60, pR = 20, pT = 20, pB = 40;
+    var cW = W - pL - pR, cH = H - pT - pB;
+    var maxVal = 0;
+    for (var j = 0; j < d.jaren.length; j++) {
+      maxVal = Math.max(maxVal, d.jaren[j].batterijWaarde, d.jaren[j].spaarWaarde);
+    }
+    maxVal = Math.max(maxVal, c.investering) * 1.15;
+    function xc(yr) { return pL + (yr / 15) * cW; }
+    function yc(v) { return pT + cH - (v / maxVal) * cH; }
+
+    var svgH = '';
+    for (var g = 0; g <= 5; g++) {
+      var gv = maxVal * (g / 5);
+      svgH += '<line x1="' + pL + '" y1="' + yc(gv) + '" x2="' + (W - pR) + '" y2="' + yc(gv) + '" stroke="#E8E8E0" stroke-width="1"/>';
+      svgH += '<text x="' + (pL - 8) + '" y="' + (yc(gv) + 3) + '" text-anchor="end" fill="#BBB" font-size="9" font-family="DM Sans">\u20AC' + Math.round(gv).toLocaleString('nl-NL') + '</text>';
+    }
+    for (var yr = 0; yr <= 15; yr += 3) {
+      svgH += '<text x="' + xc(yr) + '" y="' + (H - 12) + '" text-anchor="middle" fill="#BBB" font-size="10" font-family="DM Sans">Jaar ' + yr + '</text>';
+    }
+    svgH += '<line x1="' + pL + '" y1="' + yc(c.investering) + '" x2="' + (W - pR) + '" y2="' + yc(c.investering) + '" stroke="#EF4444" stroke-width="1.5" stroke-dasharray="6,4" opacity="0.5"/>';
+    var spP = 'M ' + xc(0) + ' ' + yc(0);
+    var btP = 'M ' + xc(0) + ' ' + yc(0);
+    for (j = 0; j < 15; j++) {
+      spP += ' L ' + xc(j + 1) + ' ' + yc(d.jaren[j].spaarWaarde);
+      btP += ' L ' + xc(j + 1) + ' ' + yc(d.jaren[j].batterijWaarde);
+    }
+    svgH += '<path d="' + spP + '" fill="none" stroke="#9CA3AF" stroke-width="2" stroke-dasharray="6,4" opacity="0.7"/>';
+    svgH += '<path d="' + btP + '" fill="none" stroke="#22C55E" stroke-width="2.5" stroke-linecap="round"/>';
+    for (j = 0; j < 15; j++) {
+      svgH += '<circle cx="' + xc(j + 1) + '" cy="' + yc(d.jaren[j].batterijWaarde) + '" r="3" fill="#22C55E"/>';
+    }
+    var chartSvg = '<svg viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" width="' + W + '" height="' + H + '">' + svgH + '</svg>';
+
+    var footerHtml = d.batterijTotaal > d.spaarTotaal
+      ? '<div style="background:rgba(34,197,94,.08);border-radius:10px;padding:14px 20px;text-align:center;font-size:14px;color:#166534;font-weight:600;">\u20AC' + fmt(Math.round(d.verschil)) + ' meer rendement \u2014 Batterij investering levert ' + d.factorBeter + 'x meer op dan sparen</div>'
+      : '<div style="background:rgba(255,220,60,.1);border-radius:10px;padding:14px 20px;text-align:center;font-size:13px;color:#555;">De batterij biedt daarnaast comfort en onafhankelijkheid die een spaarrekening niet biedt.</div>';
+
+    var content = document.createElement('div');
+    content.innerHTML = '<div class="sv-pdf-section-title">Beter dan de bank: Batterij vs. Spaarrekening</div>'
+      + '<div class="sv-pdf-section-sub">Wat als u hetzelfde bedrag op een spaarrekening zou zetten? Met ~2% rente groeit uw geld een stuk langzamer.</div>'
+      + '<div style="margin-bottom:16px;">' + chartSvg + '</div>'
+      + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">'
+      + '<div style="background:#FAFAF8;border-radius:10px;padding:16px;text-align:center;"><div style="font-family:Syne,sans-serif;font-size:22px;font-weight:800;margin-bottom:2px;">\u20AC' + fmt(Math.round(d.batterijTotaal)) + '</div><div style="font-size:11px;color:#888;">Totale waarde na 15 jaar \u2014 Batterij</div></div>'
+      + '<div style="background:#FAFAF8;border-radius:10px;padding:16px;text-align:center;"><div style="font-family:Syne,sans-serif;font-size:22px;font-weight:800;margin-bottom:2px;">\u20AC' + fmt(d.spaarTotaal) + '</div><div style="font-size:11px;color:#888;">Totale waarde na 15 jaar \u2014 Spaarrekening</div></div>'
+      + '</div>'
+      + footerHtml;
+
+    page.appendChild(content);
+    SV.pdf.addFooter(page);
+    return page;
+  },
+
+  // Wat Als Je Niets Doet
+  buildNietsPage: function(c, S) {
+    var page = SV.pdf.createPage();
+    var fmt = SV.fmt;
+    SV.pdf.addHeader(page, S);
+
+    var d = SV.berekenNietsDoen(c);
+    var subtitel = c.contract === 'vast'
+      ? 'Ook bij een vast contract stijgen de tarieven bij verlenging. Een batterij beschermt u structureel.'
+      : 'Energieprijzen stijgen structureel. Hoe hoger de prijzen, hoe meer uw batterij verdient.';
+
+    var cardsHtml = '';
+    d.projecties.forEach(function(p) {
+      cardsHtml += '<div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:20px;text-align:center;">'
+        + '<div style="font-size:20px;margin-bottom:8px;">\uD83D\uDCC5</div>'
+        + '<div style="font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.5);margin-bottom:8px;">' + p.label + '</div>'
+        + '<div style="font-family:Syne,sans-serif;font-size:24px;font-weight:800;color:#FFDC3C;margin-bottom:2px;">\u20AC' + p.tarief.toFixed(2) + '</div>'
+        + '<div style="font-size:11px;color:rgba(255,255,255,.4);">per kWh (verwacht)</div>'
+        + '<div style="font-size:12px;color:#FFDC3C;font-weight:500;margin-top:8px;">Jaarkosten \u20AC' + fmt(p.jaarkosten) + '</div>'
+        + '</div>';
+    });
+
+    var content = document.createElement('div');
+    content.innerHTML = '<div style="background:linear-gradient(135deg,#0A0A0A 0%,#1A1A1A 100%);border-radius:12px;padding:32px;color:white;">'
+      + '<div style="text-align:center;margin-bottom:24px;"><div style="font-size:28px;margin-bottom:8px;">\uD83D\uDCC8</div>'
+      + '<div style="font-family:Syne,sans-serif;font-size:20px;font-weight:800;margin-bottom:8px;">Toekomstbestendig investeren</div>'
+      + '<div style="font-size:13px;color:rgba(255,255,255,.6);line-height:1.6;max-width:500px;margin:0 auto;">' + subtitel + '</div></div>'
+      + '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:20px;">' + cardsHtml + '</div>'
+      + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">'
+      + '<div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:16px;font-size:12px;color:rgba(255,255,255,.6);line-height:1.6;"><strong style="color:rgba(255,255,255,.85);">Elektrificatie neemt toe</strong><br>Warmtepompen, EV\u2019s en inductie koken verhogen de vraag naar stroom. Dit drijft prijzen verder omhoog.</div>'
+      + '<div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:16px;font-size:12px;color:rgba(255,255,255,.6);line-height:1.6;"><strong style="color:rgba(255,255,255,.85);">Netcongestie wordt erger</strong><br>Stroomnet zit vol. Thuisbatterijen worden essentieel \u2014 en mogelijk verplicht. Early adopters profiteren het meest.</div>'
+      + '</div>'
+      + '<div style="font-size:11px;color:rgba(255,255,255,.3);text-align:center;">Prijsprojecties gebaseerd op ' + d.stijgingPct + '% jaarlijkse stijging. Werkelijke prijzen kunnen hoger of lager uitvallen.</div>'
       + '</div>';
 
     page.appendChild(content);

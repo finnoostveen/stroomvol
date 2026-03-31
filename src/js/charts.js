@@ -221,4 +221,96 @@ SV.charts = {
 
     svg.innerHTML = h;
   },
+
+  // Draw donut chart for energy independence
+  drawDonut: function(id, data) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    var size = 200, cx = 100, cy = 100, r = 70, sw = 28;
+    var circ = 2 * Math.PI * r;
+    var segments = [
+      { pct: data.pctDirectZon, color: '#22C55E', label: 'Direct zon' },
+      { pct: data.pctBatterij, color: '#0D9488', label: 'Uit batterij' },
+      { pct: data.pctNet, color: '#D1D5DB', label: 'Van het net' },
+    ];
+    var h = '<svg viewBox="0 0 ' + size + ' ' + size + '" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:200px;height:auto;">';
+    // Background ring
+    h += '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="none" stroke="#F0F0EC" stroke-width="' + sw + '"/>';
+    var offset = 0;
+    segments.forEach(function(seg) {
+      if (seg.pct <= 0) return;
+      var dash = (seg.pct / 100) * circ;
+      h += '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="none" stroke="' + seg.color + '" stroke-width="' + sw + '" stroke-dasharray="' + dash + ' ' + (circ - dash) + '" stroke-dashoffset="' + (-offset) + '" transform="rotate(-90 ' + cx + ' ' + cy + ')"/>';
+      offset += dash;
+    });
+    // Center text
+    h += '<text x="' + cx + '" y="' + (cy - 6) + '" text-anchor="middle" font-family="Syne,sans-serif" font-size="28" font-weight="800" fill="#0A0A0A">' + data.pctOnafhankelijk + '%</text>';
+    h += '<text x="' + cx + '" y="' + (cy + 14) + '" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="#888">Onafhankelijk</text>';
+    h += '</svg>';
+    el.innerHTML = h;
+  },
+
+  // Draw comparison chart: battery vs savings account
+  drawComparisonChart: function(id, jarenData, investering) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    var W = 600, H = 250, pL = 60, pR = 20, pT = 20, pB = 40;
+    var cW = W - pL - pR, cH = H - pT - pB;
+
+    var maxVal = 0;
+    for (var j = 0; j < jarenData.length; j++) {
+      maxVal = Math.max(maxVal, jarenData[j].batterijWaarde, jarenData[j].spaarWaarde);
+    }
+    maxVal = Math.max(maxVal, investering) * 1.15;
+    var minVal = 0;
+
+    function x(yr) { return pL + (yr / 15) * cW; }
+    function y(v) { return pT + cH - ((v - minVal) / (maxVal - minVal)) * cH; }
+
+    var h = '';
+
+    // Grid
+    for (var g = 0; g <= 5; g++) {
+      var gv = minVal + (maxVal - minVal) * (g / 5);
+      h += '<line x1="' + pL + '" y1="' + y(gv) + '" x2="' + (W - pR) + '" y2="' + y(gv) + '" stroke="#E8E8E0" stroke-width="1"/>';
+      h += '<text x="' + (pL - 8) + '" y="' + (y(gv) + 3) + '" text-anchor="end" fill="#BBB" font-size="9" font-family="DM Sans">\u20AC' + Math.round(gv).toLocaleString('nl-NL') + '</text>';
+    }
+
+    // Year labels
+    for (var yr = 0; yr <= 15; yr += 3) {
+      h += '<text x="' + x(yr) + '" y="' + (H - 12) + '" text-anchor="middle" fill="#BBB" font-size="10" font-family="DM Sans">Jaar ' + yr + '</text>';
+    }
+
+    // Investment line
+    h += '<line x1="' + pL + '" y1="' + y(investering) + '" x2="' + (W - pR) + '" y2="' + y(investering) + '" stroke="#EF4444" stroke-width="1.5" stroke-dasharray="6,4" opacity="0.5"/>';
+    h += '<text x="' + (W - pR - 4) + '" y="' + (y(investering) - 6) + '" text-anchor="end" fill="#EF4444" font-size="9" font-weight="500" font-family="DM Sans">Investering \u20AC' + investering.toLocaleString('nl-NL') + '</text>';
+
+    // Savings account line (dashed gray)
+    var spaarPath = 'M ' + x(0) + ' ' + y(0);
+    for (j = 0; j < 15; j++) {
+      spaarPath += ' L ' + x(j + 1) + ' ' + y(jarenData[j].spaarWaarde);
+    }
+    h += '<path d="' + spaarPath + '" fill="none" stroke="#9CA3AF" stroke-width="2" stroke-dasharray="6,4" opacity="0.7"/>';
+
+    // Battery line (solid green)
+    var battPath = 'M ' + x(0) + ' ' + y(0);
+    for (j = 0; j < 15; j++) {
+      battPath += ' L ' + x(j + 1) + ' ' + y(jarenData[j].batterijWaarde);
+    }
+    h += '<path d="' + battPath + '" fill="none" stroke="#22C55E" stroke-width="2.5" stroke-linecap="round"/>';
+
+    // Dots on battery line
+    for (j = 0; j < 15; j++) {
+      h += '<circle cx="' + x(j + 1) + '" cy="' + y(jarenData[j].batterijWaarde) + '" r="3" fill="#22C55E"/>';
+    }
+
+    // Legend
+    var legendY = H - 2;
+    h += '<circle cx="' + (pL + 10) + '" cy="' + legendY + '" r="4" fill="#22C55E"/>';
+    h += '<text x="' + (pL + 18) + '" y="' + (legendY + 3) + '" fill="#888" font-size="9" font-family="DM Sans">Batterij besparing</text>';
+    h += '<circle cx="' + (pL + 140) + '" cy="' + legendY + '" r="4" fill="#9CA3AF" opacity="0.7"/>';
+    h += '<text x="' + (pL + 148) + '" y="' + (legendY + 3) + '" fill="#888" font-size="9" font-family="DM Sans">Spaarrekening (2%)</text>';
+
+    el.innerHTML = '<svg viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">' + h + '</svg>';
+  },
 };

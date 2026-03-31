@@ -363,6 +363,8 @@ SV.calc = function() {
 
     zelfPctZonder: zelfPctZonder,
     zelfPctMet: zelfPctMet,
+    zelfZonderJaar: Math.round(zelfZonderJaar),
+    zelfMetJaar: Math.round(zelfMetJaar),
     zelfZonderMaand: zelfZonderMaand,
     zelfMetMaand: zelfMetMaand,
     surplusMaand: surplusMaand,
