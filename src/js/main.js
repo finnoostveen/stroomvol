@@ -78,9 +78,7 @@ SV.init = function() {
 
   var btnPrint = document.getElementById('btn-print');
   if (btnPrint) btnPrint.addEventListener('click', function() {
-    var notitiesEl = document.getElementById('in-notities');
-    if (notitiesEl) SV.state.notities = notitiesEl.value;
-    SV.pdf.generate();
+    window.print();
   });
 
   var btnPdf = document.getElementById('btn-pdf');
