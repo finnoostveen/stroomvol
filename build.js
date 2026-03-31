@@ -49,9 +49,10 @@ function build() {
   // Bundle vendor libs + app JS
   const libs = libFiles.map(f => readFile(f)).join('\n');
   // Escape <script> and </script> literals inside inlined JS to prevent
-  // the HTML parser from seeing them as real tags
+  // the HTML parser from seeing them as real tags. Uses \x3C hex escape
+  // which is safe inside JS string literals (evaluates to '<')
   const js = (libs + '\n\n' + jsFiles.map(f => readFile(f)).join('\n\n'))
-    .replace(/<(\/?)script([> ])/gi, '<$1scr"+"ipt$2');
+    .replace(/<(\/?script[\s>])/gi, '\\x3C$1');
 
   // Replace placeholders in index.html
   html = html.replace('/* __CSS_BUNDLE__ */', css);
