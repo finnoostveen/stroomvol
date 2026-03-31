@@ -79,6 +79,12 @@ SV.render = function(c) {
   // Goals
   SV.renderGoals(c);
 
+  // Energie Onafhankelijkheid (na goals)
+  SV.renderOnafhankelijkheid(c);
+
+  // Stress Test (na onafhankelijkheid)
+  SV.renderStressTest(c);
+
   // Cumulative chart
   SV.charts.drawCumulChart(c);
 
@@ -88,20 +94,14 @@ SV.render = function(c) {
   // Breakdown
   SV.renderBreakdown(c);
 
-  // Energie Onafhankelijkheid
-  SV.renderOnafhankelijkheid(c);
-
-  // Stress Test
-  SV.renderStressTest(c);
-
-  // Assumptions
-  SV.renderAssumptions(c);
-
   // Batterij vs Spaarrekening (na financieel blok)
   SV.renderSpaarrekening(c);
 
   // Wat Als Je Niets Doet
   SV.renderNietsDoen(c);
+
+  // Assumptions
+  SV.renderAssumptions(c);
 };
 
 SV.renderStrategy = function(c) {
@@ -359,7 +359,7 @@ SV.berekenStressTest = function(c) {
   }
   var kostenZonder = Math.round(weekNetNodig * tariefStress * 100) / 100;
 
-  var dagBattBesparing = c.usableKwh * (c.eff / 100);
+  var dagBattBesparing = c.usableKwh * c.eff;
   var kostenMet;
 
   if (c.contract === 'dynamisch') {
