@@ -1,5 +1,20 @@
 import type { Metadata } from "next";
+import localFont from "next/font/local";
 import "./globals.css";
+
+const syne = localFont({
+  src: "../src/fonts/Syne-Variable.ttf",
+  variable: "--sv-font-heading",
+  display: "swap",
+  weight: "400 800",
+});
+
+const dmSans = localFont({
+  src: "../src/fonts/DMSans-Variable.ttf",
+  variable: "--sv-font-body",
+  display: "swap",
+  weight: "100 1000",
+});
 
 export const metadata: Metadata = {
   title: "Stroomvol Batterij Adviseurstool",
@@ -13,7 +28,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="nl">
+    <html lang="nl" className={`${syne.variable} ${dmSans.variable}`}>
       <body>{children}</body>
     </html>
   );
