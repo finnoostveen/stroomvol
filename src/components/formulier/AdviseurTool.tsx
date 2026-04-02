@@ -182,7 +182,8 @@ export default function AdviseurTool() {
                 for (let m = 0; m < 12; m++) {
                   const dagSurplus = r.surplusMaand[m] / dagenPerMaand[m];
                   const bezetting = Math.min(dagSurplus / r.usableKwh, 1.0);
-                  totCycli += (1.0 - bezetting) * dagenPerMaand[m];
+                  const dagCycli = Math.max(1.0 - bezetting, 0.3);
+                  totCycli += dagCycli * dagenPerMaand[m];
                 }
                 arbCycliBerekend = String(Math.round(totCycli * 0.6));
               } else if (r.contract === "dynamisch") {

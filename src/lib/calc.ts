@@ -150,21 +150,16 @@ export interface CalcParams {
 // ===================== HELPERS =====================
 
 function berekenArbitrageCycliMetSolar(surplusMaand: number[], usableKwh: number): number {
-  // Per maand: hoe vol is de batterij met solar?
-  // Wintermaanden: weinig solar → meer ruimte voor arbitrage
-  // Zomermaanden: veel solar → batterij bezig met zelfconsumptie
   let totaalCycli = 0;
   const dagenPerMaand = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
   for (let m = 0; m < 12; m++) {
     const dagSurplus = surplusMaand[m] / dagenPerMaand[m];
-    // Hoeveel van de batterij is "bezet" door solar?
     const solarBezetting = Math.min(dagSurplus / usableKwh, 1.0);
-    // Restcapaciteit beschikbaar voor arbitrage
     const vrijVoorArbitrage = 1.0 - solarBezetting;
-    // Maximaal 1 arbitragecyclus per dag met de vrije capaciteit
-    const maandCycli = vrijVoorArbitrage * dagenPerMaand[m];
-    totaalCycli += maandCycli;
+    // Minimum 0.3 cycli/dag: nachtladen → ochtend ontladen vóór solar
+    const dagCycli = Math.max(vrijVoorArbitrage, 0.3);
+    totaalCycli += dagCycli * dagenPerMaand[m];
   }
 
   // Effectiviteit: niet elke dag heeft voldoende spread (~60%)
