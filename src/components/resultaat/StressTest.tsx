@@ -24,7 +24,7 @@ function berekenStressTest(calc: CalcResult) {
   }
   const kostenZonder = Math.round(weekNetNodig * tariefStress * 100) / 100;
 
-  const dagBattBesparing = calc.usableKwh * (calc.eff / 100);
+  const dagBattBesparing = calc.usableKwh * calc.eff;
   let kostenMet: number;
   let dagArbitrageBesparing = 0;
   let weekBesparing = 0;
@@ -47,19 +47,9 @@ function berekenStressTest(calc: CalcResult) {
     kostenMet,
     besparingPct,
     weekVerbruik: Math.round(weekVerbruik),
-    // Debug tussenwaarden
-    _debug: {
-      dagBattBesparing,
-      dagArbitrageBesparing,
-      weekBesparing,
-      dagSolarStress,
-      tariefStress,
-      weekNetNodig,
-    },
   };
 }
 
-const d = (v: unknown) => (v === undefined ? "UNDEFINED" : v === null ? "NULL" : String(v));
 const nlEuro = (n: number) =>
   n.toLocaleString("nl-NL", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
@@ -119,67 +109,6 @@ export default function StressTest({ result }: Props) {
         </div>
       )}
 
-      {/* DEBUG BLOK — TIJDELIJK */}
-      <div style={{
-        marginTop: 16,
-        padding: 14,
-        background: "#F0F0F0",
-        borderRadius: 8,
-        fontSize: 11,
-        fontFamily: "monospace",
-        color: "#555",
-        lineHeight: 1.8,
-      }}>
-        <strong style={{ fontSize: 12, color: "#333" }}>🔍 DEBUG — Stress Test tussenwaarden</strong>
-        <br />
-        <strong>calc output:</strong>
-        <br />
-        &nbsp;&nbsp;calc.usableKwh = {d(result.usableKwh)}
-        <br />
-        &nbsp;&nbsp;calc.eff = {d(result.eff)}
-        <br />
-        &nbsp;&nbsp;calc.dynPiek = {d(result.dynPiek)}
-        <br />
-        &nbsp;&nbsp;calc.dynDal = {d(result.dynDal)}
-        <br />
-        &nbsp;&nbsp;calc.tarief = {d(result.tarief)}
-        <br />
-        &nbsp;&nbsp;calc.terug = {d(result.terug)}
-        <br />
-        &nbsp;&nbsp;calc.contract = {d(result.contract)}
-        <br />
-        &nbsp;&nbsp;calc.verbruikMaand[11] = {d(result.verbruikMaand?.[11])}
-        <br />
-        &nbsp;&nbsp;calc.solarKwhMaand[11] = {d(result.solarKwhMaand?.[11])}
-        <br />
-        &nbsp;&nbsp;calc.aanbevolenKwh = {d(result.aanbevolenKwh)}
-        <br />
-        &nbsp;&nbsp;calc.dod = {d(result.dod)}
-        <br />
-        <br />
-        <strong>berekende tussenwaarden:</strong>
-        <br />
-        &nbsp;&nbsp;dagBattBesparing = {d(data._debug.dagBattBesparing)} (usableKwh * eff/100)
-        <br />
-        &nbsp;&nbsp;dagArbitrageBesparing = {d(data._debug.dagArbitrageBesparing)} (dagBatt * spread)
-        <br />
-        &nbsp;&nbsp;weekBesparing = {d(data._debug.weekBesparing)} (dagArb * 7)
-        <br />
-        &nbsp;&nbsp;tariefStress = {d(data._debug.tariefStress)}
-        <br />
-        &nbsp;&nbsp;weekNetNodig = {d(data._debug.weekNetNodig)}
-        <br />
-        &nbsp;&nbsp;dagSolarStress = {d(data._debug.dagSolarStress)}
-        <br />
-        <br />
-        <strong>resultaat:</strong>
-        <br />
-        &nbsp;&nbsp;kostenZonder = &euro;{d(data.kostenZonder)}
-        <br />
-        &nbsp;&nbsp;kostenMet = &euro;{d(data.kostenMet)}
-        <br />
-        &nbsp;&nbsp;besparingPct = {d(data.besparingPct)}%
-      </div>
     </div>
   );
 }
