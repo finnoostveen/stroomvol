@@ -28,8 +28,24 @@ function berekenStressTest(calc: CalcResult) {
   let kostenMet: number;
 
   if (calc.contract === "dynamisch") {
-    const dagArbitrageBesparing = dagBattBesparing * (calc.dynPiek - calc.dynDal) * 0.7;
-    const weekBesparing = dagArbitrageBesparing * 7;
+    // Bij dynamisch: batterij laadt bij dal, ontlaadt bij piek.
+    // Besparing = batterij-kWh × (piektarief − daltarief) per cyclus.
+    // In een stressweek draait de batterij 1 volledige cyclus per dag.
+    const dagBesparing = dagBattBesparing * (calc.dynPiek - calc.dynDal);
+    const weekBesparing = dagBesparing * 7;
+
+    console.log("[StressTest debug]", {
+      usableKwh: calc.usableKwh,
+      eff: calc.eff,
+      dynPiek: calc.dynPiek,
+      dynDal: calc.dynDal,
+      spread: calc.dynPiek - calc.dynDal,
+      dagBattBesparing,
+      dagBesparing,
+      weekBesparing,
+      kostenZonder,
+    });
+
     kostenMet = Math.round(Math.max(0, kostenZonder - weekBesparing) * 100) / 100;
   } else {
     const weekZelfconsumptieBesparing =
