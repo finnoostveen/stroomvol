@@ -104,59 +104,6 @@ export default function AdviseurTool() {
             <p className="header-sub">Batterijadvies op maat</p>
           </header>
 
-          {/* Instelbare aannames */}
-          <div className="params-panel">
-            <button type="button" className="params-toggle" onClick={() => setParamsOpen(!paramsOpen)}>
-              <span className="params-toggle-label">⚙️ Aannames aanpassen</span>
-              <span className={`params-toggle-arrow${paramsOpen ? " open" : ""}`}>▼</span>
-            </button>
-            {paramsOpen && (
-              <div className="params-body">
-                <div className="params-grid">
-                  <div className="param-item">
-                    <label>
-                      Kosten per kWh (cpk)
-                      <div className="param-val">&euro;{params.cpk}/kWh</div>
-                    </label>
-                    <input
-                      type="range"
-                      min={200} max={800} step={10}
-                      value={params.cpk}
-                      onChange={(e) => updateParam("cpk", Number(e.target.value))}
-                    />
-                    <div className="param-range-labels"><span>&euro;200</span><span>&euro;800</span></div>
-                  </div>
-                  <div className="param-item">
-                    <label>
-                      Depth of Discharge (DoD)
-                      <div className="param-val">{params.dod}%</div>
-                    </label>
-                    <input
-                      type="range"
-                      min={80} max={100} step={1}
-                      value={params.dod}
-                      onChange={(e) => updateParam("dod", Number(e.target.value))}
-                    />
-                    <div className="param-range-labels"><span>80%</span><span>100%</span></div>
-                  </div>
-                  <div className="param-item">
-                    <label>
-                      Round-trip efficiency
-                      <div className="param-val">{params.eff}%</div>
-                    </label>
-                    <input
-                      type="range"
-                      min={85} max={98} step={1}
-                      value={params.eff}
-                      onChange={(e) => updateParam("eff", Number(e.target.value))}
-                    />
-                    <div className="param-range-labels"><span>85%</span><span>98%</span></div>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-
           <div className="phase">
             <HeroMetrics result={result} />
             <DoelMetrics result={result} />
@@ -165,56 +112,66 @@ export default function AdviseurTool() {
             <FinancieelOverzicht result={result} />
             <Spaarrekening result={result} />
             <NietsDoen result={result} />
-            <Aannames result={result} />
 
-            {/* DEBUG BLOK — TIJDELIJK */}
-            {(() => {
-              const r = result;
-              const dagVerbruikGem = r.totaalVerbruik / 365;
-              const dynamischMinimum = r.contract === "dynamisch"
-                ? Math.max(Math.round(dagVerbruikGem * 0.8), 5)
-                : "n.v.t.";
-              // Herbereken arbitrage-cycli uit surplusMaand
-              let arbCycliBerekend = "n.v.t.";
-              if (r.contract === "dynamisch" && r.hasSolar) {
-                const dagenPerMaand = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-                let totCycli = 0;
-                for (let m = 0; m < 12; m++) {
-                  const dagSurplus = r.surplusMaand[m] / dagenPerMaand[m];
-                  const bezetting = Math.min(dagSurplus / r.usableKwh, 1.0);
-                  const dagCycli = Math.max(1.0 - bezetting, 0.3);
-                  totCycli += dagCycli * dagenPerMaand[m];
-                }
-                arbCycliBerekend = String(Math.round(totCycli * 0.6));
-              } else if (r.contract === "dynamisch") {
-                arbCycliBerekend = "300 (geen solar)";
-              }
-              return (
-                <div style={{
-                  marginTop: 16, padding: 14, background: "#F0F0F0",
-                  borderRadius: 8, fontSize: 11, fontFamily: "monospace",
-                  color: "#555", lineHeight: 1.8,
-                }}>
-                  <strong style={{ fontSize: 12, color: "#333" }}>🔍 DEBUG — Sizing &amp; Arbitrage</strong>
-                  <br /><br />
-                  <strong>Sizing:</strong><br />
-                  &nbsp;&nbsp;totaalJaar = {r.totaalVerbruik}<br />
-                  &nbsp;&nbsp;dagVerbruikGem = {dagVerbruikGem.toFixed(1)}<br />
-                  &nbsp;&nbsp;dynamischMinimum = {String(dynamischMinimum)}<br />
-                  &nbsp;&nbsp;aanbevolenKwh = {r.aanbevolenKwh}<br />
-                  &nbsp;&nbsp;usableKwh = {r.usableKwh.toFixed(1)}<br />
-                  &nbsp;&nbsp;contract = {r.contract}<br />
-                  <br />
-                  <strong>Arbitrage:</strong><br />
-                  &nbsp;&nbsp;cycliArbitrage (berekend) = {arbCycliBerekend}<br />
-                  &nbsp;&nbsp;cycliPerJaar totaal = {r.cycliPerJaar}<br />
-                  &nbsp;&nbsp;arb besparing jaar 1 = &euro;{r.real.perJaar[0]?.arb}<br />
-                  &nbsp;&nbsp;zelf besparing jaar 1 = &euro;{r.real.perJaar[0]?.zelf}<br />
-                  &nbsp;&nbsp;totaal besparing jaar 1 = &euro;{r.real.perJaar[0]?.totaal}<br />
-                  &nbsp;&nbsp;spread = &euro;{r.spread?.toFixed(2)}
+            {/* Instelbare aannames */}
+            <div className="params-panel">
+              <button type="button" className="params-toggle" onClick={() => setParamsOpen(!paramsOpen)}>
+                <span className="params-toggle-label">⚙️ Aannames aanpassen</span>
+                {!paramsOpen && (
+                  <span className="params-toggle-summary">
+                    &euro;{params.cpk}/kWh &middot; DoD {params.dod}% &middot; Eff {params.eff}%
+                  </span>
+                )}
+                <span className={`params-toggle-arrow${paramsOpen ? " open" : ""}`}>▼</span>
+              </button>
+              {paramsOpen && (
+                <div className="params-body">
+                  <div className="params-grid">
+                    <div className="param-item">
+                      <label>
+                        Kosten per kWh (cpk)
+                        <div className="param-val">&euro;{params.cpk}/kWh</div>
+                      </label>
+                      <input
+                        type="range"
+                        min={200} max={800} step={10}
+                        value={params.cpk}
+                        onChange={(e) => updateParam("cpk", Number(e.target.value))}
+                      />
+                      <div className="param-range-labels"><span>&euro;200</span><span>&euro;800</span></div>
+                    </div>
+                    <div className="param-item">
+                      <label>
+                        Depth of Discharge (DoD)
+                        <div className="param-val">{params.dod}%</div>
+                      </label>
+                      <input
+                        type="range"
+                        min={80} max={100} step={1}
+                        value={params.dod}
+                        onChange={(e) => updateParam("dod", Number(e.target.value))}
+                      />
+                      <div className="param-range-labels"><span>80%</span><span>100%</span></div>
+                    </div>
+                    <div className="param-item">
+                      <label>
+                        Round-trip efficiency
+                        <div className="param-val">{params.eff}%</div>
+                      </label>
+                      <input
+                        type="range"
+                        min={85} max={98} step={1}
+                        value={params.eff}
+                        onChange={(e) => updateParam("eff", Number(e.target.value))}
+                      />
+                      <div className="param-range-labels"><span>85%</span><span>98%</span></div>
+                    </div>
+                  </div>
                 </div>
-              );
-            })()}
+              )}
+            </div>
+
+            <Aannames result={result} />
           </div>
 
           <nav className="nav">
