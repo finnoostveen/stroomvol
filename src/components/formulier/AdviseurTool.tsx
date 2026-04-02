@@ -3,6 +3,7 @@
 import { useCallback, useState } from "react";
 import type { FormState, Stap } from "./types";
 import { initialFormState } from "./types";
+import { calc, type CalcResult } from "@/lib/calc";
 import StapKlant from "./StapKlant";
 import StapContract from "./StapContract";
 import StapVerbruik from "./StapVerbruik";
@@ -10,6 +11,10 @@ import StapZon from "./StapZon";
 import StapOmvormerNet from "./StapOmvormerNet";
 import StapGrootverbruikers from "./StapGrootverbruikers";
 import StapInstallatie from "./StapInstallatie";
+import HeroMetrics from "@/components/resultaat/HeroMetrics";
+import DoelMetrics from "@/components/resultaat/DoelMetrics";
+import FinancieelOverzicht from "@/components/resultaat/FinancieelOverzicht";
+import Aannames from "@/components/resultaat/Aannames";
 
 const STAP_LABELS = [
   "Klant & Adviseur",
@@ -45,6 +50,7 @@ export default function AdviseurTool() {
   const [form, setForm] = useState<FormState>(initialFormState);
   const [stap, setStap] = useState<Stap>(0);
   const [error, setError] = useState<string | null>(null);
+  const [result, setResult] = useState<CalcResult | null>(null);
 
   const onChange = useCallback(
     <K extends keyof FormState>(key: K, value: FormState[K]) => {
@@ -74,6 +80,34 @@ export default function AdviseurTool() {
   };
 
   const progressPct = ((stap + 1) / AANTAL_STAPPEN) * 100;
+
+  if (result) {
+    return (
+      <div className="sv-adv">
+        <div className="container">
+          <header className="header">
+            <h1 className="logo">
+              STROOM<span>VOL</span>
+            </h1>
+            <p className="header-sub">Batterijadvies op maat</p>
+          </header>
+
+          <div className="phase">
+            <HeroMetrics result={result} />
+            <DoelMetrics result={result} />
+            <FinancieelOverzicht result={result} />
+            <Aannames result={result} />
+          </div>
+
+          <nav className="nav">
+            <button type="button" className="btn-back" onClick={() => setResult(null)}>
+              &larr; Terug naar formulier
+            </button>
+          </nav>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="sv-adv">
@@ -119,7 +153,7 @@ export default function AdviseurTool() {
               Volgende &rarr;
             </button>
           ) : (
-            <button type="button" className="btn-next" onClick={() => {/* TODO: genereer advies */}}>
+            <button type="button" className="btn-next" onClick={() => setResult(calc(form))}>
               Genereer advies &rarr;
             </button>
           )}
