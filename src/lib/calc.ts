@@ -235,7 +235,12 @@ export function calc(form: FormState, params: CalcParams = {}): CalcResult {
     aanbevolenKwh = Math.min(gemDagSurplus, gemDagVerbruikAvond);
     aanbevolenKwh = Math.max(aanbevolenKwh, 5);
   }
-  if (contract === "dynamisch") aanbevolenKwh = Math.max(aanbevolenKwh, 10);
+  if (contract === "dynamisch") {
+    // Minimum gebaseerd op dagverbruik, niet een vaste 10 kWh
+    const dagVerbruikGemDyn = totaalJaar / 365;
+    const dynamischMinimum = Math.max(Math.round(dagVerbruikGemDyn * 0.8), 5);
+    aanbevolenKwh = Math.max(aanbevolenKwh, dynamischMinimum);
+  }
 
   if (heeftEv) aanbevolenKwh += GROOTVERBRUIK.ev.capaciteitPlus;
   if (heeftWp) aanbevolenKwh += GROOTVERBRUIK.wp.capaciteitPlus;
