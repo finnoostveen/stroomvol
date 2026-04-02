@@ -166,6 +166,54 @@ export default function AdviseurTool() {
             <Spaarrekening result={result} />
             <NietsDoen result={result} />
             <Aannames result={result} />
+
+            {/* DEBUG BLOK — TIJDELIJK */}
+            {(() => {
+              const r = result;
+              const dagVerbruikGem = r.totaalVerbruik / 365;
+              const dynamischMinimum = r.contract === "dynamisch"
+                ? Math.max(Math.round(dagVerbruikGem * 0.8), 5)
+                : "n.v.t.";
+              // Herbereken arbitrage-cycli uit surplusMaand
+              let arbCycliBerekend = "n.v.t.";
+              if (r.contract === "dynamisch" && r.hasSolar) {
+                const dagenPerMaand = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+                let totCycli = 0;
+                for (let m = 0; m < 12; m++) {
+                  const dagSurplus = r.surplusMaand[m] / dagenPerMaand[m];
+                  const bezetting = Math.min(dagSurplus / r.usableKwh, 1.0);
+                  totCycli += (1.0 - bezetting) * dagenPerMaand[m];
+                }
+                arbCycliBerekend = String(Math.round(totCycli * 0.6));
+              } else if (r.contract === "dynamisch") {
+                arbCycliBerekend = "300 (geen solar)";
+              }
+              return (
+                <div style={{
+                  marginTop: 16, padding: 14, background: "#F0F0F0",
+                  borderRadius: 8, fontSize: 11, fontFamily: "monospace",
+                  color: "#555", lineHeight: 1.8,
+                }}>
+                  <strong style={{ fontSize: 12, color: "#333" }}>🔍 DEBUG — Sizing &amp; Arbitrage</strong>
+                  <br /><br />
+                  <strong>Sizing:</strong><br />
+                  &nbsp;&nbsp;totaalJaar = {r.totaalVerbruik}<br />
+                  &nbsp;&nbsp;dagVerbruikGem = {dagVerbruikGem.toFixed(1)}<br />
+                  &nbsp;&nbsp;dynamischMinimum = {String(dynamischMinimum)}<br />
+                  &nbsp;&nbsp;aanbevolenKwh = {r.aanbevolenKwh}<br />
+                  &nbsp;&nbsp;usableKwh = {r.usableKwh.toFixed(1)}<br />
+                  &nbsp;&nbsp;contract = {r.contract}<br />
+                  <br />
+                  <strong>Arbitrage:</strong><br />
+                  &nbsp;&nbsp;cycliArbitrage (berekend) = {arbCycliBerekend}<br />
+                  &nbsp;&nbsp;cycliPerJaar totaal = {r.cycliPerJaar}<br />
+                  &nbsp;&nbsp;arb besparing jaar 1 = &euro;{r.real.perJaar[0]?.arb}<br />
+                  &nbsp;&nbsp;zelf besparing jaar 1 = &euro;{r.real.perJaar[0]?.zelf}<br />
+                  &nbsp;&nbsp;totaal besparing jaar 1 = &euro;{r.real.perJaar[0]?.totaal}<br />
+                  &nbsp;&nbsp;spread = &euro;{r.spread?.toFixed(2)}
+                </div>
+              );
+            })()}
           </div>
 
           <nav className="nav">
