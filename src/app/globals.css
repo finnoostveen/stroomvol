@@ -620,6 +620,89 @@ body {
 }
 
 /* ============================================================
+   LAAD/ONTLAADSCHEMA
+   ============================================================ */
+
+.sv-adv .laadschema-wrap {
+  margin-bottom: 16px;
+}
+
+.sv-adv .laadschema-toggle {
+  display: flex;
+  gap: 0;
+  margin-bottom: 16px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--sv-border);
+  width: fit-content;
+}
+
+.sv-adv .laadschema-btn {
+  padding: 6px 18px;
+  font-size: 12px;
+  font-weight: 600;
+  border: none;
+  background: var(--sv-bg-input);
+  color: var(--sv-text-muted);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.sv-adv .laadschema-btn.active {
+  background: var(--sv-groen);
+  color: #fff;
+}
+
+.sv-adv .laadschema-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.sv-adv .laadschema-legenda {
+  display: flex;
+  gap: 16px;
+  margin-top: 12px;
+  font-size: 11px;
+  color: var(--sv-text-muted);
+  flex-wrap: wrap;
+}
+
+.sv-adv .laadschema-leg-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.sv-adv .laadschema-leg-icon {
+  width: 14px;
+  height: 14px;
+  border-radius: 2px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.sv-adv .laadschema-leg-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--sv-grijs);
+  display: inline-block;
+}
+
+.sv-adv .laadschema-leg-line {
+  width: 16px;
+  height: 2px;
+  background: var(--sv-volt);
+  display: inline-block;
+  border-radius: 1px;
+}
+
+/* ============================================================
    GRID HELPERS
    ============================================================ */
 
