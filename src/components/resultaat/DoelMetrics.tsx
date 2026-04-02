@@ -2,6 +2,7 @@
 
 import type { CalcResult } from "@/lib/calc";
 import { fmt, GROOTVERBRUIK } from "@/lib/calc";
+import InfoTip from "./InfoTip";
 
 interface GoalItemProps {
   icon: string;
@@ -128,6 +129,7 @@ export default function DoelMetrics({ result: c }: Props) {
         >
           Bij stroomuitval levert de {c.aanbevolenKwh} kWh batterij tot{" "}
           <strong>{c.noodstroomUren} uur</strong> stroom voor essenti&euml;le apparaten (~1,2 kW).
+          <InfoTip tekst="Berekend op basis van usable capaciteit (DoD) gedeeld door een gemiddeld noodverbruik van 1,2 kW (koelkast, verlichting, wifi, telefoon opladen)." />
         </GoalItem>
       )}
 
@@ -208,6 +210,7 @@ export default function DoelMetrics({ result: c }: Props) {
         Geschatte <strong>{c.cycliPerJaar} cycli/jaar</strong> &rarr; degradatie ~
         <strong>{c.degradatiePerJaarPct}%/jaar</strong>. Na ~{c.jarenTot80Pct} jaar is de batterij op
         80% van de oorspronkelijke capaciteit.
+        <InfoTip tekst="LFP-batterijen gaan gemiddeld 5.000 cycli mee tot 80% capaciteit. Het aantal cycli per jaar hangt af van je verbruik, zonopbrengst en contracttype." />
       </GoalItem>
 
       {/* Curtailment */}
@@ -223,6 +226,7 @@ export default function DoelMetrics({ result: c }: Props) {
         >
           Jaarlijks ~<strong>{fmt(c.curtailmentJaar)} kWh</strong> ({c.curtailmentPct}% van
           zonneopbrengst) gaat verloren door curtailment &mdash; surplus dat niet in de batterij past.
+          <InfoTip tekst="Curtailment is zonnestroom die verloren gaat omdat de batterij vol is en het verbruik lager is dan de opbrengst. Bij een grotere batterij of hoger verbruik neemt dit af." />
         </GoalItem>
       )}
     </div>

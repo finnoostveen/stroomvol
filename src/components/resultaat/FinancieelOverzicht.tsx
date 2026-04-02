@@ -26,7 +26,7 @@ function ScenarioRow({
       <td>
         {label} <span className={`bs ${badgeCls}`}>{badge}</span>
       </td>
-      <td className={`v${isReal ? " hl" : ""}`}>&euro;{fmt(sc.savingY1)}</td>
+      <td className={`v${isReal ? " hl" : ""}`}>&euro;{fmt(Math.round(sc.total15 / 15))}</td>
       <td className={`v${isReal ? " hl" : ""}`}>
         {sc.tvt < 30 ? `${sc.tvt.toFixed(1)} jaar` : "> 25 jr"}
       </td>
@@ -77,7 +77,7 @@ export default function FinancieelOverzicht({ result: c }: Props) {
             <thead>
               <tr>
                 <th>Scenario</th>
-                <th>Besparing / jaar</th>
+                <th>Gem. besparing / jaar</th>
                 <th>Terugverdientijd</th>
                 <th>Totale besparing 15 jr</th>
                 <th>Netto winst</th>

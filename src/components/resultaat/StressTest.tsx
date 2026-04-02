@@ -67,9 +67,11 @@ const nlEuro = (n: number) =>
   n.toLocaleString("nl-NL", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
 export default function StressTest({ result }: Props) {
+  // Verberg bij vast/variabel contract zonder zonnepanelen
   if (!result.hasSolar && result.contract !== "dynamisch") return null;
 
   const data = berekenStressTest(result);
+  const lowSaving = data.besparingPct < 15;
 
   return (
     <div className="card" style={{ marginBottom: 16 }}>
@@ -105,7 +107,7 @@ export default function StressTest({ result }: Props) {
         {/* Met batterij */}
         <div className="stress-card stress-card--met">
           <div className="stress-card-icon">✅</div>
-          <div className="stress-card-label">Met batterij + handel</div>
+          <div className="stress-card-label">Met batterij{result.contract === "dynamisch" ? " + handel" : ""}</div>
           <div className="stress-card-amount">&euro;{nlEuro(data.kostenMet)}</div>
           <div className="stress-card-sub">Energiekosten per week</div>
           {data.besparingPct >= 10 && (
@@ -113,6 +115,12 @@ export default function StressTest({ result }: Props) {
           )}
         </div>
       </div>
+
+      {lowSaving && (
+        <div className="info-box" style={{ marginTop: 12 }}>
+          Bij een vast tarief is de weekbesparing beperkt. De batterij verdient zich vooral terug over het hele jaar door zelfconsumptie.
+        </div>
+      )}
     </div>
   );
 }

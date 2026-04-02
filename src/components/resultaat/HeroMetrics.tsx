@@ -2,6 +2,7 @@
 
 import type { CalcResult } from "@/lib/calc";
 import { fmt } from "@/lib/calc";
+import InfoTip from "./InfoTip";
 
 const PROFIEL_LABELS: Record<string, string> = {
   standaard: "Standaard profiel",
@@ -81,14 +82,20 @@ export default function HeroMetrics({ result: c }: Props) {
           <div className="mc-val">
             {c.real.tvt < 30 ? `${c.real.tvt.toFixed(1)} jaar` : "> 25 jaar"}
           </div>
-          <div className="mc-label">Terugverdientijd (realistisch)</div>
+          <div className="mc-label">
+            Terugverdientijd (realistisch)
+            <InfoTip tekst="Het aantal jaren voordat de cumulatieve besparing de investering overtreft. Gebaseerd op het realistische scenario met verwachte degradatie en prijsontwikkeling." />
+          </div>
         </div>
         <div className="mc">
           <div className="mc-icon">{"\u2600\uFE0F"}</div>
           <div className="mc-val">
             {c.hasSolar ? `${c.zelfPctMet}%` : "n.v.t."}
           </div>
-          <div className="mc-label">Zelfconsumptie met batterij</div>
+          <div className="mc-label">
+            Zelfconsumptie met batterij
+            <InfoTip tekst="Het percentage van je zonneopbrengst dat je zelf verbruikt (direct + via batterij). Hoe hoger, hoe minder je teruglevert aan het net tegen een lager tarief." />
+          </div>
         </div>
         <div className="mc">
           <div className="mc-icon">{"\uD83D\uDCA1"}</div>

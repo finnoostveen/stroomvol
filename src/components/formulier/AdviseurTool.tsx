@@ -3,7 +3,7 @@
 import { useCallback, useState } from "react";
 import type { FormState, Stap } from "./types";
 import { initialFormState } from "./types";
-import { calc, type CalcResult } from "@/lib/calc";
+import { calc, type CalcResult, type CalcParams } from "@/lib/calc";
 import StapKlant from "./StapKlant";
 import StapContract from "./StapContract";
 import StapVerbruik from "./StapVerbruik";
@@ -55,6 +55,8 @@ export default function AdviseurTool() {
   const [stap, setStap] = useState<Stap>(0);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<CalcResult | null>(null);
+  const [params, setParams] = useState<CalcParams>({ cpk: 400, dod: 90, eff: 92 });
+  const [paramsOpen, setParamsOpen] = useState(false);
 
   const onChange = useCallback(
     <K extends keyof FormState>(key: K, value: FormState[K]) => {
@@ -85,6 +87,12 @@ export default function AdviseurTool() {
 
   const progressPct = ((stap + 1) / AANTAL_STAPPEN) * 100;
 
+  const updateParam = (key: keyof CalcParams, value: number) => {
+    const next = { ...params, [key]: value };
+    setParams(next);
+    setResult(calc(form, next));
+  };
+
   if (result) {
     return (
       <div className="sv-adv">
@@ -95,6 +103,59 @@ export default function AdviseurTool() {
             </h1>
             <p className="header-sub">Batterijadvies op maat</p>
           </header>
+
+          {/* Instelbare aannames */}
+          <div className="params-panel">
+            <button type="button" className="params-toggle" onClick={() => setParamsOpen(!paramsOpen)}>
+              <span className="params-toggle-label">⚙️ Aannames aanpassen</span>
+              <span className={`params-toggle-arrow${paramsOpen ? " open" : ""}`}>▼</span>
+            </button>
+            {paramsOpen && (
+              <div className="params-body">
+                <div className="params-grid">
+                  <div className="param-item">
+                    <label>
+                      Kosten per kWh (cpk)
+                      <div className="param-val">&euro;{params.cpk}/kWh</div>
+                    </label>
+                    <input
+                      type="range"
+                      min={200} max={800} step={10}
+                      value={params.cpk}
+                      onChange={(e) => updateParam("cpk", Number(e.target.value))}
+                    />
+                    <div className="param-range-labels"><span>&euro;200</span><span>&euro;800</span></div>
+                  </div>
+                  <div className="param-item">
+                    <label>
+                      Depth of Discharge (DoD)
+                      <div className="param-val">{params.dod}%</div>
+                    </label>
+                    <input
+                      type="range"
+                      min={80} max={100} step={1}
+                      value={params.dod}
+                      onChange={(e) => updateParam("dod", Number(e.target.value))}
+                    />
+                    <div className="param-range-labels"><span>80%</span><span>100%</span></div>
+                  </div>
+                  <div className="param-item">
+                    <label>
+                      Round-trip efficiency
+                      <div className="param-val">{params.eff}%</div>
+                    </label>
+                    <input
+                      type="range"
+                      min={85} max={98} step={1}
+                      value={params.eff}
+                      onChange={(e) => updateParam("eff", Number(e.target.value))}
+                    />
+                    <div className="param-range-labels"><span>85%</span><span>98%</span></div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
 
           <div className="phase">
             <HeroMetrics result={result} />
@@ -161,7 +222,7 @@ export default function AdviseurTool() {
               Volgende &rarr;
             </button>
           ) : (
-            <button type="button" className="btn-next" onClick={() => setResult(calc(form))}>
+            <button type="button" className="btn-next" onClick={() => setResult(calc(form, params))}>
               Genereer advies &rarr;
             </button>
           )}
