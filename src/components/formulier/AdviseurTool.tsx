@@ -58,6 +58,7 @@ export default function AdviseurTool() {
   const [result, setResult] = useState<CalcResult | null>(null);
   const [params, setParams] = useState<CalcParams>({ cpk: 400, dod: 90, eff: 92 });
   const [paramsOpen, setParamsOpen] = useState(false);
+  const [notities, setNotities] = useState("");
 
   const onChange = useCallback(
     <K extends keyof FormState>(key: K, value: FormState[K]) => {
@@ -171,6 +172,24 @@ export default function AdviseurTool() {
                   </div>
                 </div>
               )}
+            </div>
+
+            {/* Adviseur notities */}
+            <div className="notities-section">
+              <div className="notities-header">
+                <span className="notities-icon">{"\uD83D\uDCDD"}</span>
+                <div>
+                  <div className="notities-title">Adviseur notities</div>
+                  <div className="notities-sub">Bijzonderheden voor het dossier</div>
+                </div>
+              </div>
+              <textarea
+                className="notities-textarea"
+                rows={4}
+                placeholder="Bijv. 'Dak op zuidwest, 6m kabellengte. Klant overweegt overstap naar dynamisch contract.'"
+                value={notities}
+                onChange={(e) => setNotities(e.target.value)}
+              />
             </div>
 
             <Aannames result={result} />

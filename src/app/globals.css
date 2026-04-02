@@ -703,6 +703,68 @@ body {
 }
 
 /* ============================================================
+   ADVISEUR NOTITIES
+   ============================================================ */
+
+.sv-adv .notities-section {
+  background: var(--sv-krijt);
+  border: 1px solid var(--sv-border-light);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+.sv-adv .notities-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.sv-adv .notities-icon {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.sv-adv .notities-title {
+  font-family: var(--sv-font-heading), 'Syne', sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--sv-text);
+}
+
+.sv-adv .notities-sub {
+  font-size: 12px;
+  color: var(--sv-text-muted);
+  font-weight: 300;
+}
+
+.sv-adv .notities-textarea {
+  width: 100%;
+  font-family: var(--sv-font-body), 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.6;
+  color: var(--sv-text);
+  background: #fff;
+  border: 1px solid var(--sv-border);
+  border-radius: 8px;
+  padding: 12px 14px;
+  resize: vertical;
+  transition: border-color 0.15s;
+}
+
+.sv-adv .notities-textarea:focus {
+  outline: none;
+  border-color: var(--sv-groen);
+}
+
+.sv-adv .notities-textarea::placeholder {
+  color: var(--sv-text-muted);
+  font-weight: 300;
+}
+
+/* ============================================================
    GRID HELPERS
    ============================================================ */
 
