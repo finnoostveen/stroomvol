@@ -74,6 +74,7 @@ export default function DoelMetrics({ result: c }: Props) {
         >
           Je verbruikt <strong>{c.zelfPctMet - c.zelfPctZonder} procentpunt meer</strong> van je
           eigen zonnestroom. Dat bespaart <strong>&euro;{fmt(y1.zelf)}/jaar</strong>.
+          <InfoTip tekst="Zonder batterij lever je overtollige zonnestroom terug tegen een laag teruglevertarief. De batterij slaat die stroom op zodat je die 's avonds zelf verbruikt tegen het hogere leveringstarief." />
         </GoalItem>
       )}
 
@@ -92,7 +93,8 @@ export default function DoelMetrics({ result: c }: Props) {
             barClass={actief ? "goal-bar-green" : "goal-bar-yellow"}
           >
             {actief ? (
-              <>Bij een dynamisch contract met een spread van <strong>&euro;{c.spread.toFixed(2)}/kWh</strong> verdient de batterij extra door actief te laden bij dalprijs en te ontladen bij piekprijs.</>
+              <>Bij een dynamisch contract met een spread van <strong>&euro;{c.spread.toFixed(2)}/kWh</strong> verdient de batterij extra door actief te laden bij dalprijs en te ontladen bij piekprijs.
+              <InfoTip tekst="De spread is het verschil tussen piek- en daltarief op de EPEX-markt. De batterij laadt 's nachts goedkoop en ontlaadt overdag duur. Het aantal arbitragecycli varieert per seizoen." /></>
             ) : (
               <>Arbitrage vereist een <strong>dynamisch energiecontract</strong>. Overweeg een overstap om dit doel te activeren.</>
             )}
@@ -113,6 +115,7 @@ export default function DoelMetrics({ result: c }: Props) {
         >
           De batterij kan piekmomenten opvangen door tot <strong>{c.peakReductieKw.toFixed(1)} kW</strong> te
           ontladen. Bespaart <strong>&euro;{fmt(y1.peak)}/jaar</strong> aan capaciteitstarieven.
+          <InfoTip tekst="Peak shaving beperkt je maximale netafname. Dit is relevant bij capaciteitstarief en voorkomt overbelasting van je aansluiting." />
         </GoalItem>
       )}
 
@@ -152,6 +155,7 @@ export default function DoelMetrics({ result: c }: Props) {
               <>De EV verhoogt je jaarverbruik met ~{fmt(GROOTVERBRUIK.ev.defaultKwhJaar)} kWh. De batterij is +3 kWh groter gedimensioneerd.</>
             )}
             {" "}Geschat extra verbruik: <strong>{fmt(GROOTVERBRUIK.ev.defaultKwhJaar)} kWh/jaar</strong>.
+            <InfoTip tekst="Bij een dynamisch contract laadt de batterij 's nachts bij dalprijs en buffert stroom voor de EV. Bij een vast/variabel contract wordt de batterij groter gedimensioneerd." />
           </GoalItem>
         );
       })()}
@@ -173,7 +177,8 @@ export default function DoelMetrics({ result: c }: Props) {
           >
             De warmtepomp voegt ~<strong>{fmt(gv.defaultKwhJaar)} kWh/jaar</strong> toe.{" "}
             {wpBuf ? (
-              <>De batterij buffert goedkope nachtstroom voor de ochtend-opstart. Bespaart <strong>&euro;{fmt(y1.wp)}/jaar</strong>.</>
+              <>De batterij buffert goedkope nachtstroom voor de ochtend-opstart. Bespaart <strong>&euro;{fmt(y1.wp)}/jaar</strong>.
+              <InfoTip tekst="De warmtepomp verbruikt de meeste stroom 's ochtends vroeg. De batterij laadt 's nachts bij dalprijs en ontlaadt tijdens de opstart." /></>
             ) : (
               <>De batterij is groter gedimensioneerd.</>
             )}

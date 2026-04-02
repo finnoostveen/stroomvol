@@ -3,6 +3,7 @@
 import type { CalcResult, ScenarioResult } from "@/lib/calc";
 import { fmt } from "@/lib/calc";
 import { berekenCumulatieveTvt } from "@/lib/helpers";
+import InfoTip from "./InfoTip";
 
 interface Props {
   result: CalcResult;
@@ -14,12 +15,14 @@ function ScenarioRow({
   badgeCls,
   sc,
   investering,
+  tip,
 }: {
   label: string;
   badge: string;
   badgeCls: string;
   sc: ScenarioResult;
   investering: number;
+  tip?: string;
 }) {
   const nettoColor = sc.nettoWinst >= 0 ? "var(--sv-groen)" : "var(--sv-rood)";
   const isReal = badgeCls === "bs-r";
@@ -29,6 +32,7 @@ function ScenarioRow({
     <tr>
       <td>
         {label} <span className={`bs ${badgeCls}`}>{badge}</span>
+        {tip && <InfoTip tekst={tip} />}
       </td>
       <td className={`v${isReal ? " hl" : ""}`}>&euro;{fmt(Math.round(sc.total15 / 15))}</td>
       <td className={`v${isReal ? " hl" : ""}`}>
@@ -98,9 +102,12 @@ export default function FinancieelOverzicht({ result: c }: Props) {
               </tr>
             </thead>
             <tbody>
-              <ScenarioRow label="Conservatief" badge="voorzichtig" badgeCls="bs-c" sc={c.cons} investering={c.investering} />
-              <ScenarioRow label="Realistisch" badge="verwacht" badgeCls="bs-r" sc={c.real} investering={c.investering} />
-              <ScenarioRow label="Optimistisch" badge="gunstig" badgeCls="bs-o" sc={c.opti} investering={c.investering} />
+              <ScenarioRow label="Conservatief" badge="voorzichtig" badgeCls="bs-c" sc={c.cons} investering={c.investering}
+                tip="Hogere degradatie, geen prijsstijging, lagere opbrengst. Worst-case indicatie." />
+              <ScenarioRow label="Realistisch" badge="verwacht" badgeCls="bs-r" sc={c.real} investering={c.investering}
+                tip="Verwachte degradatie (~2%/jr), gematigde prijsstijging en gemiddelde opbrengst." />
+              <ScenarioRow label="Optimistisch" badge="gunstig" badgeCls="bs-o" sc={c.opti} investering={c.investering}
+                tip="Lage degradatie, hogere prijsstijging en gunstige marktomstandigheden." />
             </tbody>
           </table>
         </div>

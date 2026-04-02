@@ -1,6 +1,7 @@
 "use client";
 
 import type { CalcResult } from "@/lib/calc";
+import InfoTip from "./InfoTip";
 
 interface Props {
   result: CalcResult;
@@ -118,7 +119,10 @@ export default function Onafhankelijkheid({ result }: Props) {
       <div className="card-header">
         <div className="card-icon">🔋</div>
         <div>
-          <div className="card-title">Energie Onafhankelijkheid</div>
+          <div className="card-title">
+            Energie Onafhankelijkheid
+            <InfoTip tekst="Het percentage van je totale stroomverbruik dat je zelf opwekt en verbruikt (direct + via batterij), zonder het net nodig te hebben." />
+          </div>
           <div className="card-subtitle">Hoeveel stroom produceer en verbruik je zelf</div>
         </div>
       </div>

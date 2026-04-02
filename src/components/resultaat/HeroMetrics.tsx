@@ -78,7 +78,10 @@ export default function HeroMetrics({ result: c }: Props) {
         <div className="mc">
           <div className="mc-icon">{"\uD83D\uDCB0"}</div>
           <div className="mc-val">&euro;{fmt(c.investering)}</div>
-          <div className="mc-label">Geschatte investering</div>
+          <div className="mc-label">
+            Geschatte investering
+            <InfoTip tekst="Indicatieve prijs op basis van batterijgrootte × kosten per kWh. Werkelijke prijs hangt af van merk, installatie en subsidies." />
+          </div>
         </div>
         <div className="mc">
           <div className="mc-icon">{"\uD83D\uDCC9"}</div>
