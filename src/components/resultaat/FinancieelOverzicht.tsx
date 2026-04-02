@@ -2,24 +2,10 @@
 
 import type { CalcResult, ScenarioResult } from "@/lib/calc";
 import { fmt } from "@/lib/calc";
+import { berekenCumulatieveTvt } from "@/lib/helpers";
 
 interface Props {
   result: CalcResult;
-}
-
-function berekenTvt(sc: ScenarioResult, investering: number): number {
-  let cumulatief = 0;
-  for (let j = 0; j < sc.perJaar.length; j++) {
-    const vorig = cumulatief;
-    cumulatief += sc.perJaar[j].totaal;
-    if (cumulatief >= investering) {
-      const fractie = sc.perJaar[j].totaal > 0
-        ? (investering - vorig) / sc.perJaar[j].totaal
-        : 0;
-      return Math.round((j + fractie) * 10) / 10;
-    }
-  }
-  return 99;
 }
 
 function ScenarioRow({
@@ -37,7 +23,7 @@ function ScenarioRow({
 }) {
   const nettoColor = sc.nettoWinst >= 0 ? "var(--sv-groen)" : "var(--sv-rood)";
   const isReal = badgeCls === "bs-r";
-  const tvt = berekenTvt(sc, investering);
+  const tvt = berekenCumulatieveTvt(sc, investering);
 
   return (
     <tr>
@@ -63,17 +49,27 @@ const SC_SUB: Record<string, string> = {
 };
 
 export default function FinancieelOverzicht({ result: c }: Props) {
-  const y1 = c.real.perJaar[0];
   const nw = c.real.nettoWinst;
+  const n = c.real.perJaar.length;
+
+  // Gemiddelde per component over alle jaren
+  const gem = {
+    zelf: Math.round(c.real.perJaar.reduce((s, j) => s + j.zelf, 0) / n),
+    arb: Math.round(c.real.perJaar.reduce((s, j) => s + j.arb, 0) / n),
+    ev: Math.round(c.real.perJaar.reduce((s, j) => s + j.ev, 0) / n),
+    wp: Math.round(c.real.perJaar.reduce((s, j) => s + j.wp, 0) / n),
+    peak: Math.round(c.real.perJaar.reduce((s, j) => s + j.peak, 0) / n),
+    totaal: Math.round(c.real.total15 / n),
+  };
 
   // Breakdown rows
   const bdRows: { l: string; v: string; total?: boolean; color?: string; spacer?: boolean }[] = [];
-  if (y1.zelf > 0) bdRows.push({ l: "Zelfconsumptie-besparing", v: `\u20AC${fmt(y1.zelf)} /jaar` });
-  if (y1.arb > 0) bdRows.push({ l: "Dynamisch tarief arbitrage", v: `\u20AC${fmt(y1.arb)} /jaar` });
-  if (y1.ev > 0) bdRows.push({ l: "EV slim laden (dalprijs)", v: `\u20AC${fmt(y1.ev)} /jaar` });
-  if (y1.wp > 0) bdRows.push({ l: "Warmtepomp buffering", v: `\u20AC${fmt(y1.wp)} /jaar` });
-  if (y1.peak > 0) bdRows.push({ l: "Peak shaving", v: `\u20AC${fmt(y1.peak)} /jaar` });
-  bdRows.push({ l: "Totale jaarlijkse besparing", v: `\u20AC${fmt(y1.totaal)} /jaar`, total: true });
+  if (gem.zelf > 0) bdRows.push({ l: "Zelfconsumptie-besparing", v: `\u20AC${fmt(gem.zelf)} /jaar` });
+  if (gem.arb > 0) bdRows.push({ l: "Dynamisch tarief arbitrage", v: `\u20AC${fmt(gem.arb)} /jaar` });
+  if (gem.ev > 0) bdRows.push({ l: "EV slim laden (dalprijs)", v: `\u20AC${fmt(gem.ev)} /jaar` });
+  if (gem.wp > 0) bdRows.push({ l: "Warmtepomp buffering", v: `\u20AC${fmt(gem.wp)} /jaar` });
+  if (gem.peak > 0) bdRows.push({ l: "Peak shaving", v: `\u20AC${fmt(gem.peak)} /jaar` });
+  bdRows.push({ l: "Gem. jaarlijkse besparing", v: `\u20AC${fmt(gem.totaal)} /jaar`, total: true });
   bdRows.push({ l: "", v: "", spacer: true });
   bdRows.push({ l: "Totale besparing over 15 jaar (realistisch)", v: `\u20AC${fmt(c.real.total15)}` });
   bdRows.push({ l: "Investering", v: `\u2212\u20AC${fmt(c.investering)}` });

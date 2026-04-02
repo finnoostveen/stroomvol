@@ -2,6 +2,7 @@
 
 import type { CalcResult } from "@/lib/calc";
 import { fmt } from "@/lib/calc";
+import { berekenCumulatieveTvt, formatTvt } from "@/lib/helpers";
 import InfoTip from "./InfoTip";
 
 const PROFIEL_LABELS: Record<string, string> = {
@@ -48,6 +49,8 @@ interface Props {
 export default function HeroMetrics({ result: c }: Props) {
   const badge = CONTRACT_BADGE[c.contract];
   const tags = buildTags(c);
+  const tvt = berekenCumulatieveTvt(c.real, c.investering);
+  const gemBesparing = Math.round(c.real.total15 / 15);
 
   return (
     <>
@@ -80,7 +83,7 @@ export default function HeroMetrics({ result: c }: Props) {
         <div className="mc">
           <div className="mc-icon">{"\uD83D\uDCC9"}</div>
           <div className="mc-val">
-            {c.real.tvt < 30 ? `${c.real.tvt.toFixed(1)} jaar` : "> 25 jaar"}
+            {formatTvt(tvt)}
           </div>
           <div className="mc-label">
             Terugverdientijd (realistisch)
@@ -99,8 +102,11 @@ export default function HeroMetrics({ result: c }: Props) {
         </div>
         <div className="mc">
           <div className="mc-icon">{"\uD83D\uDCA1"}</div>
-          <div className="mc-val">&euro;{fmt(c.real.savingY1)}</div>
-          <div className="mc-label">Jaarlijkse besparing (realistisch)</div>
+          <div className="mc-val">&euro;{fmt(gemBesparing)}</div>
+          <div className="mc-label">
+            Gem. besparing / jaar
+            <InfoTip tekst="Gemiddelde jaarlijkse besparing over 15 jaar, rekening houdend met batterijdegradatie en prijsstijgingen." />
+          </div>
         </div>
       </div>
     </>
