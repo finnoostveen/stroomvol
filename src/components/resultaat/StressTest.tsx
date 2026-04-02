@@ -32,15 +32,15 @@ function berekenStressTest(calc: CalcResult) {
   if (calc.contract === "dynamisch") {
     dagArbitrageBesparing = dagBattBesparing * (calc.dynPiek - calc.dynDal);
     weekBesparing = dagArbitrageBesparing * 7;
-    kostenMet = Math.round(Math.max(0, kostenZonder - weekBesparing) * 100) / 100;
+    kostenMet = Math.round((kostenZonder - weekBesparing) * 100) / 100;
   } else {
     const weekZelfconsumptieBesparing =
       Math.min(dagBattBesparing, dagSolarStress) * 7 * (tariefStress - calc.terug);
     weekBesparing = weekZelfconsumptieBesparing;
-    kostenMet = Math.round(Math.max(0, kostenZonder - weekZelfconsumptieBesparing) * 100) / 100;
+    kostenMet = Math.round((kostenZonder - weekZelfconsumptieBesparing) * 100) / 100;
   }
 
-  const besparingPct = kostenZonder > 0 ? Math.round((1 - kostenMet / kostenZonder) * 100) : 0;
+  const besparingPct = kostenZonder > 0 ? Math.min(Math.round((1 - kostenMet / kostenZonder) * 100), 100) : 0;
 
   return {
     kostenZonder,
@@ -93,12 +93,24 @@ export default function StressTest({ result }: Props) {
 
         {/* Met batterij */}
         <div className="stress-card stress-card--met">
-          <div className="stress-card-icon">✅</div>
+          <div className="stress-card-icon">{data.kostenMet <= 0 ? "💰" : "✅"}</div>
           <div className="stress-card-label">Met batterij{result.contract === "dynamisch" ? " + handel" : ""}</div>
-          <div className="stress-card-amount">&euro;{nlEuro(data.kostenMet)}</div>
-          <div className="stress-card-sub">Energiekosten per week</div>
-          {data.besparingPct >= 10 && (
-            <span className="stress-badge">{data.besparingPct}% besparing</span>
+          {data.kostenMet <= 0 ? (
+            <>
+              <div className="stress-card-amount" style={{ color: "var(--sv-groen)" }}>
+                +&euro;{nlEuro(Math.abs(data.kostenMet))}
+              </div>
+              <div className="stress-card-sub">Energieopbrengst per week</div>
+              <span className="stress-badge">Je verdient geld</span>
+            </>
+          ) : (
+            <>
+              <div className="stress-card-amount">&euro;{nlEuro(data.kostenMet)}</div>
+              <div className="stress-card-sub">Energiekosten per week</div>
+              {data.besparingPct >= 10 && (
+                <span className="stress-badge">{data.besparingPct}% besparing</span>
+              )}
+            </>
           )}
         </div>
       </div>
