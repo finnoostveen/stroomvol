@@ -147,6 +147,30 @@ export interface CalcParams {
   eff?: number;
 }
 
+// ===================== HELPERS =====================
+
+function berekenArbitrageCycliMetSolar(surplusMaand: number[], usableKwh: number): number {
+  // Per maand: hoe vol is de batterij met solar?
+  // Wintermaanden: weinig solar → meer ruimte voor arbitrage
+  // Zomermaanden: veel solar → batterij bezig met zelfconsumptie
+  let totaalCycli = 0;
+  const dagenPerMaand = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
+  for (let m = 0; m < 12; m++) {
+    const dagSurplus = surplusMaand[m] / dagenPerMaand[m];
+    // Hoeveel van de batterij is "bezet" door solar?
+    const solarBezetting = Math.min(dagSurplus / usableKwh, 1.0);
+    // Restcapaciteit beschikbaar voor arbitrage
+    const vrijVoorArbitrage = 1.0 - solarBezetting;
+    // Maximaal 1 arbitragecyclus per dag met de vrije capaciteit
+    const maandCycli = vrijVoorArbitrage * dagenPerMaand[m];
+    totaalCycli += maandCycli;
+  }
+
+  // Effectiviteit: niet elke dag heeft voldoende spread (~60%)
+  return Math.round(totaalCycli * 0.6);
+}
+
 // ===================== MAIN CALC =====================
 
 export function calc(form: FormState, params: CalcParams = {}): CalcResult {
@@ -293,7 +317,7 @@ export function calc(form: FormState, params: CalcParams = {}): CalcResult {
   // STAP 5c: Cycle-based degradatie
   let battKwhPerJaar = zelfMetJaar - zelfZonderJaar;
   if (contract === "dynamisch") {
-    const arbCycliJaar = hasSolar ? 50 : 300;
+    const arbCycliJaar = hasSolar ? berekenArbitrageCycliMetSolar(surplusMaand, usableKwh) : 300;
     battKwhPerJaar += arbCycliJaar * usableKwh * eff;
   }
   const cycliPerJaar = usableKwh > 0 ? battKwhPerJaar / usableKwh : 0;
@@ -326,7 +350,7 @@ export function calc(form: FormState, params: CalcParams = {}): CalcResult {
     let jaarBesparingArb = 0;
     if (contract === "dynamisch") {
       const huidigSpread = spread * prijsFactor;
-      const arbCycli = hasSolar ? 50 : 300;
+      const arbCycli = hasSolar ? berekenArbitrageCycliMetSolar(surplusMaand, effectiefKwh) : 300;
       const effectieveCycli = Math.min(arbCycli, 365 * 1.5);
       const kwhPerCyclus = Math.min(effectiefKwh * eff, maxBattVermogenKw * 2);
       jaarBesparingArb = effectieveCycli * kwhPerCyclus * huidigSpread;
