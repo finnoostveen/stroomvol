@@ -24,73 +24,86 @@ const muurOpties: { value: Muur; label: string }[] = [
 
 export default function StapInstallatie({ form, onChange }: StapProps) {
   return (
-    <div>
-      <h2>Installatie quickcheck</h2>
-      <p>Ter plekke controleren</p>
-
-      <fieldset>
-        <legend>Locatie batterij</legend>
+    <div className="card">
+      <div className="card-header">
+        <div className="card-icon">🔧</div>
         <div>
-          {locOpties.map((opt) => (
-            <button
-              key={opt.value}
-              type="button"
-              aria-pressed={form.loc === opt.value}
-              onClick={() => onChange("loc", opt.value)}
-            >
-              {opt.label}
-            </button>
-          ))}
+          <div className="card-title">Installatie quickcheck</div>
+          <div className="card-subtitle">Ter plekke controleren</div>
         </div>
-      </fieldset>
+      </div>
 
-      <fieldset>
-        <legend>Eigendom</legend>
-        <div>
-          {eigOpties.map((opt) => (
-            <button
-              key={opt.value}
-              type="button"
-              aria-pressed={form.eig === opt.value}
-              onClick={() => onChange("eig", opt.value)}
-            >
-              {opt.label}
-            </button>
-          ))}
-        </div>
-      </fieldset>
+      <div className="r2">
+        <fieldset>
+          <legend>Locatie batterij</legend>
+          <div className="tg">
+            {locOpties.map((opt) => (
+              <button
+                key={opt.value}
+                type="button"
+                className="tb"
+                aria-pressed={form.loc === opt.value}
+                onClick={() => onChange("loc", opt.value)}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+        </fieldset>
 
-      <fieldset>
-        <legend>Afstand meterkast</legend>
-        <div>
-          {afstOpties.map((opt) => (
-            <button
-              key={opt.value}
-              type="button"
-              aria-pressed={form.afst === opt.value}
-              onClick={() => onChange("afst", opt.value)}
-            >
-              {opt.label}
-            </button>
-          ))}
-        </div>
-      </fieldset>
+        <fieldset>
+          <legend>Eigendom</legend>
+          <div className="tg">
+            {eigOpties.map((opt) => (
+              <button
+                key={opt.value}
+                type="button"
+                className="tb"
+                aria-pressed={form.eig === opt.value}
+                onClick={() => onChange("eig", opt.value)}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+        </fieldset>
+      </div>
 
-      <fieldset>
-        <legend>Muren doorboren</legend>
-        <div>
-          {muurOpties.map((opt) => (
-            <button
-              key={opt.value}
-              type="button"
-              aria-pressed={form.muur === opt.value}
-              onClick={() => onChange("muur", opt.value)}
-            >
-              {opt.label}
-            </button>
-          ))}
-        </div>
-      </fieldset>
+      <div className="r2">
+        <fieldset>
+          <legend>Afstand meterkast</legend>
+          <div className="tg">
+            {afstOpties.map((opt) => (
+              <button
+                key={opt.value}
+                type="button"
+                className="tb"
+                aria-pressed={form.afst === opt.value}
+                onClick={() => onChange("afst", opt.value)}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Muren doorboren</legend>
+          <div className="tg">
+            {muurOpties.map((opt) => (
+              <button
+                key={opt.value}
+                type="button"
+                className="tb"
+                aria-pressed={form.muur === opt.value}
+                onClick={() => onChange("muur", opt.value)}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+        </fieldset>
+      </div>
     </div>
   );
 }

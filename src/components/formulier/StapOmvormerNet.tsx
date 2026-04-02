@@ -17,17 +17,23 @@ const netOpties: { value: NetAansluiting; label: string }[] = [
 
 export default function StapOmvormerNet({ form, onChange }: StapProps) {
   return (
-    <div>
-      <h2>Omvormer &amp; Net</h2>
-      <p>Check meterkast en omvormer</p>
+    <div className="card">
+      <div className="card-header">
+        <div className="card-icon">🔌</div>
+        <div>
+          <div className="card-title">Omvormer &amp; Net</div>
+          <div className="card-subtitle">Check meterkast en omvormer</div>
+        </div>
+      </div>
 
       <fieldset>
         <legend>Omvormertype</legend>
-        <div>
+        <div className="tg">
           {omvormerOpties.map((opt) => (
             <button
               key={opt.value}
               type="button"
+              className="tb"
               aria-pressed={form.omv === opt.value}
               onClick={() => onChange("omv", opt.value)}
             >
@@ -39,11 +45,12 @@ export default function StapOmvormerNet({ form, onChange }: StapProps) {
 
       <fieldset>
         <legend>Netaansluiting</legend>
-        <div>
+        <div className="tg">
           {netOpties.map((opt) => (
             <button
               key={opt.value}
               type="button"
+              className="tb"
               aria-pressed={form.net === opt.value}
               onClick={() => onChange("net", opt.value)}
             >

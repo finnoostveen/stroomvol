@@ -4,13 +4,18 @@ import type { StapProps } from "./types";
 
 export default function StapKlant({ form, onChange }: StapProps) {
   return (
-    <div>
-      <h2>Klant &amp; Adviseur</h2>
-      <p>Gegevens voor het adviesrapport</p>
+    <div className="card">
+      <div className="card-header">
+        <div className="card-icon">👤</div>
+        <div>
+          <div className="card-title">Klant &amp; Adviseur</div>
+          <div className="card-subtitle">Gegevens voor het adviesrapport</div>
+        </div>
+      </div>
 
-      <div>
-        <label htmlFor="in-klant-naam">
-          Klantnaam <span>*</span>
+      <div className="field">
+        <label className="field-label" htmlFor="in-klant-naam">
+          Klantnaam <span className="req">*</span>
         </label>
         <input
           id="in-klant-naam"
@@ -21,8 +26,8 @@ export default function StapKlant({ form, onChange }: StapProps) {
         />
       </div>
 
-      <div>
-        <label htmlFor="in-klant-adres">Adres</label>
+      <div className="field">
+        <label className="field-label" htmlFor="in-klant-adres">Adres</label>
         <input
           id="in-klant-adres"
           type="text"
@@ -32,8 +37,8 @@ export default function StapKlant({ form, onChange }: StapProps) {
         />
       </div>
 
-      <div>
-        <label htmlFor="in-klant-plaats">Postcode + Plaats</label>
+      <div className="field">
+        <label className="field-label" htmlFor="in-klant-plaats">Postcode + Plaats</label>
         <input
           id="in-klant-plaats"
           type="text"
@@ -43,8 +48,8 @@ export default function StapKlant({ form, onChange }: StapProps) {
         />
       </div>
 
-      <div>
-        <label htmlFor="in-datum">Datum</label>
+      <div className="field">
+        <label className="field-label" htmlFor="in-datum">Datum</label>
         <input
           id="in-datum"
           type="date"
@@ -53,8 +58,8 @@ export default function StapKlant({ form, onChange }: StapProps) {
         />
       </div>
 
-      <div>
-        <label htmlFor="in-adviseur">Naam adviseur</label>
+      <div className="field">
+        <label className="field-label" htmlFor="in-adviseur">Naam adviseur</label>
         <input
           id="in-adviseur"
           type="text"
@@ -64,8 +69,8 @@ export default function StapKlant({ form, onChange }: StapProps) {
         />
       </div>
 
-      <div>
-        <label htmlFor="in-bedrijf">Bedrijfsnaam</label>
+      <div className="field">
+        <label className="field-label" htmlFor="in-bedrijf">Bedrijfsnaam</label>
         <input
           id="in-bedrijf"
           type="text"

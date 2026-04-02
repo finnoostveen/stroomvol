@@ -14,35 +14,43 @@ export default function StapVerbruik({ form, onChange }: StapProps) {
     form.verbruik !== "" && (isNaN(Number(form.verbruik)) || Number(form.verbruik) <= 0);
 
   return (
-    <div>
-      <h2>Stroomverbruik</h2>
-      <p>Jaaropgave of slimme meter</p>
+    <div className="card">
+      <div className="card-header">
+        <div className="card-icon">⚡</div>
+        <div>
+          <div className="card-title">Stroomverbruik</div>
+          <div className="card-subtitle">Jaaropgave of slimme meter</div>
+        </div>
+      </div>
 
-      <div>
-        <label htmlFor="in-verbruik">
-          Jaarlijks verbruik <span>*</span>
+      <div className="field">
+        <label className="field-label" htmlFor="in-verbruik">
+          Jaarlijks verbruik <span className="req">*</span>
         </label>
-        <input
-          id="in-verbruik"
-          type="number"
-          placeholder="bijv. 3500"
-          min={0}
-          max={99999}
-          value={form.verbruik}
-          aria-invalid={verbruikError || undefined}
-          onChange={(e) => onChange("verbruik", e.target.value)}
-        />
-        <span>kWh</span>
-        {verbruikError && <p role="alert">Vul een jaarverbruik in</p>}
+        <div className="uw">
+          <input
+            id="in-verbruik"
+            type="number"
+            placeholder="bijv. 3500"
+            min={0}
+            max={99999}
+            value={form.verbruik}
+            aria-invalid={verbruikError || undefined}
+            onChange={(e) => onChange("verbruik", e.target.value)}
+          />
+          <span className="us">kWh</span>
+        </div>
+        {verbruikError && <p className="field-error" role="alert">Vul een jaarverbruik in</p>}
       </div>
 
       <fieldset>
         <legend>Verbruiksprofiel</legend>
-        <div>
+        <div className="tg">
           {profielOpties.map((opt) => (
             <button
               key={opt.value}
               type="button"
+              className="tb"
               aria-pressed={form.profiel === opt.value}
               onClick={() => onChange("profiel", opt.value)}
             >
@@ -50,7 +58,7 @@ export default function StapVerbruik({ form, onChange }: StapProps) {
             </button>
           ))}
         </div>
-        <p>Bepaalt wanneer de klant de meeste stroom verbruikt.</p>
+        <p className="field-hint">Bepaalt wanneer de klant de meeste stroom verbruikt.</p>
       </fieldset>
     </div>
   );

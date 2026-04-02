@@ -76,51 +76,55 @@ export default function AdviseurTool() {
   const progressPct = ((stap + 1) / AANTAL_STAPPEN) * 100;
 
   return (
-    <div>
-      <header>
-        <h1>
-          STROOM<span>VOL</span>
-        </h1>
-        <p>Batterijadvies op maat</p>
-      </header>
+    <div className="sv-adv">
+      <div className="container">
+        <header className="header">
+          <h1 className="logo">
+            STROOM<span>VOL</span>
+          </h1>
+          <p className="header-sub">Batterijadvies op maat</p>
+        </header>
 
-      {/* Progress */}
-      <div role="progressbar" aria-valuenow={stap + 1} aria-valuemin={1} aria-valuemax={AANTAL_STAPPEN}>
-        <div style={{ width: `${progressPct}%` }} />
+        {/* Progress */}
+        <div className="progress-bar" role="progressbar" aria-valuenow={stap + 1} aria-valuemin={1} aria-valuemax={AANTAL_STAPPEN}>
+          <div className="progress-fill" style={{ width: `${progressPct}%` }} />
+        </div>
+        <p className="progress-label">
+          Stap {stap + 1} van {AANTAL_STAPPEN}: {STAP_LABELS[stap]}
+        </p>
+
+        {/* Huidige stap */}
+        <div className="phase">
+          {stap === 0 && <StapKlant form={form} onChange={onChange} />}
+          {stap === 1 && <StapContract form={form} onChange={onChange} />}
+          {stap === 2 && <StapVerbruik form={form} onChange={onChange} />}
+          {stap === 3 && <StapZon form={form} onChange={onChange} />}
+          {stap === 4 && <StapOmvormerNet form={form} onChange={onChange} />}
+          {stap === 5 && <StapGrootverbruikers form={form} onChange={onChange} />}
+          {stap === 6 && <StapInstallatie form={form} onChange={onChange} />}
+        </div>
+
+        {/* Error */}
+        {error && <p className="error-msg" role="alert">{error}</p>}
+
+        {/* Navigatie */}
+        <nav className="nav">
+          {stap > 0 ? (
+            <button type="button" className="btn-back" onClick={vorige}>
+              &larr; Vorige
+            </button>
+          ) : <span />}
+          {stap < AANTAL_STAPPEN - 1 ? (
+            <button type="button" className="btn-next" onClick={volgende}>
+              Volgende &rarr;
+            </button>
+          ) : (
+            <button type="button" className="btn-next" onClick={() => {/* TODO: genereer advies */}}>
+              Genereer advies &rarr;
+            </button>
+          )}
+        </nav>
       </div>
-      <p>
-        Stap {stap + 1} van {AANTAL_STAPPEN}: {STAP_LABELS[stap]}
-      </p>
-
-      {/* Huidige stap */}
-      {stap === 0 && <StapKlant form={form} onChange={onChange} />}
-      {stap === 1 && <StapContract form={form} onChange={onChange} />}
-      {stap === 2 && <StapVerbruik form={form} onChange={onChange} />}
-      {stap === 3 && <StapZon form={form} onChange={onChange} />}
-      {stap === 4 && <StapOmvormerNet form={form} onChange={onChange} />}
-      {stap === 5 && <StapGrootverbruikers form={form} onChange={onChange} />}
-      {stap === 6 && <StapInstallatie form={form} onChange={onChange} />}
-
-      {/* Error */}
-      {error && <p role="alert">{error}</p>}
-
-      {/* Navigatie */}
-      <nav>
-        {stap > 0 && (
-          <button type="button" onClick={vorige}>
-            &larr; Vorige
-          </button>
-        )}
-        {stap < AANTAL_STAPPEN - 1 ? (
-          <button type="button" onClick={volgende}>
-            Volgende &rarr;
-          </button>
-        ) : (
-          <button type="button" onClick={() => {/* TODO: genereer advies */}}>
-            Genereer advies &rarr;
-          </button>
-        )}
-      </nav>
     </div>
   );
 }

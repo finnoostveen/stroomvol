@@ -12,19 +12,25 @@ export default function StapZon({ form, onChange }: StapProps) {
   const showDetail = form.zon === "ja" || form.zon === "gepland";
 
   return (
-    <div>
-      <h2>Zonnepanelen</h2>
-      <p>Controleer ter plekke</p>
+    <div className="card">
+      <div className="card-header">
+        <div className="card-icon">☀️</div>
+        <div>
+          <div className="card-title">Zonnepanelen</div>
+          <div className="card-subtitle">Controleer ter plekke</div>
+        </div>
+      </div>
 
       <fieldset>
         <legend>
-          Zonnepanelen aanwezig? <span>*</span>
+          Zonnepanelen aanwezig? <span className="req">*</span>
         </legend>
-        <div>
+        <div className="tg">
           {zonOpties.map((opt) => (
             <button
               key={opt.value}
               type="button"
+              className="tb"
               aria-pressed={form.zon === opt.value}
               onClick={() => onChange("zon", opt.value)}
             >
@@ -35,20 +41,25 @@ export default function StapZon({ form, onChange }: StapProps) {
       </fieldset>
 
       {showDetail && (
-        <div>
-          <div>
-            <label>Aantal panelen</label>
-            <div>
+        <>
+          <div className="field">
+            <label className="field-label">Aantal panelen</label>
+            <div className="stepper">
               <button
                 type="button"
+                className="stepper-btn"
                 onClick={() => onChange("panelen", Math.max(1, form.panelen - 1))}
                 aria-label="Minder panelen"
               >
                 &minus;
               </button>
-              <span>{form.panelen} panelen</span>
+              <div className="stepper-mid">
+                {form.panelen}
+                <span className="stepper-sub">panelen</span>
+              </div>
               <button
                 type="button"
+                className="stepper-btn"
                 onClick={() => onChange("panelen", Math.min(60, form.panelen + 1))}
                 aria-label="Meer panelen"
               >
@@ -57,21 +68,23 @@ export default function StapZon({ form, onChange }: StapProps) {
             </div>
           </div>
 
-          <div>
-            <label htmlFor="in-wp">Wp per paneel</label>
-            <input
-              id="in-wp"
-              type="number"
-              step={10}
-              min={100}
-              max={600}
-              value={form.wpPerPaneel}
-              onChange={(e) => onChange("wpPerPaneel", parseInt(e.target.value, 10) || 400)}
-            />
-            <span>Wp</span>
-            <p>Check label achter paneel</p>
+          <div className="field">
+            <label className="field-label" htmlFor="in-wp">Wp per paneel</label>
+            <div className="uw">
+              <input
+                id="in-wp"
+                type="number"
+                step={10}
+                min={100}
+                max={600}
+                value={form.wpPerPaneel}
+                onChange={(e) => onChange("wpPerPaneel", parseInt(e.target.value, 10) || 400)}
+              />
+              <span className="us">Wp</span>
+            </div>
+            <p className="field-hint">Check label achter paneel</p>
           </div>
-        </div>
+        </>
       )}
     </div>
   );
