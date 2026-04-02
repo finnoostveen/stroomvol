@@ -925,6 +925,125 @@ body {
 }
 
 /* ============================================================
+   RESULTS — Niets Doen (dark section)
+   ============================================================ */
+
+.sv-adv .nd-section {
+  background: linear-gradient(180deg, var(--sv-zwart) 0%, #1a1a1a 100%);
+  border-radius: var(--sv-radius);
+  padding: 36px 32px;
+  color: white;
+  margin-bottom: 16px;
+}
+
+.sv-adv .nd-inner > .card-header { color: white; }
+
+.sv-adv .nd-title {
+  font-family: var(--sv-font-heading), 'Syne', sans-serif;
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+  color: white;
+}
+
+.sv-adv .nd-subtitle {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.55);
+  font-weight: 300;
+  line-height: 1.5;
+}
+
+.sv-adv .nd-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.sv-adv .nd-card {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+}
+
+.sv-adv .nd-card-icon { font-size: 20px; margin-bottom: 6px; }
+
+.sv-adv .nd-card-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+
+.sv-adv .nd-card-tarief {
+  font-family: var(--sv-font-heading), 'Syne', sans-serif;
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: -1px;
+  color: white;
+  margin-bottom: 2px;
+}
+
+.sv-adv .nd-card-sub {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.4);
+  font-weight: 300;
+  margin-bottom: 10px;
+}
+
+.sv-adv .nd-card-kosten {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--sv-volt);
+}
+
+.sv-adv .nd-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.sv-adv .nd-info {
+  display: flex;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--sv-radius-sm);
+  padding: 16px;
+}
+
+.sv-adv .nd-info-icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
+
+.sv-adv .nd-info strong {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: white;
+  margin-bottom: 4px;
+}
+
+.sv-adv .nd-info p {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: 300;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.sv-adv .nd-footer {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.3);
+  font-weight: 300;
+  text-align: center;
+  margin: 0;
+}
+
+/* ============================================================
    RESPONSIVE
    ============================================================ */
 
@@ -938,6 +1057,9 @@ body {
   .sv-adv .metrics { grid-template-columns: 1fr; }
   .sv-adv .onafh-grid { grid-template-columns: 1fr; justify-items: center; }
   .sv-adv .stress-grid { grid-template-columns: 1fr; }
+  .sv-adv .nd-grid { grid-template-columns: 1fr; }
+  .sv-adv .nd-info-grid { grid-template-columns: 1fr; }
+  .sv-adv .nd-section { padding: 24px 20px; }
   .sv-adv .r-cap { font-size: 40px; }
   .sv-adv .btn-next { padding: 14px 22px; font-size: 13px; }
   .sv-adv .btn-back { padding: 14px 16px; font-size: 13px; }
