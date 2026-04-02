@@ -16,6 +16,7 @@ import DoelMetrics from "@/components/resultaat/DoelMetrics";
 import Onafhankelijkheid from "@/components/resultaat/Onafhankelijkheid";
 import StressTest from "@/components/resultaat/StressTest";
 import FinancieelOverzicht from "@/components/resultaat/FinancieelOverzicht";
+import Spaarrekening from "@/components/resultaat/Spaarrekening";
 import Aannames from "@/components/resultaat/Aannames";
 
 const STAP_LABELS = [
@@ -100,6 +101,7 @@ export default function AdviseurTool() {
             <Onafhankelijkheid result={result} />
             <StressTest result={result} />
             <FinancieelOverzicht result={result} />
+            <Spaarrekening result={result} />
             <Aannames result={result} />
           </div>
 
