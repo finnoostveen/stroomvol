@@ -1,6 +1,7 @@
 "use client";
 
 import type { StapProps, ContractType } from "./types";
+import Badkuipmodel from "./Badkuipmodel";
 
 const contractOpties: { type: ContractType; icon: string; naam: string; beschrijving: string }[] = [
   { type: "vast", icon: "🔒", naam: "Vast", beschrijving: "Vaste kWh-prijs gedurende contractperiode" },
@@ -172,20 +173,7 @@ export default function StapContract({ form, onChange }: StapProps) {
             </div>
           </div>
 
-          <div className="info-box">
-            <strong>Batterijstrategie bij dynamisch tarief:</strong> Dubbele
-            verdienlaag. (1) Zelfconsumptie, en (2) actieve arbitrage: laden bij
-            lage uurprijs, ontladen bij hoge uurprijs.
-          </div>
-
-          <div className="strat-cards">
-            <div className="strat-card">
-              <div className="strat-label">Arbitrage spread</div>
-              <div className="strat-val">
-                &euro;{(form.dynPiek - form.dynDal).toFixed(2)}/kWh
-              </div>
-            </div>
-          </div>
+          <Badkuipmodel dynDal={form.dynDal} dynPiek={form.dynPiek} />
         </>
       )}
     </div>

@@ -503,6 +503,123 @@ body {
 }
 
 /* ============================================================
+   BADKUIPMODEL
+   ============================================================ */
+
+.sv-adv .badkuip-wrap {
+  margin-top: 20px;
+  background: var(--sv-zwart);
+  border-radius: 12px;
+  padding: 20px;
+  color: #fff;
+}
+
+.sv-adv .badkuip-header {
+  font-family: var(--sv-font-heading), 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--sv-volt);
+  margin-bottom: 4px;
+}
+
+.sv-adv .badkuip-sub {
+  font-size: 12px;
+  font-weight: 300;
+  color: rgba(255,255,255,0.5);
+  margin-bottom: 16px;
+  line-height: 1.4;
+}
+
+.sv-adv .badkuip-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.sv-adv .badkuip-legenda {
+  display: flex;
+  gap: 16px;
+  margin-top: 10px;
+  font-size: 11px;
+  color: rgba(255,255,255,0.6);
+}
+
+.sv-adv .badkuip-leg-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.sv-adv .badkuip-leg-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.sv-adv .badkuip-leg-line {
+  width: 16px;
+  height: 2px;
+  background: var(--sv-volt);
+  display: inline-block;
+  border-radius: 1px;
+}
+
+.sv-adv .badkuip-banner {
+  margin-top: 16px;
+  padding: 12px 16px;
+  background: var(--sv-volt);
+  color: var(--sv-zwart);
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.sv-adv .badkuip-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.sv-adv .badkuip-card {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  padding: 14px;
+}
+
+.sv-adv .badkuip-card-label {
+  font-family: var(--sv-font-heading), 'Syne', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.5);
+  margin-bottom: 6px;
+}
+
+.sv-adv .badkuip-card-badge {
+  display: inline-block;
+  font-family: var(--sv-font-heading), 'Syne', sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+
+.sv-adv .badkuip-card-badge--actief { color: var(--sv-groen); }
+.sv-adv .badkuip-card-badge--spread { color: var(--sv-volt); }
+
+.sv-adv .badkuip-card-desc {
+  font-size: 12px;
+  color: rgba(255,255,255,0.5);
+  font-weight: 300;
+  line-height: 1.4;
+}
+
+/* ============================================================
    GRID HELPERS
    ============================================================ */
 
@@ -1211,6 +1328,8 @@ body {
   .sv-adv .r3 { grid-template-columns: 1fr 1fr 1fr; }
   .sv-adv .contract-cards { grid-template-columns: 1fr 1fr 1fr; }
   .sv-adv .strat-cards { grid-template-columns: 1fr; }
+  .sv-adv .badkuip-cards { grid-template-columns: 1fr; }
+  .sv-adv .badkuip-legenda { flex-wrap: wrap; }
   .sv-adv .metrics { grid-template-columns: 1fr; }
   .sv-adv .onafh-grid { grid-template-columns: 1fr; justify-items: center; }
   .sv-adv .stress-grid { grid-template-columns: 1fr; }
