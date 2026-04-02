@@ -7,19 +7,37 @@ interface Props {
   result: CalcResult;
 }
 
+function berekenTvt(sc: ScenarioResult, investering: number): number {
+  let cumulatief = 0;
+  for (let j = 0; j < sc.perJaar.length; j++) {
+    const vorig = cumulatief;
+    cumulatief += sc.perJaar[j].totaal;
+    if (cumulatief >= investering) {
+      const fractie = sc.perJaar[j].totaal > 0
+        ? (investering - vorig) / sc.perJaar[j].totaal
+        : 0;
+      return Math.round((j + fractie) * 10) / 10;
+    }
+  }
+  return 99;
+}
+
 function ScenarioRow({
   label,
   badge,
   badgeCls,
   sc,
+  investering,
 }: {
   label: string;
   badge: string;
   badgeCls: string;
   sc: ScenarioResult;
+  investering: number;
 }) {
   const nettoColor = sc.nettoWinst >= 0 ? "var(--sv-groen)" : "var(--sv-rood)";
   const isReal = badgeCls === "bs-r";
+  const tvt = berekenTvt(sc, investering);
 
   return (
     <tr>
@@ -28,7 +46,7 @@ function ScenarioRow({
       </td>
       <td className={`v${isReal ? " hl" : ""}`}>&euro;{fmt(Math.round(sc.total15 / 15))}</td>
       <td className={`v${isReal ? " hl" : ""}`}>
-        {sc.tvt < 30 ? `${sc.tvt.toFixed(1)} jaar` : "> 25 jr"}
+        {tvt < 30 ? `${tvt.toFixed(1)} jaar` : "> 25 jr"}
       </td>
       <td className={`v${isReal ? " hl" : ""}`}>&euro;{fmt(sc.total15)}</td>
       <td className="v" style={{ color: nettoColor, fontSize: isReal ? "18px" : undefined }}>
@@ -84,42 +102,12 @@ export default function FinancieelOverzicht({ result: c }: Props) {
               </tr>
             </thead>
             <tbody>
-              <ScenarioRow label="Conservatief" badge="voorzichtig" badgeCls="bs-c" sc={c.cons} />
-              <ScenarioRow label="Realistisch" badge="verwacht" badgeCls="bs-r" sc={c.real} />
-              <ScenarioRow label="Optimistisch" badge="gunstig" badgeCls="bs-o" sc={c.opti} />
+              <ScenarioRow label="Conservatief" badge="voorzichtig" badgeCls="bs-c" sc={c.cons} investering={c.investering} />
+              <ScenarioRow label="Realistisch" badge="verwacht" badgeCls="bs-r" sc={c.real} investering={c.investering} />
+              <ScenarioRow label="Optimistisch" badge="gunstig" badgeCls="bs-o" sc={c.opti} investering={c.investering} />
             </tbody>
           </table>
         </div>
-      </div>
-
-      {/* DEBUG BLOK — TIJDELIJK */}
-      <div style={{
-        margin: "12px 0",
-        padding: 14,
-        background: "#F0F0F0",
-        borderRadius: 8,
-        fontSize: 11,
-        fontFamily: "monospace",
-        color: "#555",
-        lineHeight: 1.8,
-      }}>
-        <strong style={{ fontSize: 12, color: "#333" }}>🔍 DEBUG — Scenario waarden</strong>
-        <br />
-        <strong>Conservatief:</strong> savingY1 = {c.cons.savingY1} | total15 = {c.cons.total15} | gem/jr = {Math.round(c.cons.total15 / 15)}
-        <br />
-        <strong>Realistisch:</strong> savingY1 = {c.real.savingY1} | total15 = {c.real.total15} | gem/jr = {Math.round(c.real.total15 / 15)}
-        <br />
-        <strong>Optimistisch:</strong> savingY1 = {c.opti.savingY1} | total15 = {c.opti.total15} | gem/jr = {Math.round(c.opti.total15 / 15)}
-        <br /><br />
-        <strong>real.perJaar breakdown:</strong>
-        <br />
-        perJaar[0].totaal = {c.real.perJaar[0]?.totaal} (jaar 1)
-        <br />
-        perJaar[1].totaal = {c.real.perJaar[1]?.totaal} (jaar 2)
-        <br />
-        perJaar[14].totaal = {c.real.perJaar[14]?.totaal} (jaar 15)
-        <br /><br />
-        <strong>Extra:</strong> investering = {c.investering} | tvt cons/real/opti = {c.cons.tvt.toFixed(1)} / {c.real.tvt.toFixed(1)} / {c.opti.tvt.toFixed(1)}
       </div>
 
       {/* Breakdown */}
