@@ -99,21 +99,24 @@ export default function AdviseurTool() {
     return (
       <div className="sv-adv">
         <div className="container">
-          <header className="header">
+          <div className="header-sticky">
             <h1 className="logo">
               STROOM<span>VOL</span>
             </h1>
-            <p className="header-sub">Batterijadvies op maat</p>
-          </header>
+          </div>
 
           <div className="phase">
             <HeroMetrics result={result} />
             <DoelMetrics result={result} />
-            <LaadOntlaadSchema result={result} />
+            <div className="section-gray">
+              <LaadOntlaadSchema result={result} />
+            </div>
             <Onafhankelijkheid result={result} />
             <StressTest result={result} />
             <FinancieelOverzicht result={result} />
-            <Spaarrekening result={result} />
+            <div className="section-gray">
+              <Spaarrekening result={result} />
+            </div>
             <NietsDoen result={result} />
 
             {/* Instelbare aannames */}
@@ -207,13 +210,18 @@ export default function AdviseurTool() {
 
   return (
     <div className="sv-adv">
-      <div className="container">
-        <header className="header">
-          <h1 className="logo">
-            STROOM<span>VOL</span>
-          </h1>
-          <p className="header-sub">Batterijadvies op maat</p>
-        </header>
+      <div className="hero-bg" style={{ padding: "36px 20px 28px", marginBottom: 0 }}>
+        <div className="container">
+          <header className="header" style={{ position: "relative" }}>
+            <h1 className="logo">
+              STROOM<span>VOL</span>
+            </h1>
+            <p className="header-sub">Batterijadvies op maat</p>
+            <div className="header-badge">ADVISEURSTOOL</div>
+          </header>
+        </div>
+      </div>
+      <div className="container" style={{ paddingTop: 24 }}>
 
         {/* Progress */}
         <div className="progress-bar" role="progressbar" aria-valuenow={stap + 1} aria-valuemin={1} aria-valuemax={AANTAL_STAPPEN}>
