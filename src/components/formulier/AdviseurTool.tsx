@@ -14,6 +14,7 @@ import StapInstallatie from "./StapInstallatie";
 import HeroMetrics from "@/components/resultaat/HeroMetrics";
 import DoelMetrics from "@/components/resultaat/DoelMetrics";
 import Onafhankelijkheid from "@/components/resultaat/Onafhankelijkheid";
+import StressTest from "@/components/resultaat/StressTest";
 import FinancieelOverzicht from "@/components/resultaat/FinancieelOverzicht";
 import Aannames from "@/components/resultaat/Aannames";
 
@@ -97,6 +98,7 @@ export default function AdviseurTool() {
             <HeroMetrics result={result} />
             <DoelMetrics result={result} />
             <Onafhankelijkheid result={result} />
+            <StressTest result={result} />
             <FinancieelOverzicht result={result} />
             <Aannames result={result} />
           </div>
