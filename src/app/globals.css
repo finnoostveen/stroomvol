@@ -93,6 +93,48 @@ body {
 }
 
 /* ============================================================
+   ARBITRAGE WAARSCHUWING
+   ============================================================ */
+
+.arb-warn {
+  position: relative;
+  background: #FFF8E7;
+  border-left: 4px solid #FF9500;
+  padding: 16px 40px 16px 16px;
+  margin: 0 2rem 8px;
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--sv-grafiet);
+  line-height: 1.6;
+}
+
+.arb-warn-header {
+  font-weight: 700;
+  color: var(--sv-zwart);
+  margin-bottom: 6px;
+}
+
+.arb-warn-text {
+  margin: 0;
+}
+
+.arb-warn-close {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: var(--sv-grijsDonker);
+  cursor: pointer;
+  padding: 4px;
+  line-height: 1;
+}
+.arb-warn-close:hover {
+  color: var(--sv-zwart);
+}
+
+/* ============================================================
    ADVIES SAMENVATTING
    ============================================================ */
 

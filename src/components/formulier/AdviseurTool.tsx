@@ -32,6 +32,7 @@ import OptiNetUpgrade from "@/components/resultaat/OptiNetUpgrade";
 import SpeelMetProfiel from "@/components/resultaat/SpeelMetProfiel";
 import ScenarioTabel from "@/components/resultaat/ScenarioTabel";
 import AdviesSamenvatting from "@/components/resultaat/AdviesSamenvatting";
+import ArbitrageWaarschuwing from "@/components/resultaat/ArbitrageWaarschuwing";
 import AannamesTab from "@/components/resultaat/AannamesTab";
 import Aannames from "@/components/resultaat/Aannames";
 import { bepaalOptimalisaties } from "@/lib/optimalisaties";
@@ -182,6 +183,7 @@ export default function AdviseurTool() {
             advies={
               <>
                 <AdviesSamenvatting result={result} />
+                <ArbitrageWaarschuwing show={!result.hasSolar && result.contract === "dynamisch"} />
                 <div id="sectie-scenario" className="section-reveal"><ScenarioTabel result={result} /></div>
                 <div id="sectie-financieel" className="section-reveal"><FinancieelOverzicht result={result} /></div>
                 <div id="sectie-doelen" className="section-reveal"><DoelMetrics result={result} /></div>

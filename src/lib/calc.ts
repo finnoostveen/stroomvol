@@ -141,6 +141,7 @@ export const GROOTVERBRUIK = {
 
 const ESSENTIAL_LOAD_KW = 1.2;
 const CAPACITEITS_TARIEF = 40;
+const ARBITRAGE_CAPTURE_RATE = 0.65;
 
 // ===================== HELPERS =====================
 
@@ -371,7 +372,7 @@ export function calc(form: FormState, params: CalcParams = {}): CalcResult {
       const arbCycli = hasSolar ? berekenArbitrageCycliMetSolar(surplusMaand, effectiefKwh) : 220;
       const effectieveCycli = Math.min(arbCycli, 365 * 1.5);
       const kwhPerCyclus = Math.min(effectiefKwh * eff, maxBattVermogenKw * 2);
-      jaarBesparingArb = effectieveCycli * kwhPerCyclus * huidigSpread;
+      jaarBesparingArb = effectieveCycli * kwhPerCyclus * huidigSpread * ARBITRAGE_CAPTURE_RATE;
     } else if (contract === "variabel" && form.doel.has("handel")) {
       jaarBesparingArb = effectiefKwh * 20 * prijsFactor;
     }
