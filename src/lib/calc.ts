@@ -242,12 +242,12 @@ export function calc(form: FormState, params: CalcParams = {}): CalcResult {
   const surplusJaar = som(surplusMaand);
 
   // STAP 4: Batterij sizing
+  const dagBasisVerbruik = verbruik / 365; // excl. grootverbruikers
   let aanbevolenKwh: number;
   if (!hasSolar && contract !== "dynamisch") {
     aanbevolenKwh = 5;
   } else if (!hasSolar && contract === "dynamisch") {
-    const dagVerbruikGem = totaalJaar / 365;
-    aanbevolenKwh = Math.max(5, Math.min(dagVerbruikGem * 0.5, 15));
+    aanbevolenKwh = Math.max(5, Math.min(dagBasisVerbruik * 0.5, 15));
   } else {
     const gemDagSurplus = surplusJaar / 365;
     const gemDagVerbruikAvond = (totaalJaar / 365) * 0.5;
@@ -255,9 +255,8 @@ export function calc(form: FormState, params: CalcParams = {}): CalcResult {
     aanbevolenKwh = Math.max(aanbevolenKwh, 5);
   }
   if (contract === "dynamisch") {
-    // Minimum gebaseerd op dagverbruik, niet een vaste 10 kWh
-    const dagVerbruikGemDyn = totaalJaar / 365;
-    const dynamischMinimum = Math.max(Math.round(dagVerbruikGemDyn * 0.8), 5);
+    // Minimum gebaseerd op BASISverbruik (excl. grootverbruikers)
+    const dynamischMinimum = Math.max(Math.round(dagBasisVerbruik * 0.8), 5);
     aanbevolenKwh = Math.max(aanbevolenKwh, dynamischMinimum);
   }
 
@@ -270,7 +269,7 @@ export function calc(form: FormState, params: CalcParams = {}): CalcResult {
   const maxKwhVoorNet = maxKwNet * 2;
   aanbevolenKwh = Math.min(aanbevolenKwh, maxKwhVoorNet);
   aanbevolenKwh = Math.round(aanbevolenKwh / 5) * 5;
-  aanbevolenKwh = Math.max(5, Math.min(30, aanbevolenKwh));
+  aanbevolenKwh = Math.max(5, Math.min(20, aanbevolenKwh));
 
   const usableKwh = aanbevolenKwh * dod;
   const maxBattVermogenKw = Math.min(usableKwh / 2, maxKwNet * 0.7);
