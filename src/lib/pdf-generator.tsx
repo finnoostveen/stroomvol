@@ -617,6 +617,131 @@ function FinancieelPage({ calc: r }: { calc: CalcResult }) {
 }
 
 /* ============================================================
+   PAGINA 4: SCENARIO'S + ADVIES
+   ============================================================ */
+
+const c4 = StyleSheet.create({
+  sectionTitle: { fontFamily: "Lexend", fontWeight: 700, fontSize: 14, color: K.zwart, marginBottom: 12 },
+
+  // Scenario tabel
+  tableHeader: {
+    flexDirection: "row",
+    paddingVertical: 6,
+    borderBottomWidth: 1,
+    borderBottomColor: K.zwart,
+  },
+  tableHeaderCell: { fontSize: 8, color: K.grijsDonker, textTransform: "uppercase", letterSpacing: 0.5, fontWeight: 700 },
+  tableRow: { flexDirection: "row", paddingVertical: 8, borderBottomWidth: 0.5, borderBottomColor: K.grijs },
+  tableRowHl: { flexDirection: "row", paddingVertical: 8, borderBottomWidth: 0.5, borderBottomColor: K.grijs, backgroundColor: K.krijt },
+  cellScenario: { width: "22%" },
+  cellBesp: { width: "20%", textAlign: "right" },
+  cellTvt: { width: "22%", textAlign: "right" },
+  cellTotaal: { width: "20%", textAlign: "right" },
+  cellNetto: { width: "16%", textAlign: "right" },
+  cellText: { fontSize: 10 },
+  cellTextBold: { fontSize: 10, fontWeight: 700 },
+
+  // Advies blok
+  adviesBlok: {
+    marginTop: 24,
+    flexDirection: "row",
+    backgroundColor: K.krijt,
+    borderRadius: 6,
+    overflow: "hidden",
+  },
+  adviesBar: { width: 4, backgroundColor: K.groen },
+  adviesContent: { flex: 1, padding: 16 },
+  adviesTitle: { fontFamily: "Lexend", fontWeight: 700, fontSize: 12, color: K.zwart, marginBottom: 8 },
+  adviesText: { fontSize: 10, color: K.grafiet, lineHeight: 1.6 },
+
+  // Volgende stappen
+  stappenWrap: { marginTop: 24 },
+  stappenTitle: { fontFamily: "Lexend", fontWeight: 700, fontSize: 12, color: K.zwart, marginBottom: 10 },
+  stapRow: { flexDirection: "row", marginBottom: 6, gap: 8 },
+  stapNr: { fontFamily: "Lexend", fontWeight: 700, fontSize: 10, color: K.volt, width: 16 },
+  stapText: { fontSize: 10, color: K.grafiet, flex: 1 },
+});
+
+function ScenarioPage({ calc: r }: { calc: CalcResult }) {
+  const tvtCons = berekenCumulatieveTvt(r.cons, r.investering);
+  const tvtReal = berekenCumulatieveTvt(r.real, r.investering);
+  const tvtOpti = berekenCumulatieveTvt(r.opti, r.investering);
+
+  const rows = [
+    { label: "Conservatief", sc: r.cons, tvt: tvtCons, hl: false },
+    { label: "Realistisch", sc: r.real, tvt: tvtReal, hl: true },
+    { label: "Optimistisch", sc: r.opti, tvt: tvtOpti, hl: false },
+  ];
+
+  const nw = r.real.nettoWinst;
+
+  return (
+    <BrandedPage>
+      {/* A. Scenariotabel */}
+      <Text style={c4.sectionTitle}>Terugverdienscenario{"\u2019"}s</Text>
+
+      <View style={c4.tableHeader}>
+        <Text style={[c4.tableHeaderCell, c4.cellScenario]}>Scenario</Text>
+        <Text style={[c4.tableHeaderCell, c4.cellBesp]}>Besp./jaar</Text>
+        <Text style={[c4.tableHeaderCell, c4.cellTvt]}>TVT</Text>
+        <Text style={[c4.tableHeaderCell, c4.cellTotaal]}>Totaal 15 jr</Text>
+        <Text style={[c4.tableHeaderCell, c4.cellNetto]}>Netto winst</Text>
+      </View>
+
+      {rows.map((row) => (
+        <View key={row.label} style={row.hl ? c4.tableRowHl : c4.tableRow}>
+          <Text style={[row.hl ? c4.cellTextBold : c4.cellText, c4.cellScenario]}>{row.label}</Text>
+          <Text style={[row.hl ? c4.cellTextBold : c4.cellText, c4.cellBesp]}>
+            {"\u20AC"}{fmt(Math.round(row.sc.total15 / 15))}
+          </Text>
+          <Text style={[row.hl ? c4.cellTextBold : c4.cellText, c4.cellTvt]}>
+            {formatTvt(row.tvt)}
+          </Text>
+          <Text style={[row.hl ? c4.cellTextBold : c4.cellText, c4.cellTotaal]}>
+            {"\u20AC"}{fmt(row.sc.total15)}
+          </Text>
+          <Text style={[row.hl ? c4.cellTextBold : c4.cellText, c4.cellNetto, { color: row.sc.nettoWinst >= 0 ? K.groen : "#FF3B30" }]}>
+            {row.sc.nettoWinst >= 0 ? "+" : ""}{"\u20AC"}{fmt(row.sc.nettoWinst)}
+          </Text>
+        </View>
+      ))}
+
+      {/* B. Positief advies-blok */}
+      <View style={c4.adviesBlok}>
+        <View style={c4.adviesBar} />
+        <View style={c4.adviesContent}>
+          <Text style={c4.adviesTitle}>Ons advies</Text>
+          <Text style={c4.adviesText}>
+            Met een thuisbatterij van {r.aanbevolenKwh} kWh benut je {r.hasSolar ? `${r.zelfPctMet}% van je eigen zonnestroom en verdien` : "verdien"} je de investering terug in {formatTvt(tvtReal)}.
+            Na de terugverdientijd is elke besparing pure winst.
+          </Text>
+          <Text style={[c4.adviesText, { marginTop: 8 }]}>
+            In het realistisch scenario levert de batterij over 15 jaar {"\u20AC"}{fmt(nw)} netto op.
+          </Text>
+        </View>
+      </View>
+
+      {/* C. Volgende stappen */}
+      <View style={c4.stappenWrap}>
+        <Text style={c4.stappenTitle}>Volgende stappen</Text>
+        <View style={c4.stapRow}>
+          <Text style={c4.stapNr}>1.</Text>
+          <Text style={c4.stapText}>Heb je vragen? Neem contact op met je adviseur.</Text>
+        </View>
+        <View style={c4.stapRow}>
+          <Text style={c4.stapNr}>2.</Text>
+          <Text style={c4.stapText}>Klaar om te starten? Vraag een vrijblijvende offerte aan.</Text>
+        </View>
+        <View style={c4.stapRow}>
+          <Text style={c4.stapNr}>3.</Text>
+          <Text style={c4.stapText}>Na akkoord plannen we de installatie op een moment dat jou uitkomt.</Text>
+        </View>
+      </View>
+    </BrandedPage>
+  );
+}
+
+/* ============================================================
    DOCUMENT
    ============================================================ */
 
@@ -638,6 +763,7 @@ export function AdviesRapport({ calc, klant }: { calc: CalcResult; klant: PdfDat
       <CoverPage calc={calc} klant={klant} />
       <DoelenPage calc={calc} />
       <FinancieelPage calc={calc} />
+      <ScenarioPage calc={calc} />
     </Document>
   );
 }
