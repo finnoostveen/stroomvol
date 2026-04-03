@@ -12,6 +12,7 @@ import type { ReactNode } from "react";
 import type { CalcResult } from "./calc";
 import { fmt } from "./calc";
 import { berekenCumulatieveTvt, formatTvt } from "./helpers";
+import { berekenSalderingImpact } from "@/components/resultaat/SalderingImpact";
 
 /* ============================================================
    FONT REGISTRATION
@@ -612,6 +613,48 @@ const c3 = StyleSheet.create({
   scenarioUitlegText: { fontFamily: "DM Sans", fontSize: 9, color: K.grafiet, lineHeight: 1.5 },
 });
 
+const cSald = StyleSheet.create({
+  wrap: { marginTop: 16, marginBottom: 4 },
+  title: { fontFamily: "Lexend", fontWeight: 700, fontSize: 11, color: K.zwart, marginBottom: 8 },
+  row: { flexDirection: "row", justifyContent: "space-between", paddingVertical: 5, borderBottomWidth: 0.5, borderBottomColor: K.grijs },
+  rowLabel: { fontSize: 9, color: K.grafiet, width: "55%" },
+  rowVal: { fontSize: 9, fontWeight: 700, color: K.zwart, width: "22%", textAlign: "right" },
+  rowExtra: { fontSize: 9, width: "23%", textAlign: "right" },
+  footer: { fontSize: 8, color: K.grafiet, marginTop: 8, lineHeight: 1.5 },
+});
+
+function SalderingBlok({ calc: r }: { calc: CalcResult }) {
+  const d = berekenSalderingImpact(r);
+  return (
+    <View style={cSald.wrap}>
+      <Text style={cSald.title}>Impact afschaffing saldering (per 1 januari 2027)</Text>
+      <View style={[cSald.row, { borderBottomWidth: 1, borderBottomColor: K.zwart }]}>
+        <Text style={[cSald.rowLabel, { fontSize: 8, color: K.grijsDonker, textTransform: "uppercase" }]}> </Text>
+        <Text style={[cSald.rowVal, { fontSize: 8, color: K.grijsDonker, textTransform: "uppercase" }]}>Kosten/jaar</Text>
+        <Text style={[cSald.rowExtra, { fontSize: 8, color: K.grijsDonker, textTransform: "uppercase" }]}>Impact</Text>
+      </View>
+      <View style={cSald.row}>
+        <Text style={cSald.rowLabel}>Met saldering (2026)</Text>
+        <Text style={cSald.rowVal}>{"\u20AC"}{fmt(d.jaarKostenMetSaldering)}</Text>
+        <Text style={cSald.rowExtra}> </Text>
+      </View>
+      <View style={cSald.row}>
+        <Text style={cSald.rowLabel}>Zonder saldering, zonder batterij</Text>
+        <Text style={cSald.rowVal}>{"\u20AC"}{fmt(d.jaarKostenZonderSalderingZonderBatt)}</Text>
+        <Text style={[cSald.rowExtra, { color: "#FF3B30" }]}>+{"\u20AC"}{fmt(d.extraKostenDoorAfschaffing)}/jr</Text>
+      </View>
+      <View style={cSald.row}>
+        <Text style={cSald.rowLabel}>Zonder saldering, met batterij</Text>
+        <Text style={cSald.rowVal}>{"\u20AC"}{fmt(d.jaarKostenZonderSalderingMetBatt)}</Text>
+        <Text style={[cSald.rowExtra, { color: K.groen }]}>{"\u2212\u20AC"}{fmt(d.besparingDoorBatterij)}/jr</Text>
+      </View>
+      <Text style={cSald.footer}>
+        De batterij beschermt je tegen {"\u20AC"}{fmt(d.extraKostenDoorAfschaffing)}/jaar aan extra kosten door het einde van de salderingsregeling.
+      </Text>
+    </View>
+  );
+}
+
 function FinancieelPage({ calc: r }: { calc: CalcResult }) {
   const n = r.real.perJaar.length;
   const gem = {
@@ -653,7 +696,10 @@ function FinancieelPage({ calc: r }: { calc: CalcResult }) {
         <Text style={c3.bdownTotalVal}>{"\u20AC"}{fmt(gem.totaal)}/jaar</Text>
       </View>
 
-      {/* B. 15-jaar overzicht */}
+      {/* B. Saldering impact */}
+      {r.hasSolar && <SalderingBlok calc={r} />}
+
+      {/* C. 15-jaar overzicht */}
       <View style={c3.overzichtWrap}>
         <Text style={[c3.sectionTitle, { marginBottom: 8 }]}>15-jaar overzicht</Text>
         <View style={c3.overzichtRow}>
@@ -672,7 +718,7 @@ function FinancieelPage({ calc: r }: { calc: CalcResult }) {
         </View>
       </View>
 
-      {/* C. Terugverdienscenario's */}
+      {/* D. Terugverdienscenario's */}
       <Text style={[c3.sectionTitle, { marginTop: 4 }]}>Terugverdienscenario{"\u2019"}s</Text>
 
       {/* Uitleg */}
