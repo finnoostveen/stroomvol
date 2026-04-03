@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import type { TabId } from "@/components/resultaat/ContentArea";
 import type { FormState, Stap } from "./types";
 import { initialFormState } from "./types";
@@ -32,6 +32,7 @@ import ScenarioTabel from "@/components/resultaat/ScenarioTabel";
 import AdviesSamenvatting from "@/components/resultaat/AdviesSamenvatting";
 import AannamesTab from "@/components/resultaat/AannamesTab";
 import Aannames from "@/components/resultaat/Aannames";
+import { bepaalOptimalisaties } from "@/lib/optimalisaties";
 
 const STAP_LABELS = [
   "Klant & Adviseur",
@@ -149,6 +150,11 @@ export default function AdviseurTool() {
     }
   }, [activeTab]);
 
+  const optimalisaties = useMemo(
+    () => (result ? bepaalOptimalisaties(result, form, params) : []),
+    [result, form, params],
+  );
+
   /* ===================== RESULTAATSCHERM ===================== */
   if (result) {
     return (
@@ -163,6 +169,7 @@ export default function AdviseurTool() {
             onAanpassen={() => setActiveTab("scenarios")}
             onDownloadPdf={handleDownloadPdf}
             onScrollToSection={scrollNaarSectie}
+            optimalisaties={optimalisaties}
             pdfLoading={pdfLoading}
           />
 

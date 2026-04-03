@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import type { CalcResult } from "@/lib/calc";
 import { fmt } from "@/lib/calc";
+import type { Optimalisatie } from "@/lib/optimalisaties";
 import InfoTip from "./InfoTip";
 import { berekenCumulatieveTvt, formatTvt } from "@/lib/helpers";
 
@@ -35,10 +36,11 @@ interface Props {
   onAanpassen: () => void;
   onDownloadPdf: () => void;
   onScrollToSection: (id: string, tab: string) => void;
+  optimalisaties: Optimalisatie[];
   pdfLoading?: boolean;
 }
 
-export default function SidePanel({ result: c, klantNaam, datum, onTerug, onAanpassen, onDownloadPdf, onScrollToSection, pdfLoading }: Props) {
+export default function SidePanel({ result: c, klantNaam, datum, onTerug, onAanpassen, onDownloadPdf, onScrollToSection, optimalisaties, pdfLoading }: Props) {
   const tvt = berekenCumulatieveTvt(c.real, c.investering);
   const gemBesparing = Math.round(c.real.total15 / 15);
 
@@ -126,6 +128,40 @@ export default function SidePanel({ result: c, klantNaam, datum, onTerug, onAanp
       </div>
 
       <div className="side-divider" />
+
+      {/* Optimalisaties */}
+      {optimalisaties.length > 0 && (
+        <>
+          <div className="opti-header">
+            <span className="opti-header-label">OPTIMALISATIES</span>
+            <span className="opti-badge">{optimalisaties.length}</span>
+          </div>
+          {optimalisaties.map((o) => (
+            <div
+              key={o.id}
+              className="opti-item"
+              role="button"
+              tabIndex={0}
+              title={o.reden}
+              onClick={() => {
+                onScrollToSection(o.sectieId, o.tab);
+                setTimeout(() => {
+                  const el = document.getElementById(o.sectieId);
+                  if (el) {
+                    el.classList.add("highlighted");
+                    setTimeout(() => el.classList.remove("highlighted"), 1500);
+                  }
+                }, 150);
+              }}
+            >
+              <span className="opti-dot" />
+              <span className="opti-label">{o.label}</span>
+              <span className="opti-arrow">&rsaquo;</span>
+            </div>
+          ))}
+          <div className="side-divider" />
+        </>
+      )}
 
       {/* Acties */}
       <button
