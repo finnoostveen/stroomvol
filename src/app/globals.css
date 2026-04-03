@@ -933,6 +933,125 @@ body {
 }
 
 /* ============================================================
+   JOUW DAG SIMULATOR
+   ============================================================ */
+
+.sv-adv .jd-wrap {
+  margin-bottom: 20px;
+}
+
+.sv-adv .jd-toggle {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.sv-adv .jd-btn {
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid rgba(0,0,0,0.1);
+  background: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--sv-text-muted);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.sv-adv .jd-btn:hover {
+  border-color: var(--sv-volt);
+  color: var(--sv-text);
+}
+
+.sv-adv .jd-btn.active {
+  background: var(--sv-volt);
+  border-color: var(--sv-volt);
+  color: #0A0A0A;
+  font-weight: 600;
+}
+
+.sv-adv .jd-svg {
+  width: 100%;
+  height: auto;
+  margin-bottom: 8px;
+}
+
+.sv-adv .jd-legenda {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.sv-adv .jd-leg {
+  font-size: 12px;
+  color: var(--sv-text-muted);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.sv-adv .jd-leg-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  display: inline-block;
+}
+
+.sv-adv .jd-ticker {
+  background: #FAFAF8;
+  border: 1px solid rgba(0,0,0,0.06);
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 12px;
+  min-height: 42px;
+}
+
+.sv-adv .jd-ticker-text {
+  font-size: 13px;
+  color: var(--sv-text);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.sv-adv .jd-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sv-adv .jd-play {
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid rgba(0,0,0,0.1);
+  background: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+
+.sv-adv .jd-play:hover {
+  border-color: var(--sv-volt);
+}
+
+.sv-adv .jd-slider {
+  flex: 1;
+  accent-color: var(--sv-volt);
+}
+
+.sv-adv .jd-hour {
+  font-size: 14px;
+  font-weight: 600;
+  font-family: var(--sv-font-heading), 'Lexend', sans-serif;
+  color: var(--sv-text);
+  min-width: 42px;
+  text-align: right;
+}
+
+/* ============================================================
    MAANDKALENDER
    ============================================================ */
 
