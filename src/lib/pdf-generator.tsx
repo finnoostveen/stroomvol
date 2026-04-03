@@ -176,101 +176,46 @@ function fmtNl(n: number): string {
 function genereerAdviesTekst(r: CalcResult, form: FormState): string[] {
   const alineas: string[] = [];
   const tvt = berekenCumulatieveTvt(r.real, r.investering);
+  const rendementPct = Math.round((r.real.total15 / 15) / r.investering * 100);
 
-  // Alinea 1: Kernadvies (altijd)
-  const profielLabel =
-    form.profiel === "avond-zwaar" ? "avondgerichte verbruiksprofiel" :
-    form.profiel === "overdag" ? "verbruiksprofiel met overdag-activiteit" :
-    form.profiel === "ev-nacht" ? "verbruiksprofiel met nachtelijk EV-laden" :
-    "verbruiksprofiel";
+  // Alinea 1: Kernadvies + financieel (altijd)
   alineas.push(
-    `Op basis van jouw verbruik van ${fmtNl(r.totaalVerbruik)} kWh per jaar ` +
-    `en jouw ${profielLabel} ` +
-    `adviseren wij een thuisbatterij van ${r.aanbevolenKwh} kWh. ` +
-    `De investering van \u20AC${fmtNl(r.investering)} verdien je terug in ${formatTvt(tvt)}. ` +
-    `Daarna is elke besparing pure winst.`
+    `Met een thuisbatterij van ${r.aanbevolenKwh} kWh verdien je de investering van ` +
+    `\u20AC${fmtNl(r.investering)} terug in ${formatTvt(tvt)}. Over 15 jaar levert dit netto ` +
+    `\u20AC${fmtNl(r.real.nettoWinst)} op \u2014 een gemiddeld rendement van ${rendementPct}% per jaar.`
   );
 
   // Alinea 2: Energie-onafhankelijkheid (als solar)
   if (r.hasSolar) {
     const suffix =
-      r.zelfPctMet >= 70 ? "je bent grotendeels onafhankelijk van het energienet." :
-      r.zelfPctMet >= 50 ? "meer dan de helft van je stroom komt van je eigen dak." :
-      "een flinke stap richting energieonafhankelijkheid.";
+      r.zelfPctMet >= 70 ? "Je bent daarmee grotendeels onafhankelijk van het energienet." :
+      r.zelfPctMet >= 50 ? "Meer dan de helft van je stroom komt van je eigen dak." :
+      "Een stevige stap richting energieonafhankelijkheid.";
     alineas.push(
-      `Met de batterij stijgt je energie-onafhankelijkheid van ${r.zelfPctZonder}% naar ${r.zelfPctMet}%. ` +
-      `Dat betekent dat ${r.zelfPctMet}% van je verbruik uit eigen zonnestroom komt \u2014 ${suffix}`
+      `Je benut ${r.zelfPctMet}% van je eigen zonnestroom \u2014 dat was ${r.zelfPctZonder}% zonder batterij. ${suffix}`
     );
   }
 
-  // Alinea 3: Doelen bereikt
-  const doelTeksten: string[] = [];
-  if (r.zelfPctMet >= 60) doelTeksten.push(`zelfconsumptie maximaliseren (${r.zelfPctMet}%)`);
-  if (r.contract === "dynamisch" && r.real.perJaar[0]?.arb > 0) {
-    doelTeksten.push(`slim handelen op de energiemarkt (\u20AC${fmt(r.real.perJaar[0].arb)}/jaar)`);
-  }
-  if (r.noodstroomUren >= 4) doelTeksten.push(`noodstroom bij stroomuitval (${r.noodstroomUren} uur)`);
-  if (r.peakReductieKw > 0 && r.doel.has("peak")) doelTeksten.push("piekverbruik beperken");
-  if (doelTeksten.length > 0) {
-    const joined = doelTeksten.length > 1
-      ? doelTeksten.slice(0, -1).join(", ") + ` en ${doelTeksten[doelTeksten.length - 1]}`
-      : doelTeksten[0];
-    alineas.push(`De batterij helpt je bij het bereiken van jouw doelen: ${joined}.`);
-  }
-
-  // Alinea 4: Financieel rendement
-  const rendementPct = Math.round((r.real.total15 / 15) / r.investering * 100);
-  const rendementSuffix =
-    rendementPct > 10 ? "ruim beter dan een spaarrekening of de meeste beleggingen." :
-    rendementPct > 5 ? "beter dan een spaarrekening." :
-    "vergelijkbaar met een spaarrekening maar met het extra voordeel van energieonafhankelijkheid.";
-  alineas.push(
-    `In het realistisch scenario levert de batterij over 15 jaar \u20AC${fmtNl(r.real.total15)} op \u2014 ` +
-    `netto \u20AC${fmtNl(r.real.nettoWinst)} winst na aftrek van de investering. ` +
-    `Dat komt neer op een gemiddeld rendement van ${rendementPct}% per jaar, ${rendementSuffix}`
-  );
-
-  // Alinea 5: Saldering context (als solar)
-  if (r.hasSolar) {
-    alineas.push(
-      `Vanaf 2027 stopt de salderingsregeling. Zonder batterij ontvang je voor teruggeleverde stroom ` +
-      `nog slechts \u20AC${r.terug.toFixed(2)}/kWh in plaats van het volle tarief. ` +
-      `De batterij beschermt je hiertegen door zoveel mogelijk stroom zelf te gebruiken in plaats van terug te leveren.`
-    );
-  }
-
-  // Alinea 6: Profiel-specifieke tip
+  // Alinea 3: Eén contextuele zin (eerste match)
   if (form.profiel === "avond-zwaar") {
     alineas.push(
-      `Omdat jij het meeste stroom \u2019s avonds verbruikt terwijl de zon overdag schijnt, ` +
-      `heeft de batterij bij jouw profiel extra veel impact. De batterij overbrugt precies dat gat ` +
-      `tussen opwek en verbruik.`
-    );
-  } else if (form.profiel === "overdag") {
-    alineas.push(
-      `Doordat je overdag thuis bent en al veel zonnestroom direct verbruikt, ` +
-      `is de batterij vooral waardevol voor de avonduren en bewolkte dagen.`
+      "Jouw avondprofiel matcht minimaal met de zon \u2014 juist daar overbrugt de batterij het gat en heeft hij het meeste impact."
     );
   } else if (form.profiel === "ev-nacht" && r.heeftEv) {
     alineas.push(
-      `De batterij laadt overdag op met zonnestroom en levert deze \u2019s nachts aan je elektrische auto. ` +
-      `Zo rijd je op eigen zonnestroom \u2014 goedkoper en groener dan laden van het net.`
+      "De batterij laadt overdag op met zonnestroom en levert deze \u2019s nachts aan je auto. Zo rijd je op eigen opwek."
     );
-  }
-
-  // Alinea 7: Batterijlevensduur
-  const cycli = Math.round(r.cycliPerJaar);
-  if (r.jarenTot80Pct >= 12) {
+  } else if (r.contract === "dynamisch" && r.real.perJaar[0]?.arb > 0) {
     alineas.push(
-      `De verwachte levensduur van de batterij is ${Math.round(r.jarenTot80Pct)} jaar tot 80% capaciteit ` +
-      `bij het berekende gebruik van ~${cycli} cycli per jaar. ` +
-      `Dat betekent dat de batterij ruim voorbij de terugverdientijd optimaal presteert.`
+      "Door slim te handelen op dynamische uurprijzen verdient de batterij ook buiten de zonne-uren actief voor je."
     );
-  } else if (r.jarenTot80Pct >= 8) {
+  } else if (!r.hasSolar) {
     alineas.push(
-      `Bij ~${cycli} cycli per jaar heeft de batterij een verwachte levensduur van ` +
-      `${Math.round(r.jarenTot80Pct)} jaar tot 80% capaciteit. De batterij verdient zichzelf terug ` +
-      `ruim binnen die levensduur.`
+      "De batterij verdient zichzelf terug door slim in te kopen bij lage prijzen en te gebruiken bij hoge prijzen."
+    );
+  } else {
+    alineas.push(
+      "De batterij beschermt je tegen stijgende energieprijzen en het wegvallen van de salderingsregeling."
     );
   }
 
