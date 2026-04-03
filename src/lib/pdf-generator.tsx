@@ -339,6 +339,14 @@ const c2 = StyleSheet.create({
   onafhDot: { width: 8, height: 8, borderRadius: 4, marginRight: 8 },
   onafhLabel: { fontSize: 10, color: K.grafiet },
   onafhFooter: { fontSize: 9, color: K.grijsDonker, marginTop: 12 },
+
+  // Verbruiksprofiel
+  profielBlok: {
+    backgroundColor: K.krijt,
+    borderRadius: 6,
+    padding: 12,
+    marginTop: 16,
+  },
 });
 
 interface DoelRij {
@@ -346,6 +354,25 @@ interface DoelRij {
   status: string;
   statusKleur: "groen" | "volt" | "amber" | "grijs";
   resultaat: string;
+}
+
+function profielNaam(p: string): string {
+  const namen: Record<string, string> = { standaard: "Standaard", "avond-zwaar": "Avondzwaar", overdag: "Overdag thuis", "ev-nacht": "EV nachtladen" };
+  return namen[p] || "Standaard";
+}
+
+function profielInsightPdf(profiel: string, zonder: number, met: number): string {
+  const v = met - zonder;
+  switch (profiel) {
+    case "avond-zwaar":
+      return `Jouw avondprofiel matcht minimaal met de zonne-opbrengst \u2014 slechts ${zonder}% wordt direct benut. De batterij tilt dit naar ${met}%, een verbetering van ${v} procentpunt.`;
+    case "overdag":
+      return `Je verbruikt al ${zonder}% direct van je zonnestroom \u2014 meer dan gemiddeld. De batterij verhoogt dit naar ${met}%.`;
+    case "ev-nacht":
+      return `Door het nachtelijk laden van je EV slaat de batterij overdag zonnestroom op en levert dit \u2019s nachts. Zelfconsumptie stijgt van ${zonder}% naar ${met}%.`;
+    default:
+      return `Bij jouw verbruiksprofiel wordt ${zonder}% van de zonnestroom direct benut. Met de batterij stijgt dit naar ${met}% \u2014 een verbetering van ${v} procentpunt.`;
+  }
 }
 
 function DoelenPage({ calc: r }: { calc: CalcResult }) {
@@ -436,7 +463,27 @@ function DoelenPage({ calc: r }: { calc: CalcResult }) {
         </View>
       ))}
 
-      {/* B. Onafhankelijkheid */}
+      {/* B. Verbruiksprofiel */}
+      {r.hasSolar && (
+        <View style={c2.profielBlok}>
+          <Text style={[c2.sectionTitle, { marginTop: 20, marginBottom: 4 }]}>
+            Jouw verbruiksprofiel: {profielNaam(r.profiel)}
+          </Text>
+          <Text style={{ fontSize: 9, color: K.grafiet, lineHeight: 1.5, marginBottom: 8 }}>
+            {profielInsightPdf(r.profiel, r.zelfPctZonder, r.zelfPctMet)}
+          </Text>
+          <View style={{ flexDirection: "row", gap: 20 }}>
+            <Text style={{ fontSize: 9, color: K.zwart }}>
+              Direct verbruikt: <Text style={{ fontWeight: 700 }}>{r.zelfPctZonder}%</Text>
+            </Text>
+            <Text style={{ fontSize: 9, color: K.groen }}>
+              Met batterij: <Text style={{ fontWeight: 700 }}>{r.zelfPctMet}%</Text>
+            </Text>
+          </View>
+        </View>
+      )}
+
+      {/* C. Onafhankelijkheid */}
       {r.hasSolar && (
         <>
           <Text style={[c2.sectionTitle, { marginTop: 28 }]}>Energie-onafhankelijkheid</Text>
