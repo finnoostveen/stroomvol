@@ -175,6 +175,7 @@ export default function AdviseurTool() {
             <Spaarrekening result={result} />
             <NietsDoen result={result} />
 
+
             {/* Adviseur notities */}
             <div className="notities-section">
               <div className="notities-header">
