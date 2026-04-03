@@ -16,6 +16,7 @@ import SidePanel from "@/components/resultaat/SidePanel";
 import ContentArea from "@/components/resultaat/ContentArea";
 import DoelMetrics from "@/components/resultaat/DoelMetrics";
 import Onafhankelijkheid from "@/components/resultaat/Onafhankelijkheid";
+import ProfielVisualisatie from "@/components/resultaat/ProfielVisualisatie";
 import StressTest from "@/components/resultaat/StressTest";
 import FinancieelOverzicht from "@/components/resultaat/FinancieelOverzicht";
 import Spaarrekening from "@/components/resultaat/Spaarrekening";
@@ -156,6 +157,7 @@ export default function AdviseurTool() {
                 <div className="section-reveal"><ScenarioTabel result={result} /></div>
                 <div className="section-reveal"><FinancieelOverzicht result={result} /></div>
                 <div className="section-reveal"><DoelMetrics result={result} /></div>
+                <div className="section-reveal"><ProfielVisualisatie result={result} /></div>
                 <div className="section-reveal"><Onafhankelijkheid result={result} /></div>
                 <div className="section-reveal"><Spaarrekening result={result} /></div>
                 <div className="section-reveal"><StressTest result={result} /></div>

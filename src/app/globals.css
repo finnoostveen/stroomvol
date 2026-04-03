@@ -1323,6 +1323,81 @@ body {
 }
 
 /* ============================================================
+   PROFIEL VISUALISATIE
+   ============================================================ */
+
+.pv-chart { display: block; margin-bottom: 12px; }
+
+.pv-legenda {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 20px;
+  font-size: 12px;
+  color: var(--sv-text-sub);
+}
+
+.pv-leg { display: flex; align-items: center; gap: 6px; }
+
+.pv-leg-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.pv-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.pv-metric {
+  text-align: center;
+  padding: 14px 8px;
+  background: var(--sv-krijt);
+  border-radius: 8px;
+}
+
+.pv-metric-val {
+  font-family: var(--sv-font-heading), 'Lexend', sans-serif;
+  font-weight: 700;
+  font-size: 22px;
+  color: var(--sv-text);
+}
+
+.pv-metric-val--groen { color: var(--sv-groen); }
+.pv-metric-val--grijs { color: var(--sv-grijs-donker); }
+
+.pv-metric-label {
+  font-weight: 500;
+  font-size: 12px;
+  color: var(--sv-text);
+  margin-top: 2px;
+}
+
+.pv-metric-sub {
+  font-size: 11px;
+  color: var(--sv-text-muted);
+  margin-top: 2px;
+}
+
+.pv-insight {
+  font-size: 13px;
+  color: var(--sv-grafiet);
+  line-height: 1.6;
+  padding: 12px 16px;
+  background: var(--sv-krijt);
+  border-radius: 8px;
+  border-left: 3px solid var(--sv-groen);
+}
+
+@media (max-width: 480px) {
+  .pv-metrics { grid-template-columns: 1fr; }
+}
+
+/* ============================================================
    JOUW DAG SIMULATOR
    ============================================================ */
 
