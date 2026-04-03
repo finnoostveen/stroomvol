@@ -644,11 +644,6 @@ function SalderingBlok({ calc: r }: { calc: CalcResult }) {
         <Text style={[cSald.rowExtra, { fontSize: 8, color: K.grijsDonker, textTransform: "uppercase" }]}>Impact</Text>
       </View>
       <View style={cSald.row}>
-        <Text style={cSald.rowLabel}>Met saldering (2026)</Text>
-        <Text style={cSald.rowVal}>{"\u20AC"}{fmt(d.jaarKostenMetSaldering)}</Text>
-        <Text style={cSald.rowExtra}> </Text>
-      </View>
-      <View style={cSald.row}>
         <Text style={cSald.rowLabel}>Zonder saldering, zonder batterij</Text>
         <Text style={cSald.rowVal}>{"\u20AC"}{fmt(d.jaarKostenZonderSalderingZonderBatt)}</Text>
         <Text style={[cSald.rowExtra, { color: "#FF3B30" }]}>+{"\u20AC"}{fmt(d.extraKostenDoorAfschaffing)}/jr</Text>

@@ -1341,6 +1341,9 @@ body {
   gap: 12px;
   margin-bottom: 20px;
 }
+.si-grid--two {
+  grid-template-columns: repeat(2, 1fr);
+}
 
 .si-col {
   padding: 16px;

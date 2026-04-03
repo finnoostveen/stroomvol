@@ -60,18 +60,9 @@ export default function SalderingImpact({ result }: Props) {
         </div>
       </div>
 
-      {/* Drie scenario kolommen */}
-      <div className="si-grid">
-        {/* Kolom 1: Huidig */}
-        <div className="si-col si-col--neutral">
-          <div className="si-badge si-badge--neutral">Huidig</div>
-          <div className="si-col-title">Met saldering</div>
-          <div className="si-col-sub">2026</div>
-          <div className="si-kosten-label">Energiekosten</div>
-          <div className="si-kosten-val">&euro;{fmt(d.jaarKostenMetSaldering)}/jaar</div>
-        </div>
-
-        {/* Kolom 2: Zonder batterij */}
+      {/* Twee scenario kolommen */}
+      <div className="si-grid si-grid--two">
+        {/* Zonder batterij */}
         <div className="si-col si-col--rood">
           <div className="si-badge si-badge--rood">Vanaf 2027</div>
           <div className="si-col-title">Zonder batterij</div>
@@ -83,7 +74,7 @@ export default function SalderingImpact({ result }: Props) {
           )}
         </div>
 
-        {/* Kolom 3: Met batterij */}
+        {/* Met batterij */}
         <div className="si-col si-col--groen">
           <div className="si-badge si-badge--groen">Vanaf 2027</div>
           <div className="si-col-title">Met batterij</div>
