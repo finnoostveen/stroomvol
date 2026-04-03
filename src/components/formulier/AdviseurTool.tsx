@@ -160,7 +160,7 @@ export default function AdviseurTool() {
                     </div>
                     <textarea
                       className="notities-textarea"
-                      rows={4}
+                      rows={3}
                       placeholder="Bijv. 'Dak op zuidwest, 6m kabellengte. Klant overweegt overstap naar dynamisch contract.'"
                       value={notities}
                       onChange={(e) => setNotities(e.target.value)}
