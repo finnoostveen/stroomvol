@@ -92,6 +92,19 @@ export default function JouwDag({ result }: Props) {
 
   const data = simuleerDag(result, dagType);
 
+  // Globale schaal: bereken max over ALLE dagtypes zodat staven vergelijkbaar zijn
+  const globalMax = (() => {
+    let max = 0.01;
+    for (const dt of ["zomer", "winter", "stress"] as DagType[]) {
+      const sim = dt === dagType ? data : simuleerDag(result, dt);
+      for (const d of sim) {
+        const total = d.directZon + d.batterijOntlaad + d.batterijLaad + d.vanNet;
+        if (total > max) max = total;
+      }
+    }
+    return max;
+  })();
+
   const stopPlay = useCallback(() => {
     if (intervalRef.current) clearInterval(intervalRef.current);
     intervalRef.current = null;
@@ -126,8 +139,7 @@ export default function JouwDag({ result }: Props) {
   const plotH = H - pad.top - pad.bottom;
   const barW = plotW / 24;
 
-  const maxVal = Math.max(...data.map((d) => d.verbruik), ...data.map((d) => d.solar), 0.01);
-  const yScale = (v: number) => (v / maxVal) * plotH;
+  const yScale = (v: number) => (v / globalMax) * plotH;
 
   return (
     <div className="card jd-wrap">

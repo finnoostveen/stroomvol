@@ -488,29 +488,23 @@ function DoelenPage({ calc: r }: { calc: CalcResult }) {
 
 function SpaarVergelijking({ calc: r }: { calc: CalcResult }) {
   const spaarRente = 0.02;
-  let battWaarde = r.investering;
-  let spaarWaarde = r.investering;
-  for (let j = 0; j < 15; j++) {
-    battWaarde += r.real.perJaar[j].totaal;
-    spaarWaarde *= 1 + spaarRente;
-  }
-  battWaarde = Math.round(battWaarde);
-  spaarWaarde = Math.round(spaarWaarde);
-  const verschil = battWaarde - spaarWaarde;
+  const batterijTotaal = r.real.total15;
+  const spaarTotaal = Math.round(r.investering * Math.pow(1 + spaarRente, 15));
+  const verschil = batterijTotaal - spaarTotaal;
 
   return (
     <View style={{ marginTop: 24 }}>
       <Text style={cSpaar.sectionTitle}>Batterij vs. spaarrekening</Text>
       <View style={cSpaar.spaarGrid}>
         <View style={cSpaar.spaarCardGroen}>
-          <Text style={cSpaar.spaarTitle}>Batterij investering</Text>
-          <Text style={cSpaar.spaarLabel}>Totale waarde na 15 jaar</Text>
-          <Text style={cSpaar.spaarVal}>{"\u20AC"}{fmt(battWaarde)}</Text>
+          <Text style={cSpaar.spaarTitle}>Totale besparing batterij</Text>
+          <Text style={cSpaar.spaarLabel}>Cumulatieve besparing 15 jaar</Text>
+          <Text style={cSpaar.spaarVal}>{"\u20AC"}{fmt(batterijTotaal)}</Text>
         </View>
         <View style={cSpaar.spaarCard}>
-          <Text style={cSpaar.spaarTitle}>Spaarrekening (2%)</Text>
-          <Text style={cSpaar.spaarLabel}>Totale waarde na 15 jaar</Text>
-          <Text style={cSpaar.spaarVal}>{"\u20AC"}{fmt(spaarWaarde)}</Text>
+          <Text style={cSpaar.spaarTitle}>Eindsaldo spaarrekening</Text>
+          <Text style={cSpaar.spaarLabel}>{"\u20AC"}{fmt(r.investering)} × 1,02^15</Text>
+          <Text style={cSpaar.spaarVal}>{"\u20AC"}{fmt(spaarTotaal)}</Text>
         </View>
       </View>
       {verschil > 0 && (

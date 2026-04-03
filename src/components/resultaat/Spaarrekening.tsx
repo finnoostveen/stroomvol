@@ -10,23 +10,24 @@ const SPAARRENTE = 0.02;
 
 function berekenVergelijking(investering: number, perJaarData: JaarBesparing[]) {
   const jaren = [];
-  let batterijWaarde = investering;
+  let cumulatiefBatterij = 0;
   let spaarWaarde = investering;
 
   for (let j = 0; j < 15; j++) {
-    batterijWaarde += perJaarData[j].totaal;
+    cumulatiefBatterij += perJaarData[j].totaal;
     spaarWaarde *= 1 + SPAARRENTE;
     jaren.push({
       jaar: j + 1,
-      batterijWaarde: Math.round(batterijWaarde),
+      batterijWaarde: Math.round(cumulatiefBatterij),
       spaarWaarde: Math.round(spaarWaarde),
     });
   }
 
-  const verschil = jaren[14].batterijWaarde - jaren[14].spaarWaarde;
-  const factorBeter = Math.round((jaren[14].batterijWaarde / Math.max(jaren[14].spaarWaarde, 1)) * 10) / 10;
+  const batterijTotaal = jaren[14].batterijWaarde;
+  const spaarTotaal = jaren[14].spaarWaarde;
+  const verschil = batterijTotaal - spaarTotaal;
 
-  return { jaren, investering, batterijTotaal: jaren[14].batterijWaarde, spaarTotaal: jaren[14].spaarWaarde, verschil, factorBeter };
+  return { jaren, investering, batterijTotaal, spaarTotaal, verschil };
 }
 
 const nlEuro = (n: number) => n.toLocaleString("nl-NL", { maximumFractionDigits: 0 });
@@ -50,11 +51,11 @@ function LineChart({ jaren, investering }: { jaren: { jaar: number; batterijWaar
   const x = (jaar: number) => padL + (jaar / 15) * plotW;
   const y = (val: number) => padT + plotH - (val / yMax) * plotH;
 
-  // Batterij pad (start bij investering)
-  const battPoints = [{ jaar: 0, val: investering }, ...jaren.map((j) => ({ jaar: j.jaar, val: j.batterijWaarde }))];
+  // Batterij pad (start bij €0, groeit met cumulatieve besparing)
+  const battPoints = [{ jaar: 0, val: 0 }, ...jaren.map((j) => ({ jaar: j.jaar, val: j.batterijWaarde }))];
   const battPath = battPoints.map((p, i) => `${i === 0 ? "M" : "L"}${x(p.jaar)},${y(p.val)}`).join(" ");
 
-  // Spaar pad (start bij investering)
+  // Spaar pad (start bij investering, groeit met 2% rente)
   const spaarPoints = [{ jaar: 0, val: investering }, ...jaren.map((j) => ({ jaar: j.jaar, val: j.spaarWaarde }))];
   const spaarPath = spaarPoints.map((p, i) => `${i === 0 ? "M" : "L"}${x(p.jaar)},${y(p.val)}`).join(" ");
 
@@ -115,7 +116,7 @@ export default function Spaarrekening({ result }: Props) {
         <LineChart jaren={data.jaren} investering={data.investering} />
         <div className="spaar-legend">
           <span className="spaar-legend-item">
-            <span className="spaar-legend-line spaar-legend-line--batt" /> Batterij investering
+            <span className="spaar-legend-line spaar-legend-line--batt" /> Batterij besparing
           </span>
           <span className="spaar-legend-item">
             <span className="spaar-legend-line spaar-legend-line--spaar" /> Spaarrekening (2%)
@@ -126,21 +127,21 @@ export default function Spaarrekening({ result }: Props) {
       {/* Twee kaarten */}
       <div className="r2" style={{ marginBottom: 16 }}>
         <div className="spaar-total spaar-total--batt">
-          <div className="spaar-total-label">Totale waarde na 15 jaar</div>
+          <div className="spaar-total-label">Totale besparing batterij</div>
           <div className="spaar-total-val">&euro;{nlEuro(data.batterijTotaal)}</div>
-          <div className="spaar-total-sub">Met batterij investering</div>
+          <div className="spaar-total-sub">Cumulatieve besparing over 15 jaar</div>
         </div>
         <div className="spaar-total spaar-total--spaar">
-          <div className="spaar-total-label">Totale waarde na 15 jaar</div>
+          <div className="spaar-total-label">Eindsaldo spaarrekening</div>
           <div className="spaar-total-val">&euro;{nlEuro(data.spaarTotaal)}</div>
-          <div className="spaar-total-sub">Met spaarrekening (2%)</div>
+          <div className="spaar-total-sub">&euro;{nlEuro(data.investering)} × 1,02^15</div>
         </div>
       </div>
 
       {/* Footer */}
-      {data.batterijTotaal > data.spaarTotaal ? (
+      {data.verschil > 0 ? (
         <div className="spaar-footer">
-          &euro;{nlEuro(data.verschil)} meer rendement — Batterij investering levert {data.factorBeter}x meer op dan sparen
+          &euro;{nlEuro(data.verschil)} meer rendement met de batterij dan op de spaarrekening
         </div>
       ) : (
         <div className="spaar-footer spaar-footer--neutral">
