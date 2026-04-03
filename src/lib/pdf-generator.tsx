@@ -14,6 +14,7 @@ import { calc as runCalc, fmt } from "./calc";
 import type { CalcParams } from "./calc";
 import type { FormState } from "@/components/formulier/types";
 import { berekenCumulatieveTvt, formatTvt } from "./helpers";
+import { bepaalOptimalisaties, type Optimalisatie } from "./optimalisaties";
 import { berekenSalderingImpact } from "@/components/resultaat/SalderingImpact";
 
 /* ============================================================
@@ -228,9 +229,22 @@ const c1 = StyleSheet.create({
   adviesContent: { flex: 1, padding: 14 },
   adviesTitle: { fontFamily: "Lexend", fontWeight: 700, fontSize: 11, color: K.zwart, marginBottom: 6 },
   adviesText: { fontSize: 9, color: K.grafiet, lineHeight: 1.6 },
+
+  // Optimalisatieblok
+  optiWrap: {
+    marginTop: 12,
+    backgroundColor: K.krijt,
+    borderRadius: 6,
+    padding: 12,
+  },
+  optiTitle: { fontFamily: "Lexend", fontWeight: 700, fontSize: 10, color: K.zwart, marginBottom: 6 },
+  optiRow: { flexDirection: "row", alignItems: "flex-start", marginBottom: 4, gap: 6 },
+  optiDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: "#FF9500", marginTop: 3, flexShrink: 0 },
+  optiText: { fontSize: 9, color: K.grafiet, lineHeight: 1.5, flex: 1 },
+  optiBold: { fontWeight: 700, color: K.zwart },
 });
 
-function CoverPage({ calc: r, klant }: { calc: CalcResult; klant: PdfData }) {
+function CoverPage({ calc: r, klant, optimalisaties }: { calc: CalcResult; klant: PdfData; optimalisaties: Optimalisatie[] }) {
   const tvt = berekenCumulatieveTvt(r.real, r.investering);
   const gemBesparing = Math.round(r.real.total15 / 15);
 
@@ -300,6 +314,21 @@ function CoverPage({ calc: r, klant }: { calc: CalcResult; klant: PdfData }) {
           </Text>
         </View>
       </View>
+
+      {/* E. Optimalisatiemogelijkheden */}
+      {optimalisaties.length > 0 && (
+        <View style={c1.optiWrap}>
+          <Text style={c1.optiTitle}>Optimalisatiemogelijkheden</Text>
+          {optimalisaties.slice(0, 3).map((o) => (
+            <View key={o.id} style={c1.optiRow}>
+              <View style={c1.optiDot} />
+              <Text style={c1.optiText}>
+                <Text style={c1.optiBold}>{o.label}</Text> — {o.reden}
+              </Text>
+            </View>
+          ))}
+        </View>
+      )}
     </BrandedPage>
   );
 }
@@ -1027,12 +1056,13 @@ export interface PdfData {
 }
 
 export function AdviesRapport({ calc, klant, form, params }: { calc: CalcResult; klant: PdfData; form: FormState; params: CalcParams }) {
+  const optis = bepaalOptimalisaties(calc, form, params);
   return (
     <Document
       title={`Stroomvol Advies - ${klant.klantNaam}`}
       author="Stroomvol"
     >
-      <CoverPage calc={calc} klant={klant} />
+      <CoverPage calc={calc} klant={klant} optimalisaties={optis} />
       <FinancieelPage calc={calc} form={form} params={params} />
       <DoelenPage calc={calc} />
       <SlotPage notities={klant.notities} calc={calc} />
