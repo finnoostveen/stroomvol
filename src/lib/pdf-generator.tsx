@@ -10,7 +10,9 @@ import {
 } from "@react-pdf/renderer";
 import type { ReactNode } from "react";
 import type { CalcResult } from "./calc";
-import { fmt } from "./calc";
+import { calc as runCalc, fmt } from "./calc";
+import type { CalcParams } from "./calc";
+import type { FormState } from "@/components/formulier/types";
 import { berekenCumulatieveTvt, formatTvt } from "./helpers";
 import { berekenSalderingImpact } from "@/components/resultaat/SalderingImpact";
 
@@ -538,8 +540,6 @@ function DoelenPage({ calc: r }: { calc: CalcResult }) {
         </>
       )}
 
-      {/* C. Batterij vs. spaarrekening */}
-      <SpaarVergelijking calc={r} />
     </BrandedPage>
   );
 }
@@ -551,7 +551,7 @@ function SpaarVergelijking({ calc: r }: { calc: CalcResult }) {
   const verschil = batterijTotaal - spaarTotaal;
 
   return (
-    <View style={{ marginTop: 24 }}>
+    <View style={{ marginBottom: 20 }}>
       <Text style={cSpaar.sectionTitle}>Batterij vs. spaarrekening</Text>
       <View style={cSpaar.spaarGrid}>
         <View style={cSpaar.spaarCardGroen}>
@@ -598,7 +598,7 @@ const c3 = StyleSheet.create({
   bdownTotalVal: { width: "58%", fontFamily: "Lexend", fontWeight: 700, fontSize: 12, color: K.zwart, textAlign: "right" },
 
   // 15-jaar overzicht
-  overzichtWrap: { marginTop: 20, marginBottom: 20 },
+  overzichtWrap: { marginTop: 12, marginBottom: 12 },
   overzichtRow: { flexDirection: "row", justifyContent: "space-between", paddingVertical: 4 },
   overzichtLabel: { fontSize: 10, color: K.grafiet },
   overzichtVal: { fontSize: 10, fontWeight: 700, color: K.zwart },
@@ -660,7 +660,68 @@ function SalderingBlok({ calc: r }: { calc: CalcResult }) {
   );
 }
 
-function FinancieelPage({ calc: r }: { calc: CalcResult }) {
+/* ---- Omvormer upgrade-analyse blok ---- */
+
+const cOmv = StyleSheet.create({
+  wrap: { marginTop: 12 },
+  title: { fontFamily: "Lexend", fontWeight: 700, fontSize: 11, color: K.zwart, marginBottom: 6 },
+  tableHeader: { flexDirection: "row", paddingVertical: 4, borderBottomWidth: 1, borderBottomColor: K.zwart },
+  headerCell: { fontSize: 8, color: K.grijsDonker, textTransform: "uppercase", letterSpacing: 0.5, fontWeight: 700 },
+  row: { flexDirection: "row", paddingVertical: 5, borderBottomWidth: 0.5, borderBottomColor: K.grijs },
+  cellLabel: { width: "34%", fontSize: 9, color: K.grafiet },
+  cellHuidig: { width: "33%", fontSize: 9, fontWeight: 500, color: K.zwart, textAlign: "right" },
+  cellHybride: { width: "33%", fontSize: 9, fontWeight: 700, color: K.groen, textAlign: "right" },
+  footer: { fontSize: 8, color: K.grafiet, marginTop: 6, lineHeight: 1.5 },
+});
+
+function OmvormerAnalyseBlok({ calc: r, form, params }: { calc: CalcResult; form: FormState; params: CalcParams }) {
+  if (r.omv === "hybride") return null;
+
+  const hyb = runCalc({ ...form, omv: "hybride", omvormerMerk: "" }, params);
+  const omvLabel = r.omv === "micro" ? "micro" : "standaard";
+  const huidigEff = Math.round(r.effectieveEff * 100);
+  const hybrideEff = Math.round(hyb.eff * 100);
+  const huidigCpk = r.cpk + (r.omv === "micro" ? 75 : 50);
+  const hybrideCpk = hyb.cpk;
+  const huidigBesp = r.real.savingY1;
+  const hybrideBesp = hyb.real.savingY1;
+  const huidigTvt = r.real.tvt;
+  const hybrideTvt = hyb.real.tvt;
+  const verschil = hybrideBesp - huidigBesp;
+  const tvtVerschil = Math.round((huidigTvt - hybrideTvt) * 10) / 10;
+
+  const rows = [
+    { label: "Efficiency", huidig: `${huidigEff}%`, hybride: `${hybrideEff}%` },
+    { label: "Installatiekosten", huidig: `\u20AC${fmt(huidigCpk)}/kWh`, hybride: `\u20AC${fmt(hybrideCpk)}/kWh` },
+    { label: "Besparing/jaar", huidig: `\u20AC${fmt(huidigBesp)}`, hybride: `\u20AC${fmt(hybrideBesp)}` },
+    { label: "TVT", huidig: `${huidigTvt} jaar`, hybride: `${hybrideTvt} jaar` },
+  ];
+
+  return (
+    <View style={cOmv.wrap}>
+      <Text style={cOmv.title}>Omvormer upgrade-analyse</Text>
+      <View style={cOmv.tableHeader}>
+        <Text style={[cOmv.headerCell, cOmv.cellLabel]}> </Text>
+        <Text style={[cOmv.headerCell, cOmv.cellHuidig]}>Huidig ({omvLabel})</Text>
+        <Text style={[cOmv.headerCell, cOmv.cellHybride]}>Met hybride</Text>
+      </View>
+      {rows.map((row) => (
+        <View key={row.label} style={cOmv.row}>
+          <Text style={cOmv.cellLabel}>{row.label}</Text>
+          <Text style={cOmv.cellHuidig}>{row.huidig}</Text>
+          <Text style={cOmv.cellHybride}>{row.hybride}</Text>
+        </View>
+      ))}
+      {verschil > 0 && (
+        <Text style={cOmv.footer}>
+          Een hybride omvormer bespaart {"\u20AC"}{fmt(verschil)}/jaar extra en verkort de terugverdientijd met {tvtVerschil} jaar.
+        </Text>
+      )}
+    </View>
+  );
+}
+
+function FinancieelPage({ calc: r, form, params }: { calc: CalcResult; form: FormState; params: CalcParams }) {
   const n = r.real.perJaar.length;
   const gem = {
     zelf: Math.round(r.real.perJaar.reduce((s, j) => s + j.zelf, 0) / n),
@@ -734,6 +795,9 @@ function FinancieelPage({ calc: r }: { calc: CalcResult }) {
       </View>
 
       <ScenarioTabel calc={r} />
+
+      {/* E. Omvormer upgrade-analyse (alleen als niet hybride) */}
+      <OmvormerAnalyseBlok calc={r} form={form} params={params} />
     </BrandedPage>
   );
 }
@@ -804,8 +868,7 @@ function ScenarioTabel({ calc: r }: { calc: CalcResult }) {
 }
 
 /* ============================================================
-   PAGINA 3: DOELEN + ONAFHANKELIJKHEID + SPAARREKENING
-   (DoelenPage already defined above — spaarrekening added below)
+   PAGINA 3: DOELEN + ONAFHANKELIJKHEID
    ============================================================ */
 
 const cSpaar = StyleSheet.create({
@@ -842,7 +905,7 @@ const cSpaar = StyleSheet.create({
 });
 
 /* ============================================================
-   PAGINA 4: VOLGENDE STAPPEN + NOTITIES + DISCLAIMER
+   PAGINA 4: SPAARREKENING + VOLGENDE STAPPEN + NOTITIES + DISCLAIMER
    ============================================================ */
 
 const c4 = StyleSheet.create({
@@ -876,7 +939,10 @@ function SlotPage({ notities, calc: r }: { notities: string; calc: CalcResult })
 
   return (
     <BrandedPage>
-      {/* A. Volgende stappen */}
+      {/* A. Batterij vs. spaarrekening */}
+      <SpaarVergelijking calc={r} />
+
+      {/* B. Volgende stappen */}
       <View style={c4.stappenWrap}>
         <Text style={c4.sectionTitle}>Volgende stappen</Text>
         <View style={c4.stapRow}>
@@ -960,14 +1026,14 @@ export interface PdfData {
   notities: string;
 }
 
-export function AdviesRapport({ calc, klant }: { calc: CalcResult; klant: PdfData }) {
+export function AdviesRapport({ calc, klant, form, params }: { calc: CalcResult; klant: PdfData; form: FormState; params: CalcParams }) {
   return (
     <Document
       title={`Stroomvol Advies - ${klant.klantNaam}`}
       author="Stroomvol"
     >
       <CoverPage calc={calc} klant={klant} />
-      <FinancieelPage calc={calc} />
+      <FinancieelPage calc={calc} form={form} params={params} />
       <DoelenPage calc={calc} />
       <SlotPage notities={klant.notities} calc={calc} />
     </Document>

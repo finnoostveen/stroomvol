@@ -122,7 +122,7 @@ export default function AdviseurTool() {
         adviseur: form.adviseur,
         notities,
       };
-      const blob = await pdf(<AdviesRapport calc={result} klant={klantData} />).toBlob();
+      const blob = await pdf(<AdviesRapport calc={result} klant={klantData} form={form} params={params} />).toBlob();
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       const datumStr = form.datum ? form.datum.split("-").reverse().join("-") : "rapport";
@@ -135,7 +135,7 @@ export default function AdviseurTool() {
     } finally {
       setPdfLoading(false);
     }
-  }, [result, form, notities]);
+  }, [result, form, notities, params]);
 
   /* ===================== RESULTAATSCHERM ===================== */
   if (result) {
