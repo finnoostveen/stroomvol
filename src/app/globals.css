@@ -2123,7 +2123,7 @@ body {
    RESULTS — Scenario table
    ============================================================ */
 
-.sv-adv .sc-card { background: var(--sv-bg-card); border-radius: var(--sv-radius); overflow: hidden; margin-bottom: 16px; }
+.sv-adv .sc-card { background: var(--sv-bg-card); border-radius: var(--sv-radius); overflow: visible; margin-bottom: 16px; }
 .sv-adv .sc-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 .sv-adv .sc-header { padding: 20px 24px 12px; font-family: var(--sv-font-heading), 'Lexend', sans-serif; font-size: 17px; font-weight: 700; }
 .sv-adv .sc-sub { padding: 0 24px 16px; font-size: 13px; color: var(--sv-text-muted); font-weight: 300; }
@@ -2398,8 +2398,9 @@ body {
   padding: 10px 14px;
   border-radius: 8px;
   width: max-content;
-  max-width: 260px;
-  z-index: 10;
+  max-width: 280px;
+  word-wrap: break-word;
+  z-index: 50;
   pointer-events: none;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
