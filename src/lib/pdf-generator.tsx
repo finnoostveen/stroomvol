@@ -742,6 +742,48 @@ function ScenarioPage({ calc: r }: { calc: CalcResult }) {
 }
 
 /* ============================================================
+   PAGINA 5: DISCLAIMER + NOTITIES
+   ============================================================ */
+
+const c5 = StyleSheet.create({
+  notitiesWrap: { marginBottom: 16 },
+  notitiesTitle: { fontFamily: "Lexend", fontWeight: 700, fontSize: 11, color: K.zwart, marginBottom: 6 },
+  notitiesText: { fontSize: 9, color: K.grafiet, lineHeight: 1.6 },
+  divider: { borderBottomWidth: 0.5, borderBottomColor: K.grijs, marginBottom: 12 },
+  disclaimerWrap: {
+    backgroundColor: K.krijt,
+    borderRadius: 6,
+    padding: 12,
+  },
+  disclaimerTitle: { fontFamily: "Lexend", fontWeight: 700, fontSize: 9, color: K.grijsDonker, marginBottom: 4 },
+  disclaimerText: { fontSize: 8, color: K.grijsDonker, lineHeight: 1.6 },
+});
+
+const DISCLAIMER_TEKST =
+  "Dit adviesrapport is een indicatieve berekening op basis van de ingevoerde gegevens en aannames over energieprijzen, verbruikspatronen en batterijprestaties. Werkelijke resultaten kunnen afwijken door veranderingen in energieprijzen, verbruik, weer en marktomstandigheden. Dit rapport vormt geen garantie op besparing of terugverdientijd. Stroomvol is niet aansprakelijk voor afwijkingen tussen de berekende en daadwerkelijke opbrengsten. Raadpleeg altijd een gekwalificeerd installateur voor een definitieve offerte.";
+
+function DisclaimerPage({ notities }: { notities: string }) {
+  return (
+    <BrandedPage>
+      {/* Adviseur notities */}
+      {notities.trim() !== "" && (
+        <View style={c5.notitiesWrap}>
+          <Text style={c5.notitiesTitle}>Notities adviseur</Text>
+          <Text style={c5.notitiesText}>{notities}</Text>
+          <View style={[c5.divider, { marginTop: 12 }]} />
+        </View>
+      )}
+
+      {/* Disclaimer */}
+      <View style={c5.disclaimerWrap}>
+        <Text style={c5.disclaimerTitle}>Disclaimer</Text>
+        <Text style={c5.disclaimerText}>{DISCLAIMER_TEKST}</Text>
+      </View>
+    </BrandedPage>
+  );
+}
+
+/* ============================================================
    DOCUMENT
    ============================================================ */
 
@@ -764,6 +806,7 @@ export function AdviesRapport({ calc, klant }: { calc: CalcResult; klant: PdfDat
       <DoelenPage calc={calc} />
       <FinancieelPage calc={calc} />
       <ScenarioPage calc={calc} />
+      <DisclaimerPage notities={klant.notities} />
     </Document>
   );
 }
