@@ -29,6 +29,7 @@ import ContractSwitch from "@/components/resultaat/ContractSwitch";
 import OmvormerUpgrade from "@/components/resultaat/OmvormerUpgrade";
 import SpeelMetProfiel from "@/components/resultaat/SpeelMetProfiel";
 import ScenarioTabel from "@/components/resultaat/ScenarioTabel";
+import AdviesSamenvatting from "@/components/resultaat/AdviesSamenvatting";
 import AannamesTab from "@/components/resultaat/AannamesTab";
 import Aannames from "@/components/resultaat/Aannames";
 
@@ -159,6 +160,7 @@ export default function AdviseurTool() {
             onTabChange={setActiveTab}
             advies={
               <>
+                <AdviesSamenvatting result={result} />
                 <div className="section-reveal"><ScenarioTabel result={result} /></div>
                 <div className="section-reveal"><FinancieelOverzicht result={result} /></div>
                 <div className="section-reveal"><DoelMetrics result={result} /></div>

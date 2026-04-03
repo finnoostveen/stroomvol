@@ -93,6 +93,54 @@ body {
 }
 
 /* ============================================================
+   ADVIES SAMENVATTING
+   ============================================================ */
+
+.adv-samenvatting {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  padding: 16px 2rem;
+}
+
+.adv-sam-card {
+  background: #fff;
+  border-radius: 8px;
+  padding: 12px;
+  text-align: center;
+}
+
+.adv-sam-label {
+  font-family: var(--sv-font-body), 'DM Sans', sans-serif;
+  font-size: 11px;
+  color: var(--sv-grijsDonker);
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.adv-sam-val {
+  font-family: var(--sv-font-heading), 'Lexend', sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--sv-zwart);
+}
+
+.adv-sam-val--groen {
+  color: var(--sv-groen);
+}
+
+@media (max-width: 600px) {
+  .adv-samenvatting {
+    grid-template-columns: repeat(2, 1fr);
+    padding: 12px 1rem;
+  }
+  .adv-sam-val {
+    font-size: 16px;
+  }
+}
+
+/* ============================================================
    TAB BAR
    ============================================================ */
 
