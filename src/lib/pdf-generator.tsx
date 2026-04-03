@@ -362,6 +362,13 @@ function profielNaam(p: string): string {
   return namen[p] || "Standaard";
 }
 
+const PROFIEL_BESCHRIJVING_PDF: Record<string, string> = {
+  standaard: "Standaard huishouden: verbruik verdeeld over de dag met pieken in de ochtend (ontbijt, douche) en avond (koken, TV, wasmachine). Overdag lager verbruik door werk buitenshuis.",
+  "avond-zwaar": "Avondprofiel: het grootste deel van het verbruik valt na 17:00. Typisch voor huishoudens waar iedereen overdag buitenshuis is en \u2019s avonds tegelijk thuiskomt, kookt en apparaten draait.",
+  overdag: "Overdagprofiel: verbruik verspreid over de hele dag, ook tussen 9:00 en 17:00. Typisch voor thuiswerkers of gepensioneerden die overdag thuis zijn.",
+  "ev-nacht": "Nachtprofiel met EV: vergelijkbaar met standaard maar met een flinke nachtelijke piek door het laden van een elektrische auto (meestal 23:00\u201306:00).",
+};
+
 function profielInsightPdf(profiel: string, zonder: number, met: number): string {
   const v = met - zonder;
   switch (profiel) {
@@ -469,6 +476,9 @@ function DoelenPage({ calc: r }: { calc: CalcResult }) {
         <View style={c2.profielBlok}>
           <Text style={[c2.sectionTitle, { marginTop: 20, marginBottom: 4 }]}>
             Jouw verbruiksprofiel: {profielNaam(r.profiel)}
+          </Text>
+          <Text style={{ fontSize: 9, color: K.grijsDonker, lineHeight: 1.5, marginBottom: 6 }}>
+            {PROFIEL_BESCHRIJVING_PDF[r.profiel] || ""}
           </Text>
           <Text style={{ fontSize: 9, color: K.grafiet, lineHeight: 1.5, marginBottom: 8 }}>
             {profielInsightPdf(r.profiel, r.zelfPctZonder, r.zelfPctMet)}

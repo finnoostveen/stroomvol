@@ -9,6 +9,15 @@ interface Props {
 
 const SOLAR_UUR_JUNI = [0,0,0,0,0,0.02,0.05,0.08,0.10,0.12,0.13,0.13,0.12,0.11,0.08,0.04,0.02,0,0,0,0,0,0,0];
 
+const PROFIEL_BESCHRIJVING: Record<string, string> = {
+  standaard: "Standaard huishouden: verbruik verdeeld over de dag met pieken in de ochtend (ontbijt, douche) en avond (koken, TV, wasmachine). Overdag lager verbruik door werk buitenshuis.",
+  "avond-zwaar": "Avondprofiel: het grootste deel van het verbruik valt na 17:00. Typisch voor huishoudens waar iedereen overdag buitenshuis is en \u2019s avonds tegelijk thuiskomt, kookt en apparaten draait.",
+  overdag: "Overdagprofiel: verbruik verspreid over de hele dag, ook tussen 9:00 en 17:00. Typisch voor thuiswerkers of gepensioneerden die overdag thuis zijn.",
+  "ev-nacht": "Nachtprofiel met EV: vergelijkbaar met standaard maar met een flinke nachtelijke piek door het laden van een elektrische auto (meestal 23:00\u201306:00).",
+};
+
+export { PROFIEL_BESCHRIJVING };
+
 function profielInsight(profiel: string, zelfPctZonder: number, zelfPctMet: number): string {
   const verbetering = zelfPctMet - zelfPctZonder;
   switch (profiel) {
@@ -123,6 +132,8 @@ export default function ProfielVisualisatie({ result }: Props) {
           <div className="card-subtitle">Hoe jouw verbruik samenwerkt met de zon — voorbeeld junidag</div>
         </div>
       </div>
+
+      <p className="pv-beschrijving">{PROFIEL_BESCHRIJVING[result.profiel]}</p>
 
       <OverlapChart result={result} />
 

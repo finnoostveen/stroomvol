@@ -1417,6 +1417,13 @@ body {
    PROFIEL VISUALISATIE
    ============================================================ */
 
+.pv-beschrijving {
+  font-size: 13px;
+  color: var(--sv-grafiet);
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+
 .pv-chart { display: block; margin-bottom: 12px; }
 
 .pv-legenda {
