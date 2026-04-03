@@ -8,6 +8,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@fontsource-variable/lexend": "^5.2.11",
     "html2canvas": "^1.4.1",
     "jspdf": "^2.5.2",
     "next": "16.2.2",

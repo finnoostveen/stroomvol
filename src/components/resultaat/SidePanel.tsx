@@ -5,6 +5,12 @@ import type { CalcResult } from "@/lib/calc";
 import { fmt } from "@/lib/calc";
 import { berekenCumulatieveTvt, formatTvt } from "@/lib/helpers";
 
+function formatDatum(d: string): string {
+  if (!d) return new Date().toLocaleDateString("nl-NL", { day: "2-digit", month: "2-digit", year: "numeric" });
+  const [y, m, day] = d.split("-");
+  return `${day}-${m}-${y}`;
+}
+
 function useCountUp(target: number, duration = 1000) {
   const [value, setValue] = useState(0);
   useEffect(() => {
@@ -56,7 +62,7 @@ export default function SidePanel({ result: c, klantNaam, datum, onTerug, onAanp
       <div className="side-klant">
         <p className="side-label">Advies voor</p>
         <p className="side-naam">{klantNaam || "Klant"}</p>
-        <p className="side-datum">{datum || new Date().toLocaleDateString("nl-NL")}</p>
+        <p className="side-datum">{formatDatum(datum)}</p>
       </div>
 
       {/* Capaciteit */}

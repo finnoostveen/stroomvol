@@ -69,16 +69,6 @@ export default function StapKlant({ form, onChange }: StapProps) {
         />
       </div>
 
-      <div className="field">
-        <label className="field-label" htmlFor="in-bedrijf">Bedrijfsnaam</label>
-        <input
-          id="in-bedrijf"
-          type="text"
-          placeholder="Stroomvol"
-          value={form.bedrijf}
-          onChange={(e) => onChange("bedrijf", e.target.value)}
-        />
-      </div>
     </div>
   );
 }

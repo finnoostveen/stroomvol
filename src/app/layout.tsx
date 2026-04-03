@@ -4,9 +4,16 @@ import "./globals.css";
 
 const syne = localFont({
   src: "../fonts/Syne-Variable.ttf",
-  variable: "--sv-font-heading",
+  variable: "--sv-font-logo",
   display: "swap",
   weight: "400 800",
+});
+
+const lexend = localFont({
+  src: "../fonts/Lexend-Variable.woff2",
+  variable: "--sv-font-heading",
+  display: "swap",
+  weight: "100 900",
 });
 
 const dmSans = localFont({
@@ -28,7 +35,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="nl" className={`${syne.variable} ${dmSans.variable}`}>
+    <html lang="nl" className={`${syne.variable} ${lexend.variable} ${dmSans.variable}`}>
       <body>{children}</body>
     </html>
   );
