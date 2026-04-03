@@ -108,13 +108,34 @@ export default function ContractSwitch({ result, form, params }: Props) {
       {/* Verschil banner */}
       {verschilJaar > 0 && (
         <div className="cs-banner">
-          Met een dynamisch contract bespaar je <strong>&euro;{fmt(verschilJaar)}/jaar</strong> extra
+          Met een dynamisch contract bespaar je <strong>&euro;{fmt(verschilJaar)}/jaar</strong> extra door actief te handelen op prijsverschillen.
         </div>
       )}
 
-      <p className="cs-disclaimer">
-        Een dynamisch contract brengt prijsrisico met zich mee. De batterij beperkt dit risico.
-      </p>
+      {/* Doelen die verbeteren */}
+      <div className="ov-doelen">
+        <div className="ov-doel ov-doel--actief">&#10003; Stroomhandel: +&euro;{fmt(verschilJaar)}/jaar door arbitrage</div>
+        <div className="ov-doel ov-doel--actief">&#10003; Terugverdientijd: van {formatTvt(hTvt)} naar {formatTvt(dTvt)}</div>
+        {result.heeftEv && (
+          <div className="ov-doel ov-doel--actief">&#10003; EV slim laden: laden bij de laagste uurprijs</div>
+        )}
+        {(result.heeftWp || result.heeftHwp) && (
+          <div className="ov-doel ov-doel--actief">&#10003; WP buffering: voorverwarmen bij dalprijs</div>
+        )}
+      </div>
+
+      {/* EV-specifiek blok */}
+      {result.heeftEv && (
+        <div className="ov-info" style={{ marginTop: 12 }}>
+          <strong>Slim laden voor je EV:</strong> Zonder dynamisch contract betaal je voor elke kWh hetzelfde.
+          Met dynamische prijzen laadt de batterij je auto &apos;s nachts tussen 1:00 en 5:00 wanneer stroom het goedkoopst is.
+        </div>
+      )}
+
+      <div className="ov-info">
+        Bij een dynamisch contract verandert de stroomprijs elk uur. De batterij laadt automatisch op als stroom
+        goedkoop is en ontlaadt als stroom duur is. Dit heet arbitrage en is een extra verdienlaag bovenop zelfconsumptie.
+      </div>
     </div>
   );
 }

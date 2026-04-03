@@ -1650,6 +1650,99 @@ body {
 }
 
 /* ============================================================
+   OPTIMALISATIE VERDIEPINGEN (gedeeld)
+   ============================================================ */
+
+.ov-wrap { margin-top: 0; }
+
+.ov-dot {
+  color: #FF9500 !important;
+  font-size: 14px !important;
+  background: none !important;
+}
+
+.ov-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.ov-col {
+  padding: 16px;
+  border-radius: 10px;
+  border: 1.5px solid var(--sv-grijs);
+}
+
+.ov-col--grijs { border-color: var(--sv-grijs); background: #fff; }
+.ov-col--groen { border-color: var(--sv-groen); background: rgba(52,199,89,0.04); }
+
+.ov-col-title {
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 10px;
+  color: var(--sv-zwart);
+}
+
+.ov-row {
+  font-size: 13px;
+  color: var(--sv-grafiet);
+  margin-bottom: 4px;
+}
+
+.ov-beter { color: var(--sv-groen); }
+
+.ov-diff {
+  font-size: 11px;
+  font-weight: 600;
+}
+.ov-diff--groen { color: var(--sv-groen); }
+.ov-diff--rood { color: #FF3B30; }
+
+.ov-banner {
+  background: rgba(52,199,89,0.1);
+  border-left: 3px solid var(--sv-groen);
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--sv-zwart);
+  margin-bottom: 12px;
+}
+
+.ov-doelen {
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  background: var(--sv-krijt);
+  border-radius: 8px;
+}
+
+.ov-doel {
+  font-size: 13px;
+  color: var(--sv-grafiet);
+  margin-bottom: 3px;
+}
+
+.ov-doel--actief {
+  color: var(--sv-groen);
+  font-weight: 500;
+}
+
+.ov-info {
+  font-size: 12px;
+  color: var(--sv-grafiet);
+  line-height: 1.5;
+  padding: 10px 12px;
+  background: var(--sv-krijt);
+  border-radius: 8px;
+  margin-top: 8px;
+}
+
+@media (max-width: 600px) {
+  .ov-grid { grid-template-columns: 1fr; }
+}
+
+/* ============================================================
    PROFIEL VISUALISATIE
    ============================================================ */
 

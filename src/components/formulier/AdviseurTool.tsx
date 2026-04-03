@@ -27,6 +27,8 @@ import MaandKalender from "@/components/resultaat/MaandKalender";
 import JouwDag from "@/components/resultaat/JouwDag";
 import ContractSwitch from "@/components/resultaat/ContractSwitch";
 import OmvormerUpgrade from "@/components/resultaat/OmvormerUpgrade";
+import OptiZonnepanelen from "@/components/resultaat/OptiZonnepanelen";
+import OptiNetUpgrade from "@/components/resultaat/OptiNetUpgrade";
 import SpeelMetProfiel from "@/components/resultaat/SpeelMetProfiel";
 import ScenarioTabel from "@/components/resultaat/ScenarioTabel";
 import AdviesSamenvatting from "@/components/resultaat/AdviesSamenvatting";
@@ -193,11 +195,15 @@ export default function AdviseurTool() {
             }
             verdieping={
               <>
+                {/* Optimalisatie-verdiepingen (conditioneel) */}
+                <div id="sectie-opti-zonnepanelen" className="section-reveal"><OptiZonnepanelen result={result} form={form} params={params} /></div>
+                <div id="sectie-opti-net" className="section-reveal"><OptiNetUpgrade result={result} form={form} params={params} /></div>
+                <div id="sectie-contract-switch" className="section-reveal"><ContractSwitch result={result} form={form} params={params} /></div>
+                <div id="sectie-omvormer-analyse" className="section-reveal"><OmvormerUpgrade result={result} form={form} params={params} /></div>
+                {/* Analyse-secties */}
                 <div className="section-reveal"><LaadOntlaadSchema result={result} /></div>
                 <div className="section-reveal"><MaandKalender result={result} /></div>
                 <div className="section-reveal"><JouwDag result={result} /></div>
-                <div id="sectie-contract-switch" className="section-reveal"><ContractSwitch result={result} form={form} params={params} /></div>
-                <div id="sectie-omvormer-analyse" className="section-reveal"><OmvormerUpgrade result={result} form={form} params={params} /></div>
               </>
             }
             scenarios={

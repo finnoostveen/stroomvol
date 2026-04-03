@@ -85,6 +85,18 @@ export default function OmvormerUpgrade({ result, form, params }: Props) {
         </div>
       )}
 
+      {/* Doelen die verbeteren */}
+      <div className="ov-doelen">
+        <div className="ov-doel ov-doel--actief">&#10003; Efficiency: van {huidigEff}% naar {hybrideEff}%</div>
+        {verschil > 0 && (
+          <div className="ov-doel ov-doel--actief">&#10003; Besparing: +&euro;{fmt(verschil)}/jaar door hogere efficiency</div>
+        )}
+        <div className="ov-doel ov-doel--actief">&#10003; Lagere installatiekosten: -&euro;{fmt(huidigCpk - hybrideCpk)}/kWh (geen aparte batterij-omvormer)</div>
+        {tvtVerschil > 0 && (
+          <div className="ov-doel ov-doel--actief">&#10003; Terugverdientijd: -{tvtVerschil} jaar sneller</div>
+        )}
+      </div>
+
       <div className="ou-info">
         Een hybride omvormer stuurt de batterij direct aan via DC-koppeling. Dit elimineert de dubbele AC-DC conversie
         en bespaart op installatiekosten doordat er geen aparte batterij-omvormer nodig is.

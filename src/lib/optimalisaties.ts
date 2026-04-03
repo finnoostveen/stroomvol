@@ -54,31 +54,35 @@ export function bepaalOptimalisaties(
       id: "netupgrade",
       label: "Netaansluiting upgraden",
       reden: `Je ${r.net} aansluiting (${r.maxKwNet} kW) beperkt de maximale batterijgrootte en het laad/ontlaadvermogen.`,
-      tab: "advies",
-      sectieId: "sectie-doelen",
+      tab: "verdieping",
+      sectieId: "sectie-opti-net",
     });
   }
 
-  // 5. Zonnepanelen
+  // 4. Zonnepanelen
   if (!r.hasSolar) {
     items.push({
       id: "zonnepanelen",
       label: "Zonnepanelen plaatsen",
       reden: "Zonder zonnepanelen mist de batterij de belangrijkste besparingsbron: zelfconsumptie van eigen opwek.",
-      tab: "advies",
-      sectieId: "sectie-doelen",
+      tab: "verdieping",
+      sectieId: "sectie-opti-zonnepanelen",
     });
   }
 
-  // 6. EV + dynamisch
+  // 5. EV + dynamisch (merged into contract-switch section)
   if (r.heeftEv && r.contract !== "dynamisch") {
-    items.push({
-      id: "ev-dynamisch",
-      label: "Dynamisch voor EV slim laden",
-      reden: "Je hebt een EV maar geen dynamisch contract. Met dynamische prijzen kan de batterij je auto slim laden bij lage tarieven.",
-      tab: "verdieping",
-      sectieId: "sectie-contract-switch",
-    });
+    // Only show as separate item if contract optimalisatie wasn't already added
+    const hasContract = items.some((i) => i.id === "contract");
+    if (!hasContract) {
+      items.push({
+        id: "ev-dynamisch",
+        label: "Dynamisch voor EV slim laden",
+        reden: "Je hebt een EV maar geen dynamisch contract. Met dynamische prijzen kan de batterij je auto slim laden bij lage tarieven.",
+        tab: "verdieping",
+        sectieId: "sectie-contract-switch",
+      });
+    }
   }
 
   return items;
