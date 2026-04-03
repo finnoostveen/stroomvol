@@ -16,7 +16,15 @@ const netOpties: { value: NetAansluiting; label: string }[] = [
   { value: "3x63", label: "3\u00D763A" },
 ];
 
+const MERKEN_PER_TYPE: Record<OmvormerType, string[]> = {
+  hybride: ["SolarEdge", "Huawei", "Growatt", "Sungrow", "GoodWe", "Fronius", "SMA", "Sigenergy", "Fox ESS", "Deye", "Overig hybride"],
+  standaard: ["SolarEdge", "Huawei", "Growatt", "Sungrow", "GoodWe", "Fronius", "SMA", "Overig standaard"],
+  micro: ["Enphase", "Hoymiles", "AP Systems", "Overig micro"],
+};
+
 export default function StapOmvormerNet({ form, onChange }: StapProps) {
+  const merken = form.omv ? MERKEN_PER_TYPE[form.omv] : [];
+
   return (
     <div className="card">
       <div className="card-header">
@@ -39,13 +47,39 @@ export default function StapOmvormerNet({ form, onChange }: StapProps) {
               type="button"
               className="tb"
               aria-pressed={form.omv === opt.value}
-              onClick={() => onChange("omv", opt.value)}
+              onClick={() => {
+                onChange("omv", opt.value);
+                onChange("omvormerMerk", "");
+              }}
             >
               {opt.label}
             </button>
           ))}
         </div>
       </fieldset>
+
+      {form.omv && (
+        <div className="field">
+          <label className="field-label" htmlFor="in-omv-merk">
+            Omvormer merk <span className="req">*</span>{" "}
+            <InfoTip tekst="Het merk van je omvormer bepaalt de compatibiliteit met batterijsystemen. Niet elk batterijmerk werkt met elke omvormer. Je adviseur helpt je met de juiste match." />
+          </label>
+          <select
+            id="in-omv-merk"
+            className="field-select"
+            value={form.omvormerMerk}
+            onChange={(e) => onChange("omvormerMerk", e.target.value)}
+          >
+            <option value="">— Kies merk —</option>
+            {merken.map((m) => (
+              <option key={m} value={m}>{m}</option>
+            ))}
+          </select>
+          {form.omvormerMerk === "" && (
+            <p className="field-hint" style={{ color: "var(--sv-amber)" }}>Selecteer het merk van de omvormer</p>
+          )}
+        </div>
+      )}
 
       <fieldset>
         <legend>

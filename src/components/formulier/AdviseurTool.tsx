@@ -56,6 +56,9 @@ function validate(form: FormState, stap: Stap): string | null {
     case 3:
       if (!form.zon) return "Geef aan of er zonnepanelen zijn";
       return null;
+    case 4:
+      if (form.omv && !form.omvormerMerk) return "Selecteer het merk van de omvormer";
+      return null;
     default:
       return null;
   }

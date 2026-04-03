@@ -40,6 +40,7 @@ export interface FormState {
 
   // Omvormer & Net
   omv: OmvormerType | null;
+  omvormerMerk: string;
   net: NetAansluiting | null;
 
   // Grootverbruikers & doelen
@@ -78,6 +79,7 @@ export const initialFormState: FormState = {
   wpPerPaneel: 400,
 
   omv: null,
+  omvormerMerk: "",
   net: null,
 
   gv: new Set(),

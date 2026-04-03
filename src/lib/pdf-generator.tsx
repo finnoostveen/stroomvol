@@ -862,10 +862,12 @@ const c4 = StyleSheet.create({
 });
 
 function SlotPage({ notities, calc: r }: { notities: string; calc: CalcResult }) {
+  const omvLabel = r.omv === "hybride" ? "Hybride" : r.omv === "micro" ? "Micro" : "Standaard";
   const aannames: string[] = [
     `Installatiekosten: \u20AC${r.cpk}/kWh`,
-    `Depth of Discharge (DoD): ${r.dod}%`,
-    `Roundtrip efficiency: ${r.eff}%`,
+    `Depth of Discharge (DoD): ${Math.round(r.dod * 100)}%`,
+    `Roundtrip efficiency: ${Math.round(r.effectieveEff * 100)}%`,
+    `Omvormer: ${omvLabel}${r.omvormerMerk ? ` (${r.omvormerMerk})` : ""}`,
     `Degradatie: ${(r.degradatiePerJaarPct).toFixed(2)}%/jaar (${Math.round(r.cycliPerJaar)} cycli/jaar)`,
     `Energieprijsstijging: ${r.stijgPct}%/jaar`,
     `Teruglevertarief: \u20AC${r.terug.toFixed(2)}/kWh`,

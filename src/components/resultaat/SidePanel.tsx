@@ -50,6 +50,10 @@ export default function SidePanel({ result: c, klantNaam, datum, onTerug, onAanp
   if (c.hasSolar) badges.push(`${c.nPanelen} panelen`);
   if (c.heeftEv) badges.push("EV");
   if (c.heeftWp || c.heeftHwp) badges.push("Warmtepomp");
+  if (c.omvormerMerk) {
+    const omvLabel = c.omv === "hybride" ? "hybride" : c.omv === "micro" ? "micro" : "standaard";
+    badges.push(`${c.omvormerMerk} ${omvLabel}`);
+  }
   if (c.doel.has("nood")) badges.push("Noodstroom");
 
   return (

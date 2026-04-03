@@ -6,6 +6,7 @@ import type {
   FormState,
   ContractType,
   Profiel,
+  OmvormerType,
   NetAansluiting,
 } from "@/components/formulier/types";
 
@@ -55,6 +56,9 @@ export interface CalcResult {
   cpk: number;
   dod: number;
   eff: number;
+  effectieveEff: number;
+  omv: OmvormerType;
+  omvormerMerk: string;
   net: NetAansluiting;
 
   profiel: Profiel;
@@ -168,12 +172,28 @@ function berekenArbitrageCycliMetSolar(surplusMaand: number[], usableKwh: number
 
 // ===================== MAIN CALC =====================
 
+const OMVORMER_EFFICIENCY_FACTOR: Record<OmvormerType, number> = {
+  hybride: 1.0,
+  standaard: 0.95,
+  micro: 0.93,
+};
+
+const OMVORMER_KOSTEN_OPSLAG: Record<OmvormerType, number> = {
+  hybride: 0,
+  standaard: 50,
+  micro: 75,
+};
+
 export function calc(form: FormState, params: CalcParams = {}): CalcResult {
   const contract: ContractType = form.contract ?? "vast";
   const verbruik = Number(form.verbruik) || 3500;
-  const cpk = params.cpk ?? 400;
+  const omv: OmvormerType = form.omv || "hybride";
+  const omvormerMerk = form.omvormerMerk || "";
+  const baseCpk = params.cpk ?? 400;
+  const cpk = baseCpk + OMVORMER_KOSTEN_OPSLAG[omv];
   const dod = (params.dod ?? 90) / 100;
-  const eff = (params.eff ?? 92) / 100;
+  const baseEff = (params.eff ?? 92) / 100;
+  const eff = baseEff * OMVORMER_EFFICIENCY_FACTOR[omv];
   const profiel = form.profiel || "standaard";
   const net: NetAansluiting = form.net || "1x25";
 
@@ -458,9 +478,12 @@ export function calc(form: FormState, params: CalcParams = {}): CalcResult {
     maxBattVermogenKw,
     tier,
     investering,
-    cpk,
+    cpk: baseCpk,
     dod,
-    eff,
+    eff: baseEff,
+    effectieveEff: eff,
+    omv,
+    omvormerMerk,
     net,
 
     profiel,
