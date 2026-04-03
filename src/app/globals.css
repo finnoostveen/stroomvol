@@ -1323,6 +1323,97 @@ body {
 }
 
 /* ============================================================
+   SALDERING IMPACT
+   ============================================================ */
+
+.si-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.si-col {
+  padding: 16px;
+  border-radius: 10px;
+  border: 1.5px solid var(--sv-grijs);
+  text-align: center;
+}
+
+.si-col--neutral { border-color: var(--sv-grijs); background: #fff; }
+.si-col--rood { border-color: #FF3B30; background: rgba(255,59,48,0.04); }
+.si-col--groen { border-color: var(--sv-groen); background: rgba(52,199,89,0.04); }
+
+.si-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 10px;
+  border-radius: 10px;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.si-badge--neutral { background: var(--sv-krijt); color: var(--sv-text-muted); }
+.si-badge--rood { background: rgba(255,59,48,0.12); color: #FF3B30; }
+.si-badge--groen { background: rgba(52,199,89,0.12); color: var(--sv-groen); }
+
+.si-col-title {
+  font-family: var(--sv-font-heading), 'Lexend', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--sv-text);
+  margin-bottom: 2px;
+}
+
+.si-col-sub {
+  font-size: 11px;
+  color: var(--sv-text-muted);
+  margin-bottom: 14px;
+}
+
+.si-kosten-label {
+  font-size: 10px;
+  color: var(--sv-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.si-kosten-val {
+  font-family: var(--sv-font-heading), 'Lexend', sans-serif;
+  font-weight: 700;
+  font-size: 20px;
+  color: var(--sv-text);
+}
+
+.si-impact {
+  margin-top: 10px;
+  font-weight: 600;
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  display: inline-block;
+}
+
+.si-impact--rood { background: rgba(255,59,48,0.10); color: #FF3B30; }
+.si-impact--groen { background: rgba(52,199,89,0.10); color: var(--sv-groen); }
+
+.si-uitleg {
+  font-size: 13px;
+  color: var(--sv-grafiet);
+  line-height: 1.6;
+  padding: 12px 16px;
+  background: var(--sv-krijt);
+  border-radius: 8px;
+}
+
+@media (max-width: 600px) {
+  .si-grid { grid-template-columns: 1fr; }
+}
+
+/* ============================================================
    PROFIEL VISUALISATIE
    ============================================================ */
 
