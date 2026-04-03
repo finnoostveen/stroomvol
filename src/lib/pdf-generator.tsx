@@ -9,6 +9,9 @@ import {
   StyleSheet,
 } from "@react-pdf/renderer";
 import type { ReactNode } from "react";
+import type { CalcResult } from "./calc";
+import { fmt } from "./calc";
+import { berekenCumulatieveTvt, formatTvt } from "./helpers";
 
 /* ============================================================
    FONT REGISTRATION
@@ -127,10 +130,7 @@ const ps = StyleSheet.create({
 function BrandedPage({ children }: { children: ReactNode }) {
   return (
     <Page size="A4" style={ps.page}>
-      {/* Gele zijbalk */}
       <View style={ps.sideBar} fixed />
-
-      {/* Header */}
       <View style={ps.header} fixed>
         <View style={ps.headerLogoWrap}>
           <Text style={ps.headerLogoStroom}>STROOM</Text>
@@ -138,11 +138,7 @@ function BrandedPage({ children }: { children: ReactNode }) {
         </View>
         <Text style={ps.headerTagline}>Batterijadvies op maat</Text>
       </View>
-
-      {/* Content */}
       {children}
-
-      {/* Footer */}
       <View style={ps.footer} fixed>
         <Text style={ps.footerText}>Stroomvol · stroomvol.nl</Text>
         <Text
@@ -157,7 +153,125 @@ function BrandedPage({ children }: { children: ReactNode }) {
 }
 
 /* ============================================================
-   DOCUMENT WRAPPER (placeholder — pages added in next tasks)
+   HELPERS
+   ============================================================ */
+
+function formatDatum(d: string): string {
+  if (!d) return "";
+  const [y, m, day] = d.split("-");
+  return `${day}-${m}-${y}`;
+}
+
+/* ============================================================
+   PAGINA 1: COVER + KERNGETALLEN
+   ============================================================ */
+
+const c1 = StyleSheet.create({
+  // Klantgegevens
+  label: { fontFamily: "Lexend", fontWeight: 700, fontSize: 12, color: K.grijsDonker, marginBottom: 4 },
+  naam: { fontFamily: "Lexend", fontWeight: 700, fontSize: 22, color: K.zwart, marginBottom: 2 },
+  adres: { fontSize: 10, color: K.grafiet, marginBottom: 1 },
+  metaRow: { flexDirection: "row", justifyContent: "space-between", marginTop: 8 },
+  meta: { fontSize: 9, color: K.grijsDonker },
+
+  // Capaciteitsblok
+  capBlock: {
+    backgroundColor: K.zwart,
+    borderRadius: 8,
+    padding: 24,
+    marginTop: 20,
+    marginBottom: 20,
+    alignItems: "center",
+  },
+  capLabel: { fontSize: 8, letterSpacing: 2, color: K.grijsDonker, marginBottom: 8, textTransform: "uppercase" },
+  capRow: { flexDirection: "row", alignItems: "flex-end", marginBottom: 12 },
+  capKwh: { fontFamily: "Syne", fontWeight: 800, fontSize: 36, color: K.wit },
+  capUnit: { fontSize: 14, color: K.grijsDonker, marginLeft: 6, marginBottom: 4 },
+  badgeRow: { flexDirection: "row", gap: 6 },
+  badge: {
+    backgroundColor: "rgba(255,255,255,0.1)",
+    borderRadius: 10,
+    paddingVertical: 3,
+    paddingHorizontal: 10,
+    fontSize: 8,
+    color: "rgba(255,255,255,0.6)",
+  },
+
+  // Kernmetrics grid
+  grid: { flexDirection: "row", flexWrap: "wrap", gap: 12 },
+  metricCard: {
+    width: "48%",
+    backgroundColor: K.krijt,
+    borderRadius: 6,
+    padding: 12,
+  },
+  metricLabel: { fontSize: 8, color: K.grijsDonker, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 },
+  metricValue: { fontFamily: "Lexend", fontWeight: 700, fontSize: 18, color: K.zwart },
+  metricVolt: { fontFamily: "Lexend", fontWeight: 700, fontSize: 18, color: K.volt },
+  metricGroen: { fontFamily: "Lexend", fontWeight: 700, fontSize: 18, color: K.groen },
+});
+
+function CoverPage({ calc: r, klant }: { calc: CalcResult; klant: PdfData }) {
+  const tvt = berekenCumulatieveTvt(r.real, r.investering);
+  const gemBesparing = Math.round(r.real.total15 / 15);
+
+  const badges: string[] = [];
+  badges.push(r.contract === "dynamisch" ? "Dynamisch" : r.contract === "variabel" ? "Variabel" : "Vast");
+  if (r.hasSolar) badges.push(`${r.nPanelen} panelen`);
+  if (r.heeftEv) badges.push("EV");
+  if (r.heeftWp || r.heeftHwp) badges.push("Warmtepomp");
+
+  return (
+    <BrandedPage>
+      {/* A. Klantgegevens */}
+      <Text style={c1.label}>Adviesrapport</Text>
+      <Text style={c1.naam}>{klant.klantNaam || "Klant"}</Text>
+      {klant.klantAdres ? <Text style={c1.adres}>{klant.klantAdres}</Text> : null}
+      {klant.klantPlaats ? <Text style={c1.adres}>{klant.klantPlaats}</Text> : null}
+      <View style={c1.metaRow}>
+        <Text style={c1.meta}>Datum: {formatDatum(klant.datum)}</Text>
+        {klant.adviseur ? <Text style={c1.meta}>Adviseur: {klant.adviseur}</Text> : null}
+      </View>
+
+      {/* B. Capaciteitsadvies */}
+      <View style={c1.capBlock}>
+        <Text style={c1.capLabel}>CAPACITEITSADVIES</Text>
+        <View style={c1.capRow}>
+          <Text style={c1.capKwh}>{r.aanbevolenKwh}</Text>
+          <Text style={c1.capUnit}>kWh</Text>
+        </View>
+        <View style={c1.badgeRow}>
+          {badges.map((b) => (
+            <Text key={b} style={c1.badge}>{b}</Text>
+          ))}
+        </View>
+      </View>
+
+      {/* C. Kernmetrics 2x2 */}
+      <View style={c1.grid}>
+        <View style={c1.metricCard}>
+          <Text style={c1.metricLabel}>INVESTERING</Text>
+          <Text style={c1.metricValue}>{"\u20AC"}{fmt(r.investering)}</Text>
+        </View>
+        <View style={c1.metricCard}>
+          <Text style={c1.metricLabel}>TERUGVERDIENTIJD</Text>
+          <Text style={c1.metricVolt}>{formatTvt(tvt)}</Text>
+        </View>
+        <View style={c1.metricCard}>
+          <Text style={c1.metricLabel}>BESPARING PER JAAR</Text>
+          <Text style={c1.metricValue}>{"\u20AC"}{fmt(gemBesparing)}</Text>
+        </View>
+        <View style={c1.metricCard}>
+          <Text style={c1.metricLabel}>ONAFHANKELIJKHEID</Text>
+          <Text style={c1.metricGroen}>{r.hasSolar ? `${r.zelfPctMet}%` : "n.v.t."}</Text>
+        </View>
+      </View>
+    </BrandedPage>
+  );
+}
+
+/* ============================================================
+   DOCUMENT
    ============================================================ */
 
 export interface PdfData {
@@ -169,15 +283,13 @@ export interface PdfData {
   notities: string;
 }
 
-export function AdviesRapport({ klant }: { klant: PdfData }) {
+export function AdviesRapport({ calc, klant }: { calc: CalcResult; klant: PdfData }) {
   return (
     <Document
       title={`Stroomvol Advies - ${klant.klantNaam}`}
       author="Stroomvol"
     >
-      <BrandedPage>
-        <Text>Placeholder — pagina&apos;s volgen</Text>
-      </BrandedPage>
+      <CoverPage calc={calc} klant={klant} />
     </Document>
   );
 }
