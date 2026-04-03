@@ -170,7 +170,7 @@ function berekenArbitrageCycliMetSolar(surplusMaand: number[], usableKwh: number
   }
 
   // Effectiviteit: niet elke dag heeft voldoende spread (~60%)
-  return Math.round(totaalCycli * 0.6);
+  return Math.round(totaalCycli * 0.75);
 }
 
 // ===================== MAIN CALC =====================
