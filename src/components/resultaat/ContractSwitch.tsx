@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 import type { FormState } from "@/components/formulier/types";
 import { calc, fmt, type CalcParams, type CalcResult } from "@/lib/calc";
-import { berekenCumulatieveTvt } from "@/lib/helpers";
+import { berekenCumulatieveTvt, formatTvt } from "@/lib/helpers";
 
 interface Props {
   result: CalcResult;
@@ -72,7 +72,7 @@ export default function ContractSwitch({ result, form, params }: Props) {
           <table className="cs-table">
             <tbody>
               <MetricRow label="Besparing/jaar" huidig={`€${fmt(hBesparingJaar)}`} dynamisch="" beter={false} />
-              <MetricRow label="Terugverdientijd" huidig={hTvt < 30 ? `${hTvt.toFixed(1)} jaar` : "> 25 jr"} dynamisch="" beter={false} />
+              <MetricRow label="Terugverdientijd" huidig={formatTvt(hTvt)} dynamisch="" beter={false} />
               <MetricRow label="Totaal 15 jaar" huidig={`€${fmt(result.real.total15)}`} dynamisch="" beter={false} />
             </tbody>
           </table>
@@ -91,7 +91,7 @@ export default function ContractSwitch({ result, form, params }: Props) {
           <table className="cs-table">
             <tbody>
               <MetricRow label="Besparing/jaar" huidig="" dynamisch={`€${fmt(dBesparingJaar)}`} beter={dBesparingJaar > hBesparingJaar} />
-              <MetricRow label="Terugverdientijd" huidig="" dynamisch={dTvt < 30 ? `${dTvt.toFixed(1)} jaar` : "> 25 jr"} beter={dTvt < hTvt} />
+              <MetricRow label="Terugverdientijd" huidig="" dynamisch={formatTvt(dTvt)} beter={dTvt < hTvt} />
               <MetricRow label="Totaal 15 jaar" huidig="" dynamisch={`€${fmt(dynResult.real.total15)}`} beter={dynResult.real.total15 > result.real.total15} />
             </tbody>
           </table>

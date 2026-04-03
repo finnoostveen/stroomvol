@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import type { FormState, ContractType, Grootverbruiker } from "@/components/formulier/types";
 import { calc, fmt, type CalcParams, type CalcResult } from "@/lib/calc";
-import { berekenCumulatieveTvt } from "@/lib/helpers";
+import { berekenCumulatieveTvt, formatTvt } from "@/lib/helpers";
 
 interface Props {
   result: CalcResult;
@@ -72,7 +72,7 @@ export default function SpeelMetProfiel({ result, form, params }: Props) {
     { label: "Batterij", nu: `${result.aanbevolenKwh} kWh`, na: `${whatIfResult.aanbevolenKwh} kWh`, diff: whatIfResult.aanbevolenKwh - result.aanbevolenKwh, unit: " kWh", better: (d: number) => d > 0 },
     { label: "Investering", nu: `\u20AC${fmt(result.investering)}`, na: `\u20AC${fmt(whatIfResult.investering)}`, diff: whatIfResult.investering - result.investering, unit: "", better: (d: number) => d < 0 },
     { label: "Besparing/jaar", nu: `\u20AC${fmt(Math.round(result.real.total15 / 15))}`, na: `\u20AC${fmt(Math.round(whatIfResult.real.total15 / 15))}`, diff: Math.round(whatIfResult.real.total15 / 15) - Math.round(result.real.total15 / 15), unit: "", better: (d: number) => d > 0 },
-    { label: "TVT", nu: hTvt < 30 ? `${hTvt.toFixed(1)} jaar` : "> 25 jr", na: wTvt < 30 ? `${wTvt.toFixed(1)} jaar` : "> 25 jr", diff: wTvt - hTvt, unit: " jaar", better: (d: number) => d < 0 },
+    { label: "TVT", nu: formatTvt(hTvt), na: formatTvt(wTvt), diff: wTvt - hTvt, unit: " jaar", better: (d: number) => d < 0 },
     { label: "Zelfconsumptie", nu: `${result.zelfPctMet}%`, na: `${whatIfResult.zelfPctMet}%`, diff: whatIfResult.zelfPctMet - result.zelfPctMet, unit: "%", better: (d: number) => d > 0 },
   ];
 

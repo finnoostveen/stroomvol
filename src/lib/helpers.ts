@@ -28,9 +28,10 @@ export function berekenCumulatieveTvt(
  * Formatteert TVT als "X jaar, Y maanden" of "> 25 jaar".
  */
 export function formatTvt(tvt: number): string {
-  if (tvt >= 30) return "> 25 jaar";
-  const jaren = Math.floor(tvt);
-  const maanden = Math.round((tvt - jaren) * 12);
-  if (maanden === 0) return `${jaren} jaar`;
-  return `${jaren} jaar, ${maanden} mnd`;
+  if (tvt >= 99) return "> 15 jaar";
+  const jr = Math.floor(tvt);
+  const mnd = Math.round((tvt - jr) * 12);
+  if (mnd === 0) return `${jr} jaar`;
+  if (mnd === 12) return `${jr + 1} jaar`;
+  return `${jr} jaar, ${mnd} mnd`;
 }

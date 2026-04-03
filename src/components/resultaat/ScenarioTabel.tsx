@@ -2,7 +2,7 @@
 
 import type { CalcResult, ScenarioResult } from "@/lib/calc";
 import { fmt } from "@/lib/calc";
-import { berekenCumulatieveTvt } from "@/lib/helpers";
+import { berekenCumulatieveTvt, formatTvt } from "@/lib/helpers";
 import InfoTip from "./InfoTip";
 
 interface Props {
@@ -36,7 +36,7 @@ function ScenarioRow({
       </td>
       <td className={`v${isReal ? " hl" : ""}`}>&euro;{fmt(Math.round(sc.total15 / 15))}</td>
       <td className={`v${isReal ? " hl" : ""}`}>
-        {tvt < 30 ? `${tvt.toFixed(1)} jaar` : "> 25 jr"}
+        {formatTvt(tvt)}
       </td>
       <td className={`v${isReal ? " hl" : ""}`}>&euro;{fmt(sc.total15)}</td>
       <td className="v" style={{ color: nettoColor, fontSize: isReal ? "18px" : undefined }}>
