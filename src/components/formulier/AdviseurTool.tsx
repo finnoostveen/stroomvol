@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import type { TabId } from "@/components/resultaat/ContentArea";
 import type { FormState, Stap } from "./types";
 import { initialFormState } from "./types";
 import { calc, type CalcResult, type CalcParams } from "@/lib/calc";
@@ -25,6 +26,7 @@ import JouwDag from "@/components/resultaat/JouwDag";
 import ContractSwitch from "@/components/resultaat/ContractSwitch";
 import SpeelMetProfiel from "@/components/resultaat/SpeelMetProfiel";
 import ScenarioTabel from "@/components/resultaat/ScenarioTabel";
+import AannamesTab from "@/components/resultaat/AannamesTab";
 import Aannames from "@/components/resultaat/Aannames";
 
 const STAP_LABELS = [
@@ -63,7 +65,7 @@ export default function AdviseurTool() {
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<CalcResult | null>(null);
   const [params, setParams] = useState<CalcParams>({ cpk: 400, dod: 90, eff: 92 });
-  const [paramsOpen, setParamsOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<TabId>("advies");
   const [notities, setNotities] = useState("");
 
   const onChange = useCallback(
@@ -112,11 +114,13 @@ export default function AdviseurTool() {
             klantNaam={form.klantNaam}
             datum={form.datum}
             onTerug={() => setResult(null)}
-            onAanpassen={() => setParamsOpen(!paramsOpen)}
+            onAanpassen={() => setActiveTab("scenarios")}
           />
 
           {/* Licht contentgebied */}
           <ContentArea
+            activeTab={activeTab}
+            onTabChange={setActiveTab}
             advies={
               <>
                 <div className="section-reveal"><FinancieelOverzicht result={result} /></div>
@@ -139,6 +143,7 @@ export default function AdviseurTool() {
               <>
                 <div className="section-reveal"><SpeelMetProfiel result={result} form={form} params={params} /></div>
                 <div className="section-reveal"><ScenarioTabel result={result} /></div>
+                <div className="section-reveal"><AannamesTab params={params} onUpdate={updateParam} /></div>
               </>
             }
             belowTabs={

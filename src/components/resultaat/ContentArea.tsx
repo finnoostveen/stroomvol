@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 
 export type TabId = "advies" | "verdieping" | "scenarios";
 
@@ -11,14 +11,15 @@ const TAB_LABELS: { id: TabId; label: string }[] = [
 ];
 
 interface Props {
+  activeTab: TabId;
+  onTabChange: (tab: TabId) => void;
   advies: ReactNode;
   verdieping: ReactNode;
   scenarios: ReactNode;
   belowTabs: ReactNode;
 }
 
-export default function ContentArea({ advies, verdieping, scenarios, belowTabs }: Props) {
-  const [activeTab, setActiveTab] = useState<TabId>("advies");
+export default function ContentArea({ activeTab, onTabChange, advies, verdieping, scenarios, belowTabs }: Props) {
   const ref = useRef<HTMLDivElement>(null);
 
   /* Re-observe section-reveal elements when tab changes */
@@ -49,7 +50,7 @@ export default function ContentArea({ advies, verdieping, scenarios, belowTabs }
             key={t.id}
             type="button"
             className={`tab${activeTab === t.id ? " active" : ""}`}
-            onClick={() => setActiveTab(t.id)}
+            onClick={() => onTabChange(t.id)}
           >
             {t.label}
           </button>

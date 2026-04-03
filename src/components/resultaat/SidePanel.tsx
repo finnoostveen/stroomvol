@@ -112,8 +112,8 @@ export default function SidePanel({ result: c, klantNaam, datum, onTerug, onAanp
       <div className="side-divider" />
 
       {/* Acties */}
-      <button type="button" className="side-btn primary" onClick={onAanpassen}>
-        Aannames aanpassen
+      <button type="button" className="side-btn side-btn-link" onClick={onAanpassen}>
+        Aannames &rarr;
       </button>
       <button type="button" className="side-btn secondary" onClick={onTerug}>
         &larr; Terug naar formulier
