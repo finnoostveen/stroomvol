@@ -34,10 +34,11 @@ interface Props {
   onTerug: () => void;
   onAanpassen: () => void;
   onDownloadPdf: () => void;
+  onScrollToSection: (id: string, tab: string) => void;
   pdfLoading?: boolean;
 }
 
-export default function SidePanel({ result: c, klantNaam, datum, onTerug, onAanpassen, onDownloadPdf, pdfLoading }: Props) {
+export default function SidePanel({ result: c, klantNaam, datum, onTerug, onAanpassen, onDownloadPdf, onScrollToSection, pdfLoading }: Props) {
   const tvt = berekenCumulatieveTvt(c.real, c.investering);
   const gemBesparing = Math.round(c.real.total15 / 15);
 
@@ -75,9 +76,9 @@ export default function SidePanel({ result: c, klantNaam, datum, onTerug, onAanp
       </div>
 
       {/* Capaciteit */}
-      <div className="side-capaciteit">
+      <div className="side-capaciteit clickable" onClick={() => onScrollToSection("sectie-doelen", "advies")} role="button" tabIndex={0}>
         <p className="side-kwh">{c.aanbevolenKwh}</p>
-        <p className="side-kwh-label">kWh aanbevolen</p>
+        <p className="side-kwh-label">kWh aanbevolen <span className="side-arrow">&rsaquo;</span></p>
         <p className="side-tier">{c.tier}</p>
         {c.netBeperkt && (
           <p className="side-net-info">
@@ -97,30 +98,30 @@ export default function SidePanel({ result: c, klantNaam, datum, onTerug, onAanp
       <div className="side-divider" />
 
       {/* Metrics */}
-      <div className="side-metric">
-        <p className="side-metric-label">TERUGVERDIENTIJD</p>
+      <div className="side-metric clickable" onClick={() => onScrollToSection("sectie-scenario", "advies")} role="button" tabIndex={0}>
+        <p className="side-metric-label">TERUGVERDIENTIJD <span className="side-arrow">&rsaquo;</span></p>
         <p className="side-metric-value accent">{formatTvt(tvt)}</p>
       </div>
 
-      <div className="side-metric">
-        <p className="side-metric-label">BESPARING / JAAR</p>
+      <div className="side-metric clickable" onClick={() => onScrollToSection("sectie-financieel", "advies")} role="button" tabIndex={0}>
+        <p className="side-metric-label">BESPARING / JAAR <span className="side-arrow">&rsaquo;</span></p>
         <p className="side-metric-value">&euro;{fmt(animBesparing)}</p>
       </div>
 
-      <div className="side-metric">
-        <p className="side-metric-label">TOTAAL 15 JAAR</p>
+      <div className="side-metric clickable" onClick={() => onScrollToSection("sectie-financieel", "advies")} role="button" tabIndex={0}>
+        <p className="side-metric-label">TOTAAL 15 JAAR <span className="side-arrow">&rsaquo;</span></p>
         <p className="side-metric-value">&euro;{fmt(animTotal15)}</p>
       </div>
 
       {c.hasSolar && (
-        <div className="side-metric">
-          <p className="side-metric-label">ONAFHANKELIJKHEID</p>
+        <div className="side-metric clickable" onClick={() => onScrollToSection("sectie-onafhankelijkheid", "advies")} role="button" tabIndex={0}>
+          <p className="side-metric-label">ONAFHANKELIJKHEID <span className="side-arrow">&rsaquo;</span></p>
           <p className="side-metric-value groen">{animZelf}%</p>
         </div>
       )}
 
-      <div className="side-metric">
-        <p className="side-metric-label">INVESTERING</p>
+      <div className="side-metric clickable" onClick={() => onScrollToSection("sectie-spaarrekening", "advies")} role="button" tabIndex={0}>
+        <p className="side-metric-label">INVESTERING <span className="side-arrow">&rsaquo;</span></p>
         <p className="side-metric-value muted">&euro;{fmt(animInvestering)}</p>
       </div>
 

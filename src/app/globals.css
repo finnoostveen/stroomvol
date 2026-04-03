@@ -281,6 +281,34 @@ body {
 .sv-adv .side-metric-value.groen { color: var(--sv-groen); }
 .sv-adv .side-metric-value.muted { color: rgba(255,255,255,0.5); }
 
+.sv-adv .side-metric.clickable,
+.sv-adv .side-capaciteit.clickable {
+  cursor: pointer;
+  padding: 8px;
+  margin: -8px -8px 1.25rem;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+.sv-adv .side-capaciteit.clickable {
+  margin-bottom: 0;
+}
+.sv-adv .side-metric.clickable:hover,
+.sv-adv .side-capaciteit.clickable:hover {
+  background: rgba(255,255,255,0.06);
+}
+
+.sv-adv .side-arrow {
+  opacity: 0;
+  font-size: 14px;
+  margin-left: 4px;
+  transition: opacity 0.2s;
+  color: rgba(255,255,255,0.4);
+}
+.sv-adv .side-metric.clickable:hover .side-arrow,
+.sv-adv .side-capaciteit.clickable:hover .side-arrow {
+  opacity: 1;
+}
+
 .sv-adv .side-btn {
   display: block;
   width: 100%;

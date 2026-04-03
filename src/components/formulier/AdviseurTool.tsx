@@ -138,6 +138,17 @@ export default function AdviseurTool() {
     }
   }, [result, form, notities, params]);
 
+  const scrollNaarSectie = useCallback((id: string, tab: string) => {
+    if (tab !== activeTab) {
+      setActiveTab(tab as TabId);
+      setTimeout(() => {
+        document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 100);
+    } else {
+      document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [activeTab]);
+
   /* ===================== RESULTAATSCHERM ===================== */
   if (result) {
     return (
@@ -151,6 +162,7 @@ export default function AdviseurTool() {
             onTerug={() => setResult(null)}
             onAanpassen={() => setActiveTab("scenarios")}
             onDownloadPdf={handleDownloadPdf}
+            onScrollToSection={scrollNaarSectie}
             pdfLoading={pdfLoading}
           />
 
@@ -161,12 +173,12 @@ export default function AdviseurTool() {
             advies={
               <>
                 <AdviesSamenvatting result={result} />
-                <div className="section-reveal"><ScenarioTabel result={result} /></div>
-                <div className="section-reveal"><FinancieelOverzicht result={result} /></div>
-                <div className="section-reveal"><DoelMetrics result={result} /></div>
+                <div id="sectie-scenario" className="section-reveal"><ScenarioTabel result={result} /></div>
+                <div id="sectie-financieel" className="section-reveal"><FinancieelOverzicht result={result} /></div>
+                <div id="sectie-doelen" className="section-reveal"><DoelMetrics result={result} /></div>
                 <div className="section-reveal"><ProfielVisualisatie result={result} /></div>
-                <div className="section-reveal"><Onafhankelijkheid result={result} /></div>
-                <div className="section-reveal"><Spaarrekening result={result} /></div>
+                <div id="sectie-onafhankelijkheid" className="section-reveal"><Onafhankelijkheid result={result} /></div>
+                <div id="sectie-spaarrekening" className="section-reveal"><Spaarrekening result={result} /></div>
                 <div className="section-reveal"><SalderingImpact result={result} /></div>
                 <div className="section-reveal"><StressTest result={result} /></div>
                 <div className="section-reveal"><NietsDoen result={result} /></div>
@@ -177,8 +189,8 @@ export default function AdviseurTool() {
                 <div className="section-reveal"><LaadOntlaadSchema result={result} /></div>
                 <div className="section-reveal"><MaandKalender result={result} /></div>
                 <div className="section-reveal"><JouwDag result={result} /></div>
-                <div className="section-reveal"><ContractSwitch result={result} form={form} params={params} /></div>
-                <div className="section-reveal"><OmvormerUpgrade result={result} form={form} params={params} /></div>
+                <div id="sectie-contract-switch" className="section-reveal"><ContractSwitch result={result} form={form} params={params} /></div>
+                <div id="sectie-omvormer-analyse" className="section-reveal"><OmvormerUpgrade result={result} form={form} params={params} /></div>
               </>
             }
             scenarios={
