@@ -2,12 +2,13 @@
 
 import { useEffect, useRef, type ReactNode } from "react";
 
-export type TabId = "advies" | "verdieping" | "scenarios";
+export type TabId = "advies" | "verdieping" | "scenarios" | "notities";
 
 const TAB_LABELS: { id: TabId; label: string }[] = [
   { id: "advies", label: "Advies" },
   { id: "verdieping", label: "Verdieping" },
   { id: "scenarios", label: "Scenario\u2019s" },
+  { id: "notities", label: "Notities" },
 ];
 
 interface Props {
@@ -16,10 +17,11 @@ interface Props {
   advies: ReactNode;
   verdieping: ReactNode;
   scenarios: ReactNode;
+  notities: ReactNode;
   belowTabs: ReactNode;
 }
 
-export default function ContentArea({ activeTab, onTabChange, advies, verdieping, scenarios, belowTabs }: Props) {
+export default function ContentArea({ activeTab, onTabChange, advies, verdieping, scenarios, notities, belowTabs }: Props) {
   const ref = useRef<HTMLDivElement>(null);
 
   /* Re-observe section-reveal elements when tab changes */
@@ -66,6 +68,9 @@ export default function ContentArea({ activeTab, onTabChange, advies, verdieping
         </div>
         <div className={`tab-pane${activeTab === "scenarios" ? " active" : ""}`}>
           {scenarios}
+        </div>
+        <div className={`tab-pane${activeTab === "notities" ? " active" : ""}`}>
+          {notities}
         </div>
       </div>
 

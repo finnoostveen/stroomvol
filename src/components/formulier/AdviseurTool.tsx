@@ -185,30 +185,28 @@ export default function AdviseurTool() {
                 <div className="section-reveal"><AannamesTab params={params} onUpdate={updateParam} /></div>
               </>
             }
-            belowTabs={
-              <>
-                {/* Adviseur notities */}
-                <div className="section-reveal">
-                  <div className="notities-section">
-                    <div className="notities-header">
-                      <span className="notities-icon">{"\uD83D\uDCDD"}</span>
-                      <div>
-                        <div className="notities-title">Adviseur notities</div>
-                        <div className="notities-sub">Bijzonderheden voor het dossier</div>
-                      </div>
+            notities={
+              <div className="section-reveal">
+                <div className="notities-section">
+                  <div className="notities-header">
+                    <span className="notities-icon">{"\uD83D\uDCDD"}</span>
+                    <div>
+                      <div className="notities-title">Adviseur notities</div>
+                      <div className="notities-sub">Bijzonderheden voor het dossier</div>
                     </div>
-                    <textarea
-                      className="notities-textarea"
-                      rows={3}
-                      placeholder="Bijv. 'Dak op zuidwest, 6m kabellengte. Klant overweegt overstap naar dynamisch contract.'"
-                      value={notities}
-                      onChange={(e) => setNotities(e.target.value)}
-                    />
                   </div>
+                  <textarea
+                    className="notities-textarea"
+                    rows={6}
+                    placeholder="Bijv. 'Dak op zuidwest, 6m kabellengte. Klant overweegt overstap naar dynamisch contract.'"
+                    value={notities}
+                    onChange={(e) => setNotities(e.target.value)}
+                  />
                 </div>
-
-                <div className="section-reveal"><Aannames result={result} /></div>
-              </>
+              </div>
+            }
+            belowTabs={
+              <div className="section-reveal"><Aannames result={result} /></div>
             }
           />
         </div>
