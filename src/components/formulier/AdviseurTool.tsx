@@ -95,8 +95,6 @@ export default function AdviseurTool() {
     }
   };
 
-  const progressPct = ((stap + 1) / AANTAL_STAPPEN) * 100;
-
   const updateParam = (key: keyof CalcParams, value: number) => {
     const next = { ...params, [key]: value };
     setParams(next);

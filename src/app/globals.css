@@ -301,21 +301,6 @@ body {
   background: var(--sv-groen);
 }
 
-/* Params close button */
-.sv-adv .params-close {
-  display: block;
-  width: 100%;
-  padding: 10px;
-  background: transparent;
-  border: none;
-  border-top: 1px solid var(--sv-border-light);
-  font-size: 13px;
-  color: var(--sv-text-muted);
-  cursor: pointer;
-  font-family: var(--sv-font-body), 'DM Sans', sans-serif;
-}
-.sv-adv .params-close:hover { color: var(--sv-text); }
-
 /* ============================================================
    PROGRESS BAR
    ============================================================ */
@@ -1963,97 +1948,6 @@ body {
 }
 
 /* ============================================================
-   ADJUSTABLE PARAMS PANEL
-   ============================================================ */
-
-.sv-adv .params-panel {
-  background: #fff;
-  border-radius: 12px;
-  margin-bottom: 16px;
-  overflow: hidden;
-  border: 0.5px solid rgba(0,0,0,0.06);
-}
-
-.sv-adv .params-toggle {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px 20px;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  font-family: var(--sv-font-body), 'DM Sans', sans-serif;
-}
-
-.sv-adv .params-toggle:hover { background: var(--sv-bg-input); }
-
-.sv-adv .params-toggle-label {
-  font-family: var(--sv-font-heading), 'Lexend', sans-serif;
-  font-size: 14px;
-  font-weight: 800;
-  color: var(--sv-text);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.sv-adv .params-toggle-summary {
-  font-size: 12px;
-  font-weight: 400;
-  color: var(--sv-text-muted);
-  margin-left: auto;
-  margin-right: 8px;
-}
-
-.sv-adv .params-toggle-arrow {
-  font-size: 12px;
-  color: var(--sv-text-muted);
-  transition: transform 0.2s;
-}
-
-.sv-adv .params-toggle-arrow.open { transform: rotate(180deg); }
-
-.sv-adv .params-body {
-  padding: 0 20px 20px;
-}
-
-.sv-adv .params-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 16px;
-}
-
-.sv-adv .param-item label {
-  display: block;
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--sv-text-muted);
-  margin-bottom: 6px;
-}
-
-.sv-adv .param-item input[type="range"] {
-  width: 100%;
-  accent-color: var(--sv-accent);
-  margin-bottom: 4px;
-}
-
-.sv-adv .param-val {
-  font-family: var(--sv-font-heading), 'Lexend', sans-serif;
-  font-size: 18px;
-  font-weight: 800;
-  letter-spacing: -0.5px;
-  color: var(--sv-text);
-}
-
-.sv-adv .param-range-labels {
-  display: flex;
-  justify-content: space-between;
-  font-size: 10px;
-  color: var(--sv-text-light);
-}
-
-/* ============================================================
    RESULTS — Niets Doen (dark section)
    ============================================================ */
 
@@ -2224,7 +2118,6 @@ body {
   .sv-adv .at-grid { grid-template-columns: 1fr; }
   .sv-adv .nd-grid { grid-template-columns: 1fr; }
   .sv-adv .nd-info-grid { grid-template-columns: 1fr; }
-  .sv-adv .params-grid { grid-template-columns: 1fr; }
   .sv-adv .nd-section { padding: 24px 20px; }
   .sv-adv .btn-next { padding: 14px 22px; font-size: 13px; }
   .sv-adv .btn-back { padding: 14px 16px; font-size: 13px; }
