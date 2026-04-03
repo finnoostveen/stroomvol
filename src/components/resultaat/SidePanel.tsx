@@ -48,8 +48,8 @@ export default function SidePanel({ result: c, klantNaam, datum, onTerug, onAanp
     <aside className="side-panel">
       {/* Brand */}
       <div className="side-brand">
-        <span className="brand-dot" />
-        <span className="brand-text">STROOMVOL</span>
+        <p className="side-logo">STROOM<span>VOL</span></p>
+        <p className="side-tagline">Batterijadvies op maat</p>
       </div>
 
       {/* Klant */}

@@ -97,26 +97,26 @@ body {
    ============================================================ */
 
 .sv-adv .side-brand {
-  display: flex;
-  align-items: center;
-  gap: 6px;
   margin-bottom: 2rem;
 }
-
-.sv-adv .brand-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--sv-volt);
-  display: inline-block;
-  flex-shrink: 0;
+.sv-adv .side-logo {
+  font-family: var(--sv-font-heading), 'Syne', sans-serif;
+  font-size: 20px;
+  font-weight: 800;
+  color: #fff;
+  text-transform: uppercase;
+  margin: 0;
+  letter-spacing: -0.5px;
 }
-
-.sv-adv .brand-text {
+.sv-adv .side-logo span {
+  color: var(--sv-volt);
+}
+.sv-adv .side-tagline {
+  font-family: var(--sv-font-body), 'DM Sans', sans-serif;
   font-size: 11px;
-  letter-spacing: 0.12em;
   color: rgba(255,255,255,0.35);
-  font-weight: 500;
+  letter-spacing: 0.05em;
+  margin: 2px 0 0;
 }
 
 .sv-adv .side-klant { margin-bottom: 1.5rem; }
