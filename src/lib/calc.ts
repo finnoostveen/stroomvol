@@ -335,7 +335,7 @@ export function calc(form: FormState, params: CalcParams = {}): CalcResult {
   // STAP 5c: Cycle-based degradatie
   let battKwhPerJaar = zelfMetJaar - zelfZonderJaar;
   if (contract === "dynamisch") {
-    const arbCycliJaar = hasSolar ? berekenArbitrageCycliMetSolar(surplusMaand, usableKwh) : 300;
+    const arbCycliJaar = hasSolar ? berekenArbitrageCycliMetSolar(surplusMaand, usableKwh) : 220;
     battKwhPerJaar += arbCycliJaar * usableKwh * eff;
   }
   const cycliPerJaar = usableKwh > 0 ? battKwhPerJaar / usableKwh : 0;
@@ -368,7 +368,7 @@ export function calc(form: FormState, params: CalcParams = {}): CalcResult {
     let jaarBesparingArb = 0;
     if (contract === "dynamisch") {
       const huidigSpread = spread * prijsFactor;
-      const arbCycli = hasSolar ? berekenArbitrageCycliMetSolar(surplusMaand, effectiefKwh) : 300;
+      const arbCycli = hasSolar ? berekenArbitrageCycliMetSolar(surplusMaand, effectiefKwh) : 220;
       const effectieveCycli = Math.min(arbCycli, 365 * 1.5);
       const kwhPerCyclus = Math.min(effectiefKwh * eff, maxBattVermogenKw * 2);
       jaarBesparingArb = effectieveCycli * kwhPerCyclus * huidigSpread;
