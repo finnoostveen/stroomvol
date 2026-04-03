@@ -9,6 +9,8 @@
   },
   "dependencies": {
     "@fontsource-variable/lexend": "^5.2.11",
+    "@fontsource/lexend": "^5.2.11",
+    "@react-pdf/renderer": "^4.3.2",
     "html2canvas": "^1.4.1",
     "jspdf": "^2.5.2",
     "next": "16.2.2",
