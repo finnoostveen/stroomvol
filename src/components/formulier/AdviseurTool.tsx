@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState, useRef } from "react";
+import { useCallback, useState } from "react";
 import type { TabId } from "@/components/resultaat/ContentArea";
 import type { FormState, Stap } from "./types";
 import { initialFormState } from "./types";

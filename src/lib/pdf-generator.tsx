@@ -811,4 +811,3 @@ export function AdviesRapport({ calc, klant }: { calc: CalcResult; klant: PdfDat
   );
 }
 
-export { BrandedPage };
