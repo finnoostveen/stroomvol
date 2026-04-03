@@ -3,7 +3,6 @@
 import { useMemo } from "react";
 import type { FormState } from "@/components/formulier/types";
 import { calc, fmt, type CalcParams, type CalcResult } from "@/lib/calc";
-import { berekenCumulatieveTvt, formatTvt } from "@/lib/helpers";
 
 interface Props {
   result: CalcResult;
@@ -18,11 +17,16 @@ export default function OptiZonnepanelen({ result, form, params }: Props) {
     return calc({ ...form, zon: "ja", panelen: 10, wpPerPaneel: 400 }, params);
   }, [form, params]);
 
-  const hBesp = Math.round(result.real.total15 / 15);
-  const nBesp = Math.round(solarResult.real.total15 / 15);
-  const hTvt = berekenCumulatieveTvt(result.real, result.investering);
-  const nTvt = berekenCumulatieveTvt(solarResult.real, solarResult.investering);
-  const verschil = nBesp - hBesp;
+  const hBattBesp = Math.round(result.real.total15 / 15);
+  const nBattBesp = Math.round(solarResult.real.total15 / 15);
+
+  // Totale energiekosten per scenario
+  const kostenZonder = Math.round(result.totaalVerbruik * result.tarief - hBattBesp);
+  const directeSolarBesp = Math.round(solarResult.zelfMetJaar * solarResult.tarief);
+  const kostenMet = Math.round(
+    (solarResult.totaalVerbruik - solarResult.zelfMetJaar) * solarResult.tarief - nBattBesp,
+  );
+  const verschil = kostenZonder - kostenMet;
 
   return (
     <div className="card ov-wrap">
@@ -37,23 +41,22 @@ export default function OptiZonnepanelen({ result, form, params }: Props) {
       <div className="ov-grid">
         <div className="ov-col ov-col--grijs">
           <div className="ov-col-title">Zonder panelen</div>
-          <div className="ov-row">Besparing: <strong>&euro;{fmt(hBesp)}/jaar</strong></div>
-          <div className="ov-row">TVT: <strong>{formatTvt(hTvt)}</strong></div>
+          <div className="ov-row">Energiekosten: <strong>&euro;{fmt(kostenZonder)}/jaar</strong></div>
+          <div className="ov-row">Waarvan batterij bespaart: <strong>&euro;{fmt(hBattBesp)}/jaar</strong></div>
           <div className="ov-row">Zelfconsumptie: <strong>0%</strong></div>
-          <div className="ov-row">Investering: <strong>&euro;{fmt(result.investering)}</strong></div>
         </div>
         <div className="ov-col ov-col--groen">
           <div className="ov-col-title">Met 10 panelen</div>
-          <div className="ov-row">Besparing: <strong className="ov-beter">&euro;{fmt(nBesp)}/jaar</strong> <span className="ov-diff ov-diff--groen">(+&euro;{fmt(verschil)}/jr)</span></div>
-          <div className="ov-row">TVT: <strong className="ov-beter">{formatTvt(nTvt)}</strong></div>
+          <div className="ov-row">Energiekosten: <strong className="ov-beter">&euro;{fmt(kostenMet)}/jaar</strong> <span className="ov-diff ov-diff--groen">(-&euro;{fmt(verschil)}/jr)</span></div>
+          <div className="ov-row">Waarvan zonnestroom bespaart: <strong className="ov-beter">&euro;{fmt(directeSolarBesp)}/jaar</strong></div>
+          <div className="ov-row">Waarvan batterij bespaart: <strong className="ov-beter">&euro;{fmt(nBattBesp)}/jaar</strong></div>
           <div className="ov-row">Zelfconsumptie: <strong className="ov-beter">{solarResult.zelfPctMet}%</strong></div>
-          <div className="ov-row">Investering: <strong>&euro;{fmt(solarResult.investering)}</strong></div>
         </div>
       </div>
 
       {verschil > 0 && (
         <div className="ov-banner">
-          Met zonnepanelen stijgt je besparing met &euro;{fmt(verschil)}/jaar en dekt je {solarResult.zelfPctMet}% van je verbruik met eigen opwek.
+          Met zonnepanelen dalen je totale energiekosten met &euro;{fmt(verschil)}/jaar — van &euro;{fmt(kostenZonder)} naar &euro;{fmt(kostenMet)} per jaar.
         </div>
       )}
 
