@@ -20,6 +20,7 @@ import FinancieelOverzicht from "@/components/resultaat/FinancieelOverzicht";
 import Spaarrekening from "@/components/resultaat/Spaarrekening";
 import NietsDoen from "@/components/resultaat/NietsDoen";
 import LaadOntlaadSchema from "@/components/resultaat/LaadOntlaadSchema";
+import MaandKalender from "@/components/resultaat/MaandKalender";
 import ScenarioTabel from "@/components/resultaat/ScenarioTabel";
 import Aannames from "@/components/resultaat/Aannames";
 
@@ -126,6 +127,7 @@ export default function AdviseurTool() {
             verdieping={
               <>
                 <div className="section-reveal"><LaadOntlaadSchema result={result} /></div>
+                <div className="section-reveal"><MaandKalender result={result} /></div>
               </>
             }
             scenarios={
