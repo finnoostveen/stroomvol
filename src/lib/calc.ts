@@ -141,7 +141,7 @@ export const GROOTVERBRUIK = {
 
 const ESSENTIAL_LOAD_KW = 1.2;
 const CAPACITEITS_TARIEF = 40;
-const ARBITRAGE_CAPTURE_RATE = 0.65;
+const ARBITRAGE_CAPTURE_RATE = 0.80;
 
 // ===================== HELPERS =====================
 
