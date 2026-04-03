@@ -169,6 +169,114 @@ function formatDatum(d: string): string {
   return `${day}-${m}-${y}`;
 }
 
+function fmtNl(n: number): string {
+  return n.toLocaleString("nl-NL");
+}
+
+function genereerAdviesTekst(r: CalcResult, form: FormState): string[] {
+  const alineas: string[] = [];
+  const tvt = berekenCumulatieveTvt(r.real, r.investering);
+
+  // Alinea 1: Kernadvies (altijd)
+  const profielLabel =
+    form.profiel === "avond-zwaar" ? "avondgerichte verbruiksprofiel" :
+    form.profiel === "overdag" ? "verbruiksprofiel met overdag-activiteit" :
+    form.profiel === "ev-nacht" ? "verbruiksprofiel met nachtelijk EV-laden" :
+    "verbruiksprofiel";
+  alineas.push(
+    `Op basis van jouw verbruik van ${fmtNl(r.totaalVerbruik)} kWh per jaar ` +
+    `en jouw ${profielLabel} ` +
+    `adviseren wij een thuisbatterij van ${r.aanbevolenKwh} kWh. ` +
+    `De investering van \u20AC${fmtNl(r.investering)} verdien je terug in ${formatTvt(tvt)}. ` +
+    `Daarna is elke besparing pure winst.`
+  );
+
+  // Alinea 2: Energie-onafhankelijkheid (als solar)
+  if (r.hasSolar) {
+    const suffix =
+      r.zelfPctMet >= 70 ? "je bent grotendeels onafhankelijk van het energienet." :
+      r.zelfPctMet >= 50 ? "meer dan de helft van je stroom komt van je eigen dak." :
+      "een flinke stap richting energieonafhankelijkheid.";
+    alineas.push(
+      `Met de batterij stijgt je energie-onafhankelijkheid van ${r.zelfPctZonder}% naar ${r.zelfPctMet}%. ` +
+      `Dat betekent dat ${r.zelfPctMet}% van je verbruik uit eigen zonnestroom komt \u2014 ${suffix}`
+    );
+  }
+
+  // Alinea 3: Doelen bereikt
+  const doelTeksten: string[] = [];
+  if (r.zelfPctMet >= 60) doelTeksten.push(`zelfconsumptie maximaliseren (${r.zelfPctMet}%)`);
+  if (r.contract === "dynamisch" && r.real.perJaar[0]?.arb > 0) {
+    doelTeksten.push(`slim handelen op de energiemarkt (\u20AC${fmt(r.real.perJaar[0].arb)}/jaar)`);
+  }
+  if (r.noodstroomUren >= 4) doelTeksten.push(`noodstroom bij stroomuitval (${r.noodstroomUren} uur)`);
+  if (r.peakReductieKw > 0 && r.doel.has("peak")) doelTeksten.push("piekverbruik beperken");
+  if (doelTeksten.length > 0) {
+    const joined = doelTeksten.length > 1
+      ? doelTeksten.slice(0, -1).join(", ") + ` en ${doelTeksten[doelTeksten.length - 1]}`
+      : doelTeksten[0];
+    alineas.push(`De batterij helpt je bij het bereiken van jouw doelen: ${joined}.`);
+  }
+
+  // Alinea 4: Financieel rendement
+  const rendementPct = Math.round((r.real.total15 / 15) / r.investering * 100);
+  const rendementSuffix =
+    rendementPct > 10 ? "ruim beter dan een spaarrekening of de meeste beleggingen." :
+    rendementPct > 5 ? "beter dan een spaarrekening." :
+    "vergelijkbaar met een spaarrekening maar met het extra voordeel van energieonafhankelijkheid.";
+  alineas.push(
+    `In het realistisch scenario levert de batterij over 15 jaar \u20AC${fmtNl(r.real.total15)} op \u2014 ` +
+    `netto \u20AC${fmtNl(r.real.nettoWinst)} winst na aftrek van de investering. ` +
+    `Dat komt neer op een gemiddeld rendement van ${rendementPct}% per jaar, ${rendementSuffix}`
+  );
+
+  // Alinea 5: Saldering context (als solar)
+  if (r.hasSolar) {
+    alineas.push(
+      `Vanaf 2027 stopt de salderingsregeling. Zonder batterij ontvang je voor teruggeleverde stroom ` +
+      `nog slechts \u20AC${r.terug.toFixed(2)}/kWh in plaats van het volle tarief. ` +
+      `De batterij beschermt je hiertegen door zoveel mogelijk stroom zelf te gebruiken in plaats van terug te leveren.`
+    );
+  }
+
+  // Alinea 6: Profiel-specifieke tip
+  if (form.profiel === "avond-zwaar") {
+    alineas.push(
+      `Omdat jij het meeste stroom \u2019s avonds verbruikt terwijl de zon overdag schijnt, ` +
+      `heeft de batterij bij jouw profiel extra veel impact. De batterij overbrugt precies dat gat ` +
+      `tussen opwek en verbruik.`
+    );
+  } else if (form.profiel === "overdag") {
+    alineas.push(
+      `Doordat je overdag thuis bent en al veel zonnestroom direct verbruikt, ` +
+      `is de batterij vooral waardevol voor de avonduren en bewolkte dagen.`
+    );
+  } else if (form.profiel === "ev-nacht" && r.heeftEv) {
+    alineas.push(
+      `De batterij laadt overdag op met zonnestroom en levert deze \u2019s nachts aan je elektrische auto. ` +
+      `Zo rijd je op eigen zonnestroom \u2014 goedkoper en groener dan laden van het net.`
+    );
+  }
+
+  // Alinea 7: Batterijlevensduur
+  const cycli = Math.round(r.cycliPerJaar);
+  if (r.jarenTot80Pct >= 12) {
+    alineas.push(
+      `De verwachte levensduur van de batterij is ${Math.round(r.jarenTot80Pct)} jaar tot 80% capaciteit ` +
+      `bij het berekende gebruik van ~${cycli} cycli per jaar. ` +
+      `Dat betekent dat de batterij ruim voorbij de terugverdientijd optimaal presteert.`
+    );
+  } else if (r.jarenTot80Pct >= 8) {
+    alineas.push(
+      `Bij ~${cycli} cycli per jaar heeft de batterij een verwachte levensduur van ` +
+      `${Math.round(r.jarenTot80Pct)} jaar tot 80% capaciteit. De batterij verdient zichzelf terug ` +
+      `ruim binnen die levensduur.`
+    );
+  }
+
+  return alineas;
+}
+
 /* ============================================================
    PAGINA 1: COVER + KERNGETALLEN + ADVIES
    ============================================================ */
@@ -228,7 +336,7 @@ const c1 = StyleSheet.create({
   adviesBar: { width: 4, backgroundColor: K.groen },
   adviesContent: { flex: 1, padding: 14 },
   adviesTitle: { fontFamily: "Lexend", fontWeight: 700, fontSize: 11, color: K.zwart, marginBottom: 6 },
-  adviesText: { fontSize: 9, color: K.grafiet, lineHeight: 1.6 },
+  adviesText: { fontFamily: "DM Sans", fontSize: 10, color: K.grafiet, lineHeight: 1.6 },
 
   // Optimalisatieblok
   optiWrap: {
@@ -244,7 +352,7 @@ const c1 = StyleSheet.create({
   optiBold: { fontWeight: 700, color: K.zwart },
 });
 
-function CoverPage({ calc: r, klant, optimalisaties }: { calc: CalcResult; klant: PdfData; optimalisaties: Optimalisatie[] }) {
+function CoverPage({ calc: r, klant, optimalisaties, form }: { calc: CalcResult; klant: PdfData; optimalisaties: Optimalisatie[]; form: FormState }) {
   const tvt = berekenCumulatieveTvt(r.real, r.investering);
   const gemBesparing = Math.round(r.real.total15 / 15);
 
@@ -305,13 +413,9 @@ function CoverPage({ calc: r, klant, optimalisaties }: { calc: CalcResult; klant
         <View style={c1.adviesBar} />
         <View style={c1.adviesContent}>
           <Text style={c1.adviesTitle}>Ons advies</Text>
-          <Text style={c1.adviesText}>
-            Met een thuisbatterij van {r.aanbevolenKwh} kWh benut je {r.hasSolar ? `${r.zelfPctMet}% van je eigen zonnestroom en verdien` : "verdien"} je de investering terug in {formatTvt(tvt)}.
-            Na de terugverdientijd is elke besparing pure winst.
-          </Text>
-          <Text style={[c1.adviesText, { marginTop: 8 }]}>
-            In het realistisch scenario levert de batterij over 15 jaar {"\u20AC"}{fmt(r.real.nettoWinst)} netto op.
-          </Text>
+          {genereerAdviesTekst(r, form).map((alinea, i) => (
+            <Text key={i} style={[c1.adviesText, i > 0 ? { marginTop: 6 } : {}]}>{alinea}</Text>
+          ))}
         </View>
       </View>
 
@@ -1062,7 +1166,7 @@ export function AdviesRapport({ calc, klant, form, params }: { calc: CalcResult;
       title={`Stroomvol Advies - ${klant.klantNaam}`}
       author="Stroomvol"
     >
-      <CoverPage calc={calc} klant={klant} optimalisaties={optis} />
+      <CoverPage calc={calc} klant={klant} optimalisaties={optis} form={form} />
       <FinancieelPage calc={calc} form={form} params={params} />
       <DoelenPage calc={calc} />
       <SlotPage notities={klant.notities} calc={calc} />
