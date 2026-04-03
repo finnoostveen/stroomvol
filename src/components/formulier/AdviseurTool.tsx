@@ -11,7 +11,7 @@ import StapZon from "./StapZon";
 import StapOmvormerNet from "./StapOmvormerNet";
 import StapGrootverbruikers from "./StapGrootverbruikers";
 import StapInstallatie from "./StapInstallatie";
-import HeroMetrics from "@/components/resultaat/HeroMetrics";
+import SidePanel from "@/components/resultaat/SidePanel";
 import DoelMetrics from "@/components/resultaat/DoelMetrics";
 import LaadOntlaadSchema from "@/components/resultaat/LaadOntlaadSchema";
 import Onafhankelijkheid from "@/components/resultaat/Onafhankelijkheid";
@@ -95,42 +95,25 @@ export default function AdviseurTool() {
     setResult(calc(form, next));
   };
 
+  /* ===================== RESULTAATSCHERM ===================== */
   if (result) {
     return (
       <div className="sv-adv">
-        <div className="container">
-          <div className="header-sticky">
-            <h1 className="logo">
-              STROOM<span>VOL</span>
-            </h1>
-          </div>
+        <div className="resultaat-layout">
+          {/* Donker zijpaneel */}
+          <SidePanel
+            result={result}
+            klantNaam={form.klantNaam}
+            datum={form.datum}
+            onTerug={() => setResult(null)}
+            onAanpassen={() => setParamsOpen(!paramsOpen)}
+          />
 
-          <div className="phase">
-            <HeroMetrics result={result} />
-            <DoelMetrics result={result} />
-            <div className="section-gray">
-              <LaadOntlaadSchema result={result} />
-            </div>
-            <Onafhankelijkheid result={result} />
-            <StressTest result={result} />
-            <FinancieelOverzicht result={result} />
-            <div className="section-gray">
-              <Spaarrekening result={result} />
-            </div>
-            <NietsDoen result={result} />
-
-            {/* Instelbare aannames */}
-            <div className="params-panel">
-              <button type="button" className="params-toggle" onClick={() => setParamsOpen(!paramsOpen)}>
-                <span className="params-toggle-label">⚙️ Aannames aanpassen</span>
-                {!paramsOpen && (
-                  <span className="params-toggle-summary">
-                    &euro;{params.cpk}/kWh &middot; DoD {params.dod}% &middot; Eff {params.eff}%
-                  </span>
-                )}
-                <span className={`params-toggle-arrow${paramsOpen ? " open" : ""}`}>▼</span>
-              </button>
-              {paramsOpen && (
+          {/* Licht contentgebied */}
+          <div className="content-area">
+            {/* Aannames panel (openklapbaar) */}
+            {paramsOpen && (
+              <div className="params-panel">
                 <div className="params-body">
                   <div className="params-grid">
                     <div className="param-item">
@@ -174,8 +157,23 @@ export default function AdviseurTool() {
                     </div>
                   </div>
                 </div>
-              )}
-            </div>
+                <button
+                  type="button"
+                  className="params-close"
+                  onClick={() => setParamsOpen(false)}
+                >
+                  Sluiten
+                </button>
+              </div>
+            )}
+
+            <DoelMetrics result={result} />
+            <LaadOntlaadSchema result={result} />
+            <Onafhankelijkheid result={result} />
+            <StressTest result={result} />
+            <FinancieelOverzicht result={result} />
+            <Spaarrekening result={result} />
+            <NietsDoen result={result} />
 
             {/* Adviseur notities */}
             <div className="notities-section">
@@ -197,36 +195,32 @@ export default function AdviseurTool() {
 
             <Aannames result={result} />
           </div>
-
-          <nav className="nav">
-            <button type="button" className="btn-back" onClick={() => setResult(null)}>
-              &larr; Terug naar formulier
-            </button>
-          </nav>
         </div>
       </div>
     );
   }
 
+  /* ===================== FORMULIER ===================== */
   return (
     <div className="sv-adv">
-      <div className="hero-bg" style={{ padding: "36px 20px 28px", marginBottom: 0 }}>
-        <div className="container">
-          <header className="header" style={{ position: "relative" }}>
-            <h1 className="logo">
-              STROOM<span>VOL</span>
-            </h1>
-            <p className="header-sub">Batterijadvies op maat</p>
-            <div className="header-badge">ADVISEURSTOOL</div>
-          </header>
+      <div className="formulier-container">
+        {/* Brand mark */}
+        <div className="brand-mark">
+          <span className="brand-dot" />
+          <span>STROOMVOL ADVISEURSTOOL</span>
         </div>
-      </div>
-      <div className="container" style={{ paddingTop: 24 }}>
 
-        {/* Progress */}
-        <div className="progress-bar" role="progressbar" aria-valuenow={stap + 1} aria-valuemin={1} aria-valuemax={AANTAL_STAPPEN}>
-          <div className="progress-fill" style={{ width: `${progressPct}%` }} />
+        {/* Progress dots */}
+        <div className="step-dots">
+          {STAP_LABELS.map((_, i) => (
+            <span
+              key={i}
+              className={`step-dot${i === stap ? " active" : i < stap ? " completed" : ""}`}
+            />
+          ))}
         </div>
+
+        {/* Stap label */}
         <p className="progress-label">
           Stap {stap + 1} van {AANTAL_STAPPEN}: {STAP_LABELS[stap]}
         </p>
