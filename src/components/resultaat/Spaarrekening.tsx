@@ -10,30 +10,28 @@ const SPAARRENTE = 0.02;
 
 function berekenVergelijking(investering: number, perJaarData: JaarBesparing[]) {
   const jaren = [];
-  let cumulatiefBatterij = 0;
-  let spaarSaldo = investering;
+  let batterijWaarde = investering;
+  let spaarWaarde = investering;
 
   for (let j = 0; j < 15; j++) {
-    cumulatiefBatterij += perJaarData[j].totaal;
-    spaarSaldo *= 1 + SPAARRENTE;
+    batterijWaarde += perJaarData[j].totaal;
+    spaarWaarde *= 1 + SPAARRENTE;
     jaren.push({
       jaar: j + 1,
-      batterijWaarde: cumulatiefBatterij,
-      spaarWaarde: Math.round(spaarSaldo - investering),
+      batterijWaarde: Math.round(batterijWaarde),
+      spaarWaarde: Math.round(spaarWaarde),
     });
   }
 
-  const batterijTotaal = cumulatiefBatterij;
-  const spaarTotaal = Math.round(spaarSaldo - investering);
-  const verschil = batterijTotaal - spaarTotaal;
-  const factorBeter = Math.round((batterijTotaal / Math.max(spaarTotaal, 1)) * 10) / 10;
+  const verschil = jaren[14].batterijWaarde - jaren[14].spaarWaarde;
+  const factorBeter = Math.round((jaren[14].batterijWaarde / Math.max(jaren[14].spaarWaarde, 1)) * 10) / 10;
 
-  return { jaren, batterijTotaal, spaarTotaal, verschil, factorBeter };
+  return { jaren, investering, batterijTotaal: jaren[14].batterijWaarde, spaarTotaal: jaren[14].spaarWaarde, verschil, factorBeter };
 }
 
 const nlEuro = (n: number) => n.toLocaleString("nl-NL", { maximumFractionDigits: 0 });
 
-function LineChart({ jaren }: { jaren: { jaar: number; batterijWaarde: number; spaarWaarde: number }[] }) {
+function LineChart({ jaren, investering }: { jaren: { jaar: number; batterijWaarde: number; spaarWaarde: number }[]; investering: number }) {
   const W = 700;
   const H = 300;
   const padL = 60;
@@ -52,12 +50,12 @@ function LineChart({ jaren }: { jaren: { jaar: number; batterijWaarde: number; s
   const x = (jaar: number) => padL + (jaar / 15) * plotW;
   const y = (val: number) => padT + plotH - (val / yMax) * plotH;
 
-  // Batterij pad
-  const battPoints = [{ jaar: 0, val: 0 }, ...jaren.map((j) => ({ jaar: j.jaar, val: j.batterijWaarde }))];
+  // Batterij pad (start bij investering)
+  const battPoints = [{ jaar: 0, val: investering }, ...jaren.map((j) => ({ jaar: j.jaar, val: j.batterijWaarde }))];
   const battPath = battPoints.map((p, i) => `${i === 0 ? "M" : "L"}${x(p.jaar)},${y(p.val)}`).join(" ");
 
-  // Spaar pad
-  const spaarPoints = [{ jaar: 0, val: 0 }, ...jaren.map((j) => ({ jaar: j.jaar, val: j.spaarWaarde }))];
+  // Spaar pad (start bij investering)
+  const spaarPoints = [{ jaar: 0, val: investering }, ...jaren.map((j) => ({ jaar: j.jaar, val: j.spaarWaarde }))];
   const spaarPath = spaarPoints.map((p, i) => `${i === 0 ? "M" : "L"}${x(p.jaar)},${y(p.val)}`).join(" ");
 
   // Y-as labels (5 stappen)
@@ -114,7 +112,7 @@ export default function Spaarrekening({ result }: Props) {
 
       {/* Grafiek */}
       <div style={{ marginBottom: 20 }}>
-        <LineChart jaren={data.jaren} />
+        <LineChart jaren={data.jaren} investering={data.investering} />
         <div className="spaar-legend">
           <span className="spaar-legend-item">
             <span className="spaar-legend-line spaar-legend-line--batt" /> Batterij investering
