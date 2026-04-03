@@ -19,6 +19,7 @@ import StressTest from "@/components/resultaat/StressTest";
 import FinancieelOverzicht from "@/components/resultaat/FinancieelOverzicht";
 import Spaarrekening from "@/components/resultaat/Spaarrekening";
 import NietsDoen from "@/components/resultaat/NietsDoen";
+import LaadOntlaadSchema from "@/components/resultaat/LaadOntlaadSchema";
 import ScenarioTabel from "@/components/resultaat/ScenarioTabel";
 import Aannames from "@/components/resultaat/Aannames";
 
@@ -123,11 +124,9 @@ export default function AdviseurTool() {
               </>
             }
             verdieping={
-              <div className="section-reveal">
-                <p style={{ color: "#8E8E93", fontStyle: "italic", textAlign: "center", padding: "3rem 1rem" }}>
-                  Verdiepende analyses worden hier getoond
-                </p>
-              </div>
+              <>
+                <div className="section-reveal"><LaadOntlaadSchema result={result} /></div>
+              </>
             }
             scenarios={
               <>
