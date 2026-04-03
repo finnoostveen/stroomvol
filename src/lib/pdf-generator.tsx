@@ -465,6 +465,158 @@ function DoelenPage({ calc: r }: { calc: CalcResult }) {
 }
 
 /* ============================================================
+   PAGINA 3: FINANCIEEL OVERZICHT
+   ============================================================ */
+
+const c3 = StyleSheet.create({
+  sectionTitle: { fontFamily: "Lexend", fontWeight: 700, fontSize: 14, color: K.zwart, marginBottom: 12 },
+  // Besparingsopbouw
+  bdownRow: { flexDirection: "row", alignItems: "center", marginBottom: 6 },
+  bdownLabel: { width: "42%", fontSize: 10, color: K.grafiet },
+  bdownBarWrap: { width: "36%", height: 10, backgroundColor: K.krijt, borderRadius: 3, overflow: "hidden" },
+  bdownBar: { height: 10, backgroundColor: K.groen, borderRadius: 3 },
+  bdownVal: { width: "22%", fontSize: 10, fontWeight: 700, color: K.zwart, textAlign: "right" },
+  bdownTotal: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 4,
+    paddingTop: 8,
+    borderTopWidth: 1,
+    borderTopColor: K.grijs,
+  },
+  bdownTotalLabel: { width: "42%", fontFamily: "Lexend", fontWeight: 700, fontSize: 10, color: K.zwart },
+  bdownTotalVal: { width: "58%", fontFamily: "Lexend", fontWeight: 700, fontSize: 12, color: K.zwart, textAlign: "right" },
+
+  // 15-jaar overzicht
+  overzichtWrap: { marginTop: 20, marginBottom: 20 },
+  overzichtRow: { flexDirection: "row", justifyContent: "space-between", paddingVertical: 4 },
+  overzichtLabel: { fontSize: 10, color: K.grafiet },
+  overzichtVal: { fontSize: 10, fontWeight: 700, color: K.zwart },
+  overzichtTotalRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingTop: 8,
+    marginTop: 4,
+    borderTopWidth: 1.5,
+    borderTopColor: K.zwart,
+  },
+  overzichtTotalLabel: { fontFamily: "Lexend", fontWeight: 700, fontSize: 11, color: K.zwart },
+  overzichtTotalVal: { fontFamily: "Lexend", fontWeight: 700, fontSize: 14 },
+
+  // Spaarrekening vergelijking
+  spaarGrid: { flexDirection: "row", gap: 12, marginTop: 16 },
+  spaarCard: {
+    flex: 1,
+    borderRadius: 6,
+    padding: 14,
+    borderWidth: 1,
+    borderColor: K.grijs,
+  },
+  spaarCardGroen: {
+    flex: 1,
+    borderRadius: 6,
+    padding: 14,
+    borderWidth: 2,
+    borderColor: K.groen,
+  },
+  spaarTitle: { fontFamily: "Lexend", fontWeight: 700, fontSize: 10, color: K.zwart, marginBottom: 8 },
+  spaarLabel: { fontSize: 8, color: K.grijsDonker, marginBottom: 2 },
+  spaarVal: { fontFamily: "Lexend", fontWeight: 700, fontSize: 16, color: K.zwart, marginBottom: 4 },
+  spaarSub: { fontSize: 8, color: K.grijsDonker },
+  spaarFooter: { fontSize: 9, color: K.grafiet, marginTop: 12 },
+});
+
+function FinancieelPage({ calc: r }: { calc: CalcResult }) {
+  const n = r.real.perJaar.length;
+  const gem = {
+    zelf: Math.round(r.real.perJaar.reduce((s, j) => s + j.zelf, 0) / n),
+    arb: Math.round(r.real.perJaar.reduce((s, j) => s + j.arb, 0) / n),
+    ev: Math.round(r.real.perJaar.reduce((s, j) => s + j.ev, 0) / n),
+    wp: Math.round(r.real.perJaar.reduce((s, j) => s + j.wp, 0) / n),
+    peak: Math.round(r.real.perJaar.reduce((s, j) => s + j.peak, 0) / n),
+    totaal: Math.round(r.real.total15 / n),
+  };
+
+  const componenten: { label: string; val: number }[] = [];
+  if (gem.zelf > 0) componenten.push({ label: "Zelfconsumptie", val: gem.zelf });
+  if (gem.arb > 0) componenten.push({ label: "Dynamisch tarief arbitrage", val: gem.arb });
+  if (gem.ev > 0) componenten.push({ label: "EV slim laden", val: gem.ev });
+  if (gem.wp > 0) componenten.push({ label: "Warmtepomp buffering", val: gem.wp });
+  if (gem.peak > 0) componenten.push({ label: "Peak shaving", val: gem.peak });
+  const maxComp = Math.max(...componenten.map((c) => c.val), 1);
+
+  const nw = r.real.nettoWinst;
+
+  // Spaarrekening vergelijking
+  const spaarRente = 0.02;
+  const spaarWaarde = Math.round(r.investering * Math.pow(1 + spaarRente, 15));
+  const battRendement = r.investering > 0 ? Math.round(((r.real.total15 / r.investering) - 1) / 15 * 100) : 0;
+  const verschil = r.real.total15 - spaarWaarde;
+  const factorBeter = spaarWaarde > 0 ? (r.real.total15 / spaarWaarde).toFixed(1) : "0";
+
+  return (
+    <BrandedPage>
+      {/* A. Besparingsopbouw */}
+      <Text style={c3.sectionTitle}>Waar komt je besparing vandaan?</Text>
+
+      {componenten.map((c) => (
+        <View key={c.label} style={c3.bdownRow}>
+          <Text style={c3.bdownLabel}>{c.label}</Text>
+          <View style={c3.bdownBarWrap}>
+            <View style={[c3.bdownBar, { width: `${(c.val / maxComp) * 100}%` }]} />
+          </View>
+          <Text style={c3.bdownVal}>{"\u20AC"}{fmt(c.val)}/jaar</Text>
+        </View>
+      ))}
+
+      <View style={c3.bdownTotal}>
+        <Text style={c3.bdownTotalLabel}>Gem. jaarlijkse besparing</Text>
+        <Text style={c3.bdownTotalVal}>{"\u20AC"}{fmt(gem.totaal)}/jaar</Text>
+      </View>
+
+      {/* B. 15-jaar overzicht */}
+      <View style={c3.overzichtWrap}>
+        <Text style={[c3.sectionTitle, { marginBottom: 8 }]}>15-jaar overzicht</Text>
+        <View style={c3.overzichtRow}>
+          <Text style={c3.overzichtLabel}>Totale besparing (15 jaar, realistisch)</Text>
+          <Text style={c3.overzichtVal}>{"\u20AC"}{fmt(r.real.total15)}</Text>
+        </View>
+        <View style={c3.overzichtRow}>
+          <Text style={c3.overzichtLabel}>Investering</Text>
+          <Text style={c3.overzichtVal}>{"\u2212\u20AC"}{fmt(r.investering)}</Text>
+        </View>
+        <View style={c3.overzichtTotalRow}>
+          <Text style={c3.overzichtTotalLabel}>Netto winst na 15 jaar</Text>
+          <Text style={[c3.overzichtTotalVal, { color: nw >= 0 ? K.groen : "#FF3B30" }]}>
+            {nw >= 0 ? "+" : ""}{"\u20AC"}{fmt(nw)}
+          </Text>
+        </View>
+      </View>
+
+      {/* C. Batterij vs. Spaarrekening */}
+      <Text style={c3.sectionTitle}>Batterij vs. spaarrekening</Text>
+      <View style={c3.spaarGrid}>
+        <View style={c3.spaarCardGroen}>
+          <Text style={c3.spaarTitle}>Batterij investering</Text>
+          <Text style={c3.spaarLabel}>Totale waarde 15 jaar</Text>
+          <Text style={c3.spaarVal}>{"\u20AC"}{fmt(r.real.total15)}</Text>
+          <Text style={c3.spaarSub}>~{battRendement}% rendement/jaar</Text>
+        </View>
+        <View style={c3.spaarCard}>
+          <Text style={c3.spaarTitle}>Spaarrekening (2%)</Text>
+          <Text style={c3.spaarLabel}>Totale waarde 15 jaar</Text>
+          <Text style={c3.spaarVal}>{"\u20AC"}{fmt(spaarWaarde)}</Text>
+          <Text style={c3.spaarSub}>2% rente/jaar</Text>
+        </View>
+      </View>
+      <Text style={c3.spaarFooter}>
+        De batterij levert {"\u20AC"}{fmt(verschil)} meer op dan sparen — {factorBeter}x meer rendement.
+      </Text>
+    </BrandedPage>
+  );
+}
+
+/* ============================================================
    DOCUMENT
    ============================================================ */
 
@@ -485,6 +637,7 @@ export function AdviesRapport({ calc, klant }: { calc: CalcResult; klant: PdfDat
     >
       <CoverPage calc={calc} klant={klant} />
       <DoelenPage calc={calc} />
+      <FinancieelPage calc={calc} />
     </Document>
   );
 }
