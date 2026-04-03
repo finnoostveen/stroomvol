@@ -1426,6 +1426,75 @@ body {
 }
 
 /* ============================================================
+   OMVORMER UPGRADE
+   ============================================================ */
+
+.ou-wrap { margin-top: 0; }
+
+.ou-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.ou-col {
+  padding: 16px;
+  border-radius: 10px;
+  border: 1.5px solid var(--sv-grijs);
+}
+
+.ou-col--grijs { border-color: var(--sv-grijs); background: #fff; }
+.ou-col--groen { border-color: var(--sv-groen); background: rgba(52,199,89,0.04); }
+
+.ou-col-title {
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 10px;
+  color: var(--sv-zwart);
+}
+
+.ou-row {
+  font-size: 13px;
+  color: var(--sv-grafiet);
+  margin-bottom: 4px;
+}
+
+.ou-banner {
+  background: rgba(52,199,89,0.1);
+  border-left: 3px solid var(--sv-groen);
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--sv-zwart);
+  margin-bottom: 12px;
+}
+
+.ou-info {
+  font-size: 12px;
+  color: var(--sv-grafiet);
+  line-height: 1.5;
+  padding: 10px 12px;
+  background: var(--sv-krijt);
+  border-radius: 8px;
+}
+
+.ou-ok {
+  font-size: 13px;
+  color: var(--sv-grafiet);
+  line-height: 1.6;
+  padding: 12px 14px;
+  background: rgba(52,199,89,0.06);
+  border-left: 3px solid var(--sv-groen);
+  border-radius: 6px;
+}
+
+@media (max-width: 600px) {
+  .ou-grid { grid-template-columns: 1fr; }
+}
+
+/* ============================================================
    PROFIEL VISUALISATIE
    ============================================================ */
 
