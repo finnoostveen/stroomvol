@@ -268,7 +268,7 @@ export function calc(form: FormState, params: CalcParams = {}): CalcResult {
   const maxKwNet = NET_VERMOGEN[net]?.maxKw ?? 5.75;
   const maxKwhVoorNet = maxKwNet * 2;
   aanbevolenKwh = Math.min(aanbevolenKwh, maxKwhVoorNet);
-  aanbevolenKwh = Math.round(aanbevolenKwh / 5) * 5;
+  aanbevolenKwh = Math.round(aanbevolenKwh);
   aanbevolenKwh = Math.max(5, Math.min(20, aanbevolenKwh));
 
   const usableKwh = aanbevolenKwh * dod;
