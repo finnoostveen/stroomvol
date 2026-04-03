@@ -121,6 +121,7 @@ export default function AdviseurTool() {
             onTabChange={setActiveTab}
             advies={
               <>
+                <div className="section-reveal"><ScenarioTabel result={result} /></div>
                 <div className="section-reveal"><FinancieelOverzicht result={result} /></div>
                 <div className="section-reveal"><DoelMetrics result={result} /></div>
                 <div className="section-reveal"><Onafhankelijkheid result={result} /></div>
@@ -140,7 +141,6 @@ export default function AdviseurTool() {
             scenarios={
               <>
                 <div className="section-reveal"><SpeelMetProfiel result={result} form={form} params={params} /></div>
-                <div className="section-reveal"><ScenarioTabel result={result} /></div>
                 <div className="section-reveal"><AannamesTab params={params} onUpdate={updateParam} /></div>
               </>
             }
