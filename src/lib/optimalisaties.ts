@@ -48,18 +48,7 @@ export function bepaalOptimalisaties(
     }
   }
 
-  // 3. Grotere batterij
-  if (r.curtailmentPct > 10 && r.aanbevolenKwh < 20) {
-    items.push({
-      id: "curtailment",
-      label: "Grotere batterij overwegen",
-      reden: `${r.curtailmentPct}% van je zonnestroom gaat verloren (${fmt(r.curtailmentJaar)} kWh/jaar). Een grotere batterij vangt dit op.`,
-      tab: "advies",
-      sectieId: "sectie-doelen",
-    });
-  }
-
-  // 4. Net upgrade
+  // 3. Net upgrade
   if (r.netBeperkt) {
     items.push({
       id: "netupgrade",
