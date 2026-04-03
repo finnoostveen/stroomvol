@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useState, useRef } from "react";
 import type { TabId } from "@/components/resultaat/ContentArea";
 import type { FormState, Stap } from "./types";
 import { initialFormState } from "./types";
@@ -67,6 +67,7 @@ export default function AdviseurTool() {
   const [params, setParams] = useState<CalcParams>({ cpk: 400, dod: 90, eff: 92 });
   const [activeTab, setActiveTab] = useState<TabId>("advies");
   const [notities, setNotities] = useState("");
+  const [pdfLoading, setPdfLoading] = useState(false);
 
   const onChange = useCallback(
     <K extends keyof FormState>(key: K, value: FormState[K]) => {
@@ -101,6 +102,35 @@ export default function AdviseurTool() {
     setResult(calc(form, next));
   };
 
+  const handleDownloadPdf = useCallback(async () => {
+    if (!result) return;
+    setPdfLoading(true);
+    try {
+      const { pdf } = await import("@react-pdf/renderer");
+      const { AdviesRapport } = await import("@/lib/pdf-generator");
+      const klantData = {
+        klantNaam: form.klantNaam,
+        klantAdres: form.klantAdres,
+        klantPlaats: form.klantPlaats,
+        datum: form.datum,
+        adviseur: form.adviseur,
+        notities,
+      };
+      const blob = await pdf(<AdviesRapport calc={result} klant={klantData} />).toBlob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      const datumStr = form.datum ? form.datum.split("-").reverse().join("-") : "rapport";
+      a.href = url;
+      a.download = `Stroomvol-Advies-${form.klantNaam || "Klant"}-${datumStr}.pdf`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error("PDF generation failed:", err);
+    } finally {
+      setPdfLoading(false);
+    }
+  }, [result, form, notities]);
+
   /* ===================== RESULTAATSCHERM ===================== */
   if (result) {
     return (
@@ -113,6 +143,8 @@ export default function AdviseurTool() {
             datum={form.datum}
             onTerug={() => setResult(null)}
             onAanpassen={() => setActiveTab("scenarios")}
+            onDownloadPdf={handleDownloadPdf}
+            pdfLoading={pdfLoading}
           />
 
           {/* Licht contentgebied */}

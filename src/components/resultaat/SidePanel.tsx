@@ -32,9 +32,11 @@ interface Props {
   datum: string;
   onTerug: () => void;
   onAanpassen: () => void;
+  onDownloadPdf: () => void;
+  pdfLoading?: boolean;
 }
 
-export default function SidePanel({ result: c, klantNaam, datum, onTerug, onAanpassen }: Props) {
+export default function SidePanel({ result: c, klantNaam, datum, onTerug, onAanpassen, onDownloadPdf, pdfLoading }: Props) {
   const tvt = berekenCumulatieveTvt(c.real, c.investering);
   const gemBesparing = Math.round(c.real.total15 / 15);
 
@@ -112,6 +114,14 @@ export default function SidePanel({ result: c, klantNaam, datum, onTerug, onAanp
       <div className="side-divider" />
 
       {/* Acties */}
+      <button
+        type="button"
+        className="side-btn primary"
+        onClick={onDownloadPdf}
+        disabled={pdfLoading}
+      >
+        {pdfLoading ? "PDF genereren..." : "PDF downloaden"}
+      </button>
       <button type="button" className="side-btn side-btn-link" onClick={onAanpassen}>
         Aannames &rarr;
       </button>
