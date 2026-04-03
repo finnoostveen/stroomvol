@@ -9,7 +9,9 @@
   },
   "dependencies": {
     "@fontsource-variable/lexend": "^5.2.11",
+    "@fontsource/dm-sans": "^5.2.8",
     "@fontsource/lexend": "^5.2.11",
+    "@fontsource/syne": "^5.2.7",
     "@react-pdf/renderer": "^4.3.2",
     "html2canvas": "^1.4.1",
     "jspdf": "^2.5.2",

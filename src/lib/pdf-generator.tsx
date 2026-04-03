@@ -7,9 +7,6 @@ import {
   Text,
   Font,
   StyleSheet,
-  Svg,
-  Circle,
-  G,
 } from "@react-pdf/renderer";
 import type { ReactNode } from "react";
 import type { CalcResult } from "./calc";
@@ -22,7 +19,7 @@ import { berekenCumulatieveTvt, formatTvt } from "./helpers";
 
 Font.register({
   family: "Syne",
-  src: "/fonts/Syne-Variable.ttf",
+  src: "/fonts/Syne-ExtraBold.woff",
   fontWeight: 800,
 });
 
@@ -36,8 +33,11 @@ Font.register({
 
 Font.register({
   family: "DM Sans",
-  src: "/fonts/DMSans-Variable.ttf",
-  fontWeight: 400,
+  fonts: [
+    { src: "/fonts/DMSans-Regular.woff", fontWeight: 400 },
+    { src: "/fonts/DMSans-Medium.woff", fontWeight: 500 },
+    { src: "/fonts/DMSans-Bold.woff", fontWeight: 700 },
+  ],
 });
 
 Font.registerHyphenationCallback((word) => [word]);
@@ -307,7 +307,6 @@ const c2 = StyleSheet.create({
 
   // Onafhankelijkheid
   onafhWrap: { flexDirection: "row", alignItems: "center", marginTop: 24, gap: 20 },
-  onafhRechts: { flex: 1 },
   onafhRij: { flexDirection: "row", alignItems: "center", marginBottom: 6 },
   onafhDot: { width: 8, height: 8, borderRadius: 4, marginRight: 8 },
   onafhLabel: { fontSize: 10, color: K.grafiet },
@@ -388,8 +387,6 @@ function DoelenPage({ calc: r }: { calc: CalcResult }) {
   const pctDirectZon = r.hasSolar ? r.zelfPctZonder : 0;
   const pctBatterij = r.hasSolar ? r.zelfPctMet - r.zelfPctZonder : 0;
   const pctNet = 100 - pctOnafhankelijk;
-  const circumference = 2 * Math.PI * 40; // ~251
-
   return (
     <BrandedPage>
       {/* A. Doelen */}
@@ -416,31 +413,25 @@ function DoelenPage({ calc: r }: { calc: CalcResult }) {
         <>
           <Text style={[c2.sectionTitle, { marginTop: 28 }]}>Energie-onafhankelijkheid</Text>
           <View style={c2.onafhWrap}>
-            {/* SVG cirkel */}
-            <Svg viewBox="0 0 100 100" width={80} height={80}>
-              {/* Achtergrond cirkel */}
-              <Circle cx={50} cy={50} r={40} stroke={K.grijs} strokeWidth={8} fill="none" />
-              {/* Groene boog: direct zon */}
-              <G transform="rotate(-90 50 50)">
-                <Circle
-                  cx={50} cy={50} r={40}
-                  stroke={K.groen} strokeWidth={8} fill="none"
-                  strokeDasharray={`${(pctDirectZon / 100) * circumference} ${circumference}`}
-                />
-              </G>
-              {/* Donkergroene boog: batterij (rotated past direct zon) */}
-              <G transform={`rotate(${-90 + (pctDirectZon / 100) * 360} 50 50)`}>
-                <Circle
-                  cx={50} cy={50} r={40}
-                  stroke={K.groenDonker} strokeWidth={8} fill="none"
-                  strokeDasharray={`${(pctBatterij / 100) * circumference} ${circumference}`}
-                />
-              </G>
-            </Svg>
+            {/* Percentage groot */}
+            <Text style={{ fontFamily: "Lexend", fontWeight: 700, fontSize: 32, color: K.zwart, marginRight: 20 }}>{pctOnafhankelijk}%</Text>
 
-            {/* Rechts: breakdown */}
-            <View style={c2.onafhRechts}>
-              <Text style={{ fontFamily: "Lexend", fontWeight: 700, fontSize: 24, color: K.zwart, marginBottom: 8 }}>{pctOnafhankelijk}%</Text>
+            {/* Gestapelde balk + legenda */}
+            <View style={{ flex: 1 }}>
+              {/* Horizontale balk */}
+              <View style={{ flexDirection: "row", height: 16, borderRadius: 8, overflow: "hidden", marginBottom: 10 }}>
+                {pctDirectZon > 0 && (
+                  <View style={{ width: `${pctDirectZon}%`, backgroundColor: K.groen }} />
+                )}
+                {pctBatterij > 0 && (
+                  <View style={{ width: `${pctBatterij}%`, backgroundColor: K.groenDonker }} />
+                )}
+                {pctNet > 0 && (
+                  <View style={{ width: `${pctNet}%`, backgroundColor: K.grijs }} />
+                )}
+              </View>
+
+              {/* Legenda */}
               <View style={c2.onafhRij}>
                 <View style={[c2.onafhDot, { backgroundColor: K.groen }]} />
                 <Text style={c2.onafhLabel}>Direct zonneverbruik: {pctDirectZon}%</Text>
