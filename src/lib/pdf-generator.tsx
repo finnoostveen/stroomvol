@@ -871,6 +871,7 @@ function SlotPage({ notities, calc: r }: { notities: string; calc: CalcResult })
     `Degradatie: ${(r.degradatiePerJaarPct).toFixed(2)}%/jaar (${Math.round(r.cycliPerJaar)} cycli/jaar)`,
     `Energieprijsstijging: ${r.stijgPct}%/jaar`,
     `Teruglevertarief: \u20AC${r.terug.toFixed(2)}/kWh`,
+    `Netaansluiting: ${r.net} (${r.maxKwNet} kW)`,
   ];
   if (r.contract === "dynamisch") {
     aannames.push(`Dynamisch dal: \u20AC${r.dynDal.toFixed(2)}/kWh`);

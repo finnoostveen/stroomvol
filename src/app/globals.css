@@ -191,6 +191,15 @@ body {
 .sv-adv .side-kwh-label { font-size: 14px; color: rgba(255,255,255,0.4); margin: 4px 0 0; }
 .sv-adv .side-tier { font-size: 13px; color: rgba(255,255,255,0.3); margin: 2px 0 0; }
 
+.sv-adv .side-net-info {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 6px;
+  font-size: 11px;
+  color: var(--sv-amber);
+}
+
 .sv-adv .side-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 1.5rem; }
 .sv-adv .side-badge {
   font-size: 11px;

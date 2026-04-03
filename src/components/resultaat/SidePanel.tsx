@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import type { CalcResult } from "@/lib/calc";
 import { fmt } from "@/lib/calc";
+import InfoTip from "./InfoTip";
 import { berekenCumulatieveTvt, formatTvt } from "@/lib/helpers";
 
 function formatDatum(d: string): string {
@@ -54,6 +55,8 @@ export default function SidePanel({ result: c, klantNaam, datum, onTerug, onAanp
     const omvLabel = c.omv === "hybride" ? "hybride" : c.omv === "micro" ? "micro" : "standaard";
     badges.push(`${c.omvormerMerk} ${omvLabel}`);
   }
+  const netLabels: Record<string, string> = { "1x25": "1-fase 25A", "1x35": "1-fase 35A", "3x25": "3-fase 25A", "3x63": "3-fase 63A" };
+  badges.push(netLabels[c.net] || c.net);
   if (c.doel.has("nood")) badges.push("Noodstroom");
 
   return (
@@ -76,6 +79,12 @@ export default function SidePanel({ result: c, klantNaam, datum, onTerug, onAanp
         <p className="side-kwh">{c.aanbevolenKwh}</p>
         <p className="side-kwh-label">kWh aanbevolen</p>
         <p className="side-tier">{c.tier}</p>
+        {c.netBeperkt && (
+          <p className="side-net-info">
+            <InfoTip tekst={`Je ${netLabels[c.net] || c.net} aansluiting (${c.maxKwNet} kW) beperkt de maximale batterijgrootte. Overweeg een upgrade naar een zwaardere aansluiting voor een grotere batterij.`} />
+            <span>Beperkt door netaansluiting</span>
+          </p>
+        )}
       </div>
 
       {/* Badges */}

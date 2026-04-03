@@ -60,6 +60,8 @@ export interface CalcResult {
   omv: OmvormerType;
   omvormerMerk: string;
   net: NetAansluiting;
+  maxKwNet: number;
+  netBeperkt: boolean;
 
   profiel: Profiel;
   gvExtra: number;
@@ -287,9 +289,11 @@ export function calc(form: FormState, params: CalcParams = {}): CalcResult {
 
   const maxKwNet = NET_VERMOGEN[net]?.maxKw ?? 5.75;
   const maxKwhVoorNet = maxKwNet * 2;
+  const aanbevolenVoorNetCap = aanbevolenKwh;
   aanbevolenKwh = Math.min(aanbevolenKwh, maxKwhVoorNet);
   aanbevolenKwh = Math.round(aanbevolenKwh);
   aanbevolenKwh = Math.max(5, Math.min(20, aanbevolenKwh));
+  const netBeperkt = aanbevolenVoorNetCap > maxKwhVoorNet;
 
   const usableKwh = aanbevolenKwh * dod;
   const maxBattVermogenKw = Math.min(usableKwh / 2, maxKwNet * 0.7);
@@ -485,6 +489,8 @@ export function calc(form: FormState, params: CalcParams = {}): CalcResult {
     omv,
     omvormerMerk,
     net,
+    maxKwNet,
+    netBeperkt,
 
     profiel,
     gvExtra: gvExtraJaar,
