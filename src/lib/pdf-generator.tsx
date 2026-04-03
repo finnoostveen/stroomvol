@@ -758,7 +758,21 @@ const c4 = StyleSheet.create({
   stapText: { fontSize: 10, color: K.grafiet, flex: 1 },
 });
 
-function SlotPage({ notities }: { notities: string }) {
+function SlotPage({ notities, calc: r }: { notities: string; calc: CalcResult }) {
+  const aannames: string[] = [
+    `Installatiekosten: \u20AC${r.cpk}/kWh`,
+    `Depth of Discharge (DoD): ${r.dod}%`,
+    `Roundtrip efficiency: ${r.eff}%`,
+    `Degradatie: ${(r.degradatiePerJaarPct).toFixed(2)}%/jaar (${Math.round(r.cycliPerJaar)} cycli/jaar)`,
+    `Energieprijsstijging: ${r.stijgPct}%/jaar`,
+    `Teruglevertarief: \u20AC${r.terug.toFixed(2)}/kWh`,
+  ];
+  if (r.contract === "dynamisch") {
+    aannames.push(`Dynamisch dal: \u20AC${r.dynDal.toFixed(2)}/kWh`);
+    aannames.push(`Dynamisch piek: \u20AC${r.dynPiek.toFixed(2)}/kWh`);
+    aannames.push(`Dynamisch gemiddeld: \u20AC${r.dynGem.toFixed(2)}/kWh`);
+  }
+
   return (
     <BrandedPage>
       {/* A. Volgende stappen */}
@@ -792,6 +806,12 @@ function SlotPage({ notities }: { notities: string }) {
         <Text style={c5.disclaimerTitle}>Disclaimer</Text>
         <Text style={c5.disclaimerText}>{DISCLAIMER_TEKST}</Text>
       </View>
+
+      {/* D. Aannames */}
+      <View style={c5.aannamesTonWrap}>
+        <Text style={c5.aannamesTonTitle}>Aannames</Text>
+        <Text style={c5.aannamesTonText}>{aannames.join("  ·  ")}</Text>
+      </View>
     </BrandedPage>
   );
 }
@@ -812,6 +832,14 @@ const c5 = StyleSheet.create({
   },
   disclaimerTitle: { fontFamily: "Lexend", fontWeight: 700, fontSize: 9, color: K.grijsDonker, marginBottom: 4 },
   disclaimerText: { fontSize: 8, color: K.grijsDonker, lineHeight: 1.6 },
+  aannamesTonWrap: {
+    backgroundColor: K.krijt,
+    borderRadius: 6,
+    padding: 10,
+    marginTop: 10,
+  },
+  aannamesTonTitle: { fontFamily: "DM Sans", fontWeight: 700, fontSize: 9, color: K.grijsDonker, marginBottom: 4 },
+  aannamesTonText: { fontFamily: "DM Sans", fontSize: 8, color: K.grijsDonker, lineHeight: 1.6 },
 });
 
 const DISCLAIMER_TEKST =
@@ -840,7 +868,7 @@ export function AdviesRapport({ calc, klant }: { calc: CalcResult; klant: PdfDat
       <CoverPage calc={calc} klant={klant} />
       <FinancieelPage calc={calc} />
       <DoelenPage calc={calc} />
-      <SlotPage notities={klant.notities} />
+      <SlotPage notities={klant.notities} calc={calc} />
     </Document>
   );
 }
