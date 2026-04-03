@@ -12,6 +12,7 @@ import StapOmvormerNet from "./StapOmvormerNet";
 import StapGrootverbruikers from "./StapGrootverbruikers";
 import StapInstallatie from "./StapInstallatie";
 import SidePanel from "@/components/resultaat/SidePanel";
+import ContentArea from "@/components/resultaat/ContentArea";
 import DoelMetrics from "@/components/resultaat/DoelMetrics";
 import LaadOntlaadSchema from "@/components/resultaat/LaadOntlaadSchema";
 import Onafhankelijkheid from "@/components/resultaat/Onafhankelijkheid";
@@ -110,7 +111,7 @@ export default function AdviseurTool() {
           />
 
           {/* Licht contentgebied */}
-          <div className="content-area">
+          <ContentArea>
             {/* Aannames panel (openklapbaar) */}
             {paramsOpen && (
               <div className="params-panel">
@@ -167,35 +168,37 @@ export default function AdviseurTool() {
               </div>
             )}
 
-            <DoelMetrics result={result} />
-            <LaadOntlaadSchema result={result} />
-            <Onafhankelijkheid result={result} />
-            <StressTest result={result} />
-            <FinancieelOverzicht result={result} />
-            <Spaarrekening result={result} />
-            <NietsDoen result={result} />
+            <div className="section-reveal"><DoelMetrics result={result} /></div>
+            <div className="section-reveal"><LaadOntlaadSchema result={result} /></div>
+            <div className="section-reveal"><Onafhankelijkheid result={result} /></div>
+            <div className="section-reveal"><StressTest result={result} /></div>
+            <div className="section-reveal"><FinancieelOverzicht result={result} /></div>
+            <div className="section-reveal"><Spaarrekening result={result} /></div>
+            <div className="section-reveal"><NietsDoen result={result} /></div>
 
 
             {/* Adviseur notities */}
-            <div className="notities-section">
-              <div className="notities-header">
-                <span className="notities-icon">{"\uD83D\uDCDD"}</span>
-                <div>
-                  <div className="notities-title">Adviseur notities</div>
-                  <div className="notities-sub">Bijzonderheden voor het dossier</div>
+            <div className="section-reveal">
+              <div className="notities-section">
+                <div className="notities-header">
+                  <span className="notities-icon">{"\uD83D\uDCDD"}</span>
+                  <div>
+                    <div className="notities-title">Adviseur notities</div>
+                    <div className="notities-sub">Bijzonderheden voor het dossier</div>
+                  </div>
                 </div>
+                <textarea
+                  className="notities-textarea"
+                  rows={4}
+                  placeholder="Bijv. 'Dak op zuidwest, 6m kabellengte. Klant overweegt overstap naar dynamisch contract.'"
+                  value={notities}
+                  onChange={(e) => setNotities(e.target.value)}
+                />
               </div>
-              <textarea
-                className="notities-textarea"
-                rows={4}
-                placeholder="Bijv. 'Dak op zuidwest, 6m kabellengte. Klant overweegt overstap naar dynamisch contract.'"
-                value={notities}
-                onChange={(e) => setNotities(e.target.value)}
-              />
             </div>
 
-            <Aannames result={result} />
-          </div>
+            <div className="section-reveal"><Aannames result={result} /></div>
+          </ContentArea>
         </div>
       </div>
     );

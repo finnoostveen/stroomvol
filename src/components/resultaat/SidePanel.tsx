@@ -1,8 +1,24 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import type { CalcResult } from "@/lib/calc";
 import { fmt } from "@/lib/calc";
 import { berekenCumulatieveTvt, formatTvt } from "@/lib/helpers";
+
+function useCountUp(target: number, duration = 1000) {
+  const [value, setValue] = useState(0);
+  useEffect(() => {
+    const start = performance.now();
+    const step = (now: number) => {
+      const progress = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setValue(Math.round(target * eased));
+      if (progress < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }, [target, duration]);
+  return value;
+}
 
 interface Props {
   result: CalcResult;
@@ -15,6 +31,11 @@ interface Props {
 export default function SidePanel({ result: c, klantNaam, datum, onTerug, onAanpassen }: Props) {
   const tvt = berekenCumulatieveTvt(c.real, c.investering);
   const gemBesparing = Math.round(c.real.total15 / 15);
+
+  const animBesparing = useCountUp(gemBesparing);
+  const animTotal15 = useCountUp(c.real.total15);
+  const animInvestering = useCountUp(c.investering);
+  const animZelf = useCountUp(c.hasSolar ? c.zelfPctMet : 0, 800);
 
   const badges: string[] = [];
   badges.push(c.contract === "dynamisch" ? "Dynamisch" : c.contract === "variabel" ? "Variabel" : "Vast");
@@ -62,24 +83,24 @@ export default function SidePanel({ result: c, klantNaam, datum, onTerug, onAanp
 
       <div className="side-metric">
         <p className="side-metric-label">BESPARING / JAAR</p>
-        <p className="side-metric-value">&euro;{fmt(gemBesparing)}</p>
+        <p className="side-metric-value">&euro;{fmt(animBesparing)}</p>
       </div>
 
       <div className="side-metric">
         <p className="side-metric-label">TOTAAL 15 JAAR</p>
-        <p className="side-metric-value">&euro;{fmt(c.real.total15)}</p>
+        <p className="side-metric-value">&euro;{fmt(animTotal15)}</p>
       </div>
 
       {c.hasSolar && (
         <div className="side-metric">
           <p className="side-metric-label">ONAFHANKELIJKHEID</p>
-          <p className="side-metric-value groen">{c.zelfPctMet}%</p>
+          <p className="side-metric-value groen">{animZelf}%</p>
         </div>
       )}
 
       <div className="side-metric">
         <p className="side-metric-label">INVESTERING</p>
-        <p className="side-metric-value muted">&euro;{fmt(c.investering)}</p>
+        <p className="side-metric-value muted">&euro;{fmt(animInvestering)}</p>
       </div>
 
       <div className="side-divider" />

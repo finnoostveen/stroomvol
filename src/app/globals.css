@@ -276,7 +276,7 @@ body {
 }
 
 /* ============================================================
-   PHASE ANIMATION
+   PHASE & SCROLL ANIMATIONS
    ============================================================ */
 
 .sv-adv .phase { animation: svFade 0.3s ease; }
@@ -284,6 +284,32 @@ body {
 @keyframes svFade {
   from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Section reveal on scroll */
+.sv-adv .section-reveal {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.sv-adv .section-reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Hover on cards */
+.sv-adv .card,
+.sv-adv .goals-card,
+.sv-adv .notities-section,
+.sv-adv .assumptions {
+  transition: box-shadow 0.2s ease, transform 0.15s ease;
+}
+
+.sv-adv .card:hover,
+.sv-adv .goals-card:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+  transform: translateY(-1px);
 }
 
 /* ============================================================
