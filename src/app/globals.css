@@ -88,8 +88,63 @@ body {
 
 .sv-adv .content-area {
   background: var(--sv-krijt);
-  padding: 2rem;
+  padding: 0;
   overflow-y: auto;
+}
+
+/* ============================================================
+   TAB BAR
+   ============================================================ */
+
+.sv-adv .tab-bar {
+  display: flex;
+  gap: 0;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: #F5F5F0;
+  padding: 0 2rem;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+}
+
+.sv-adv .tab-bar button.tab {
+  padding: 14px 20px;
+  font-family: var(--sv-font-heading), 'Lexend', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: #8E8E93;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: color 0.2s, border-color 0.2s;
+  background: none;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+}
+
+.sv-adv .tab-bar button.tab:hover {
+  color: #4A4A4A;
+}
+
+.sv-adv .tab-bar button.tab.active {
+  color: #0A0A0A;
+  border-bottom-color: #FFDC3C;
+}
+
+.sv-adv .tab-content {
+  padding: 2rem;
+}
+
+.sv-adv .tab-pane {
+  display: none;
+}
+
+.sv-adv .tab-pane.active {
+  display: block;
+}
+
+.sv-adv .below-tabs {
+  padding: 0 2rem 2rem;
 }
 
 /* ============================================================
@@ -1596,7 +1651,22 @@ body {
     padding: 1.5rem;
   }
   .sv-adv .content-area {
+    padding: 0;
+  }
+  .sv-adv .tab-bar {
+    padding: 0 1rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .sv-adv .tab-bar button.tab {
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .sv-adv .tab-content {
     padding: 1.5rem 1rem;
+  }
+  .sv-adv .below-tabs {
+    padding: 0 1rem 1.5rem;
   }
 }
 

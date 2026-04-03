@@ -111,94 +111,55 @@ export default function AdviseurTool() {
           />
 
           {/* Licht contentgebied */}
-          <ContentArea>
-            {/* Aannames panel (openklapbaar) */}
-            {paramsOpen && (
-              <div className="params-panel">
-                <div className="params-body">
-                  <div className="params-grid">
-                    <div className="param-item">
-                      <label>
-                        Kosten per kWh (cpk)
-                        <div className="param-val">&euro;{params.cpk}/kWh</div>
-                      </label>
-                      <input
-                        type="range"
-                        min={200} max={800} step={10}
-                        value={params.cpk}
-                        onChange={(e) => updateParam("cpk", Number(e.target.value))}
-                      />
-                      <div className="param-range-labels"><span>&euro;200</span><span>&euro;800</span></div>
+          <ContentArea
+            advies={
+              <>
+                <div className="section-reveal"><FinancieelOverzicht result={result} /></div>
+                <div className="section-reveal"><DoelMetrics result={result} /></div>
+                <div className="section-reveal"><Onafhankelijkheid result={result} /></div>
+                <div className="section-reveal"><Spaarrekening result={result} /></div>
+                <div className="section-reveal"><StressTest result={result} /></div>
+                <div className="section-reveal"><NietsDoen result={result} /></div>
+              </>
+            }
+            verdieping={
+              <div className="section-reveal">
+                <p style={{ color: "#8E8E93", fontStyle: "italic", textAlign: "center", padding: "3rem 1rem" }}>
+                  Verdiepende analyses worden hier getoond
+                </p>
+              </div>
+            }
+            scenarios={
+              <>
+                <div className="section-reveal"><LaadOntlaadSchema result={result} /></div>
+              </>
+            }
+            belowTabs={
+              <>
+                {/* Adviseur notities */}
+                <div className="section-reveal">
+                  <div className="notities-section">
+                    <div className="notities-header">
+                      <span className="notities-icon">{"\uD83D\uDCDD"}</span>
+                      <div>
+                        <div className="notities-title">Adviseur notities</div>
+                        <div className="notities-sub">Bijzonderheden voor het dossier</div>
+                      </div>
                     </div>
-                    <div className="param-item">
-                      <label>
-                        Depth of Discharge (DoD)
-                        <div className="param-val">{params.dod}%</div>
-                      </label>
-                      <input
-                        type="range"
-                        min={80} max={100} step={1}
-                        value={params.dod}
-                        onChange={(e) => updateParam("dod", Number(e.target.value))}
-                      />
-                      <div className="param-range-labels"><span>80%</span><span>100%</span></div>
-                    </div>
-                    <div className="param-item">
-                      <label>
-                        Round-trip efficiency
-                        <div className="param-val">{params.eff}%</div>
-                      </label>
-                      <input
-                        type="range"
-                        min={85} max={98} step={1}
-                        value={params.eff}
-                        onChange={(e) => updateParam("eff", Number(e.target.value))}
-                      />
-                      <div className="param-range-labels"><span>85%</span><span>98%</span></div>
-                    </div>
+                    <textarea
+                      className="notities-textarea"
+                      rows={4}
+                      placeholder="Bijv. 'Dak op zuidwest, 6m kabellengte. Klant overweegt overstap naar dynamisch contract.'"
+                      value={notities}
+                      onChange={(e) => setNotities(e.target.value)}
+                    />
                   </div>
                 </div>
-                <button
-                  type="button"
-                  className="params-close"
-                  onClick={() => setParamsOpen(false)}
-                >
-                  Sluiten
-                </button>
-              </div>
-            )}
 
-            <div className="section-reveal"><DoelMetrics result={result} /></div>
-            <div className="section-reveal"><LaadOntlaadSchema result={result} /></div>
-            <div className="section-reveal"><Onafhankelijkheid result={result} /></div>
-            <div className="section-reveal"><StressTest result={result} /></div>
-            <div className="section-reveal"><FinancieelOverzicht result={result} /></div>
-            <div className="section-reveal"><Spaarrekening result={result} /></div>
-            <div className="section-reveal"><NietsDoen result={result} /></div>
-
-
-            {/* Adviseur notities */}
-            <div className="section-reveal">
-              <div className="notities-section">
-                <div className="notities-header">
-                  <span className="notities-icon">{"\uD83D\uDCDD"}</span>
-                  <div>
-                    <div className="notities-title">Adviseur notities</div>
-                    <div className="notities-sub">Bijzonderheden voor het dossier</div>
-                  </div>
-                </div>
-                <textarea
-                  className="notities-textarea"
-                  rows={4}
-                  placeholder="Bijv. 'Dak op zuidwest, 6m kabellengte. Klant overweegt overstap naar dynamisch contract.'"
-                  value={notities}
-                  onChange={(e) => setNotities(e.target.value)}
-                />
-              </div>
-            </div>
-
-            <div className="section-reveal"><Aannames result={result} /></div>
-          </ContentArea>
+                <div className="section-reveal"><Aannames result={result} /></div>
+              </>
+            }
+          />
         </div>
       </div>
     );
