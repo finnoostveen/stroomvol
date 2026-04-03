@@ -98,7 +98,7 @@ body {
 
 .adv-samenvatting {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 10px;
   padding: 16px 2rem;
 }
@@ -108,6 +108,16 @@ body {
   border-radius: 8px;
   padding: 12px;
   text-align: center;
+}
+
+.adv-sam-card--dark {
+  background: var(--sv-zwart, #0A0A0A);
+}
+.adv-sam-card--dark .adv-sam-label {
+  color: rgba(255,255,255,0.5);
+}
+.adv-sam-card--dark .adv-sam-val {
+  color: #fff;
 }
 
 .adv-sam-label {
@@ -132,7 +142,7 @@ body {
 
 @media (max-width: 600px) {
   .adv-samenvatting {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     padding: 12px 1rem;
   }
   .adv-sam-val {

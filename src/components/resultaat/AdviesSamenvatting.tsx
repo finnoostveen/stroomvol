@@ -17,13 +17,17 @@ export default function AdviesSamenvatting({ result }: Props) {
 
   return (
     <div className="adv-samenvatting">
+      <div className="adv-sam-card adv-sam-card--dark">
+        <div className="adv-sam-label">Batterij</div>
+        <div className="adv-sam-val">{r.aanbevolenKwh} kWh</div>
+      </div>
       <div className="adv-sam-card">
         <div className="adv-sam-label">TVT</div>
         <div className="adv-sam-val adv-sam-val--groen">{formatTvt(tvt)}</div>
       </div>
       <div className="adv-sam-card">
         <div className="adv-sam-label">Besparing</div>
-        <div className="adv-sam-val">&euro;{fmt(besparingJaar)}/jaar</div>
+        <div className="adv-sam-val">&euro;{fmt(besparingJaar)}/jr</div>
       </div>
       <div className="adv-sam-card">
         <div className="adv-sam-label">Totaal 15 jr</div>
