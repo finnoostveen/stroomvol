@@ -23,6 +23,7 @@ import LaadOntlaadSchema from "@/components/resultaat/LaadOntlaadSchema";
 import MaandKalender from "@/components/resultaat/MaandKalender";
 import JouwDag from "@/components/resultaat/JouwDag";
 import ContractSwitch from "@/components/resultaat/ContractSwitch";
+import SpeelMetProfiel from "@/components/resultaat/SpeelMetProfiel";
 import ScenarioTabel from "@/components/resultaat/ScenarioTabel";
 import Aannames from "@/components/resultaat/Aannames";
 
@@ -136,6 +137,7 @@ export default function AdviseurTool() {
             }
             scenarios={
               <>
+                <div className="section-reveal"><SpeelMetProfiel result={result} form={form} params={params} /></div>
                 <div className="section-reveal"><ScenarioTabel result={result} /></div>
               </>
             }

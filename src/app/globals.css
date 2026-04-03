@@ -933,6 +933,175 @@ body {
 }
 
 /* ============================================================
+   SPEEL MET JE PROFIEL
+   ============================================================ */
+
+.sv-adv .smp-wrap {
+  margin-bottom: 20px;
+}
+
+.sv-adv .smp-controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 20px;
+  padding: 16px;
+  background: #FAFAF8;
+  border: 1px solid rgba(0,0,0,0.06);
+  border-radius: 10px;
+}
+
+.sv-adv .smp-col-title {
+  font-family: var(--sv-font-heading), 'Lexend', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--sv-text-muted);
+  margin-bottom: 12px;
+}
+
+.sv-adv .smp-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--sv-text);
+  cursor: pointer;
+  margin-bottom: 8px;
+}
+
+.sv-adv .smp-toggle input[type="checkbox"] {
+  accent-color: var(--sv-volt);
+  width: 16px;
+  height: 16px;
+}
+
+.sv-adv .smp-slider-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sv-adv .smp-slider {
+  width: 100%;
+  accent-color: var(--sv-volt);
+}
+
+.sv-adv .smp-slider-val {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--sv-text);
+  text-align: center;
+}
+
+.sv-adv .smp-contract-btns {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sv-adv .smp-contract-btn {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(0,0,0,0.1);
+  background: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--sv-text-muted);
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.sv-adv .smp-contract-btn:hover {
+  border-color: var(--sv-volt);
+  color: var(--sv-text);
+}
+
+.sv-adv .smp-contract-btn.active {
+  background: var(--sv-volt);
+  border-color: var(--sv-volt);
+  color: #0A0A0A;
+  font-weight: 600;
+}
+
+.sv-adv .smp-table-wrap {
+  overflow-x: auto;
+  margin-bottom: 12px;
+}
+
+.sv-adv .smp-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.sv-adv .smp-table th {
+  text-align: right;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--sv-text-muted);
+  padding: 8px 12px;
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+}
+
+.sv-adv .smp-table th:first-child {
+  text-align: left;
+}
+
+.sv-adv .smp-table td {
+  padding: 10px 12px;
+  font-size: 14px;
+  border-bottom: 1px solid rgba(0,0,0,0.04);
+}
+
+.sv-adv .smp-label {
+  font-weight: 500;
+  color: var(--sv-text);
+}
+
+.sv-adv .smp-val {
+  text-align: right;
+  font-weight: 600;
+  color: var(--sv-text);
+}
+
+.sv-adv .smp-diff {
+  text-align: right;
+  font-weight: 700;
+  color: var(--sv-text-muted);
+}
+
+.sv-adv .smp-better {
+  color: var(--sv-groen);
+}
+
+.sv-adv .smp-worse {
+  color: var(--sv-rood);
+}
+
+.sv-adv .smp-reset {
+  display: block;
+  margin: 0 auto;
+  padding: 8px 20px;
+  border-radius: 20px;
+  border: 1px solid rgba(0,0,0,0.1);
+  background: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--sv-text-muted);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.sv-adv .smp-reset:hover {
+  border-color: var(--sv-volt);
+  color: var(--sv-text);
+}
+
+/* ============================================================
    CONTRACT SWITCH ADVISOR
    ============================================================ */
 
@@ -1987,6 +2156,7 @@ body {
   .sv-adv .stress-grid { grid-template-columns: 1fr; }
   .sv-adv .mk-grid { grid-template-columns: repeat(2, 1fr); }
   .sv-adv .cs-columns { grid-template-columns: 1fr; }
+  .sv-adv .smp-controls { grid-template-columns: 1fr; }
   .sv-adv .nd-grid { grid-template-columns: 1fr; }
   .sv-adv .nd-info-grid { grid-template-columns: 1fr; }
   .sv-adv .params-grid { grid-template-columns: 1fr; }
