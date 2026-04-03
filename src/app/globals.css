@@ -933,6 +933,110 @@ body {
 }
 
 /* ============================================================
+   CONTRACT SWITCH ADVISOR
+   ============================================================ */
+
+.sv-adv .cs-wrap {
+  margin-bottom: 20px;
+}
+
+.sv-adv .cs-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.sv-adv .cs-col {
+  background: #FAFAF8;
+  border: 1px solid rgba(0,0,0,0.06);
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.sv-adv .cs-col-dyn {
+  border-color: var(--sv-groen);
+  border-width: 2px;
+}
+
+.sv-adv .cs-col-header {
+  font-family: var(--sv-font-heading), 'Lexend', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--sv-text);
+  margin-bottom: 12px;
+}
+
+.sv-adv .cs-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 12px;
+}
+
+.sv-adv .cs-table td {
+  padding: 6px 0;
+  font-size: 13px;
+  border-bottom: 1px solid rgba(0,0,0,0.04);
+}
+
+.sv-adv .cs-label {
+  color: var(--sv-text-muted);
+}
+
+.sv-adv .cs-val {
+  text-align: right;
+  font-weight: 600;
+  color: var(--sv-text);
+}
+
+.sv-adv .cs-better {
+  color: var(--sv-groen);
+}
+
+.sv-adv .cs-componenten {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sv-adv .cs-comp {
+  font-size: 12px;
+  color: var(--sv-text-muted);
+}
+
+.sv-adv .cs-comp span {
+  display: inline-block;
+  width: 16px;
+  text-align: center;
+}
+
+.sv-adv .cs-comp-actief {
+  color: var(--sv-groen);
+}
+
+.sv-adv .cs-comp-actief span {
+  font-weight: 700;
+}
+
+.sv-adv .cs-banner {
+  background: rgba(52, 199, 89, 0.1);
+  border: 1px solid rgba(52, 199, 89, 0.2);
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 14px;
+  color: var(--sv-groen);
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.sv-adv .cs-disclaimer {
+  font-size: 11px;
+  color: var(--sv-text-muted);
+  text-align: center;
+  margin: 0;
+}
+
+/* ============================================================
    JOUW DAG SIMULATOR
    ============================================================ */
 
@@ -1882,6 +1986,7 @@ body {
   .sv-adv .onafh-grid { grid-template-columns: 1fr; justify-items: center; }
   .sv-adv .stress-grid { grid-template-columns: 1fr; }
   .sv-adv .mk-grid { grid-template-columns: repeat(2, 1fr); }
+  .sv-adv .cs-columns { grid-template-columns: 1fr; }
   .sv-adv .nd-grid { grid-template-columns: 1fr; }
   .sv-adv .nd-info-grid { grid-template-columns: 1fr; }
   .sv-adv .params-grid { grid-template-columns: 1fr; }

@@ -22,6 +22,7 @@ import NietsDoen from "@/components/resultaat/NietsDoen";
 import LaadOntlaadSchema from "@/components/resultaat/LaadOntlaadSchema";
 import MaandKalender from "@/components/resultaat/MaandKalender";
 import JouwDag from "@/components/resultaat/JouwDag";
+import ContractSwitch from "@/components/resultaat/ContractSwitch";
 import ScenarioTabel from "@/components/resultaat/ScenarioTabel";
 import Aannames from "@/components/resultaat/Aannames";
 
@@ -130,6 +131,7 @@ export default function AdviseurTool() {
                 <div className="section-reveal"><LaadOntlaadSchema result={result} /></div>
                 <div className="section-reveal"><MaandKalender result={result} /></div>
                 <div className="section-reveal"><JouwDag result={result} /></div>
+                <div className="section-reveal"><ContractSwitch result={result} form={form} params={params} /></div>
               </>
             }
             scenarios={
