@@ -1,6 +1,7 @@
 "use client";
 
 import type { StapProps, OmvormerType, NetAansluiting } from "./types";
+import InfoTip from "@/components/resultaat/InfoTip";
 
 const omvormerOpties: { value: OmvormerType; label: string }[] = [
   { value: "hybride", label: "Hybride" },
@@ -27,7 +28,10 @@ export default function StapOmvormerNet({ form, onChange }: StapProps) {
       </div>
 
       <fieldset>
-        <legend>Omvormertype</legend>
+        <legend>
+          Omvormertype{" "}
+          <InfoTip tekst="Hybride: een omvormer die zowel zonnepanelen als een batterij aanstuurt. Meest efficiënt (DC-gekoppeld). Standaard: een string-omvormer voor zonnepanelen. De batterij wordt apart aangesloten (AC-gekoppeld, iets minder efficiënt). Micro-omvormers: kleine omvormers per paneel. De batterij wordt altijd AC-gekoppeld aangesloten." />
+        </legend>
         <div className="tg">
           {omvormerOpties.map((opt) => (
             <button
@@ -44,7 +48,10 @@ export default function StapOmvormerNet({ form, onChange }: StapProps) {
       </fieldset>
 
       <fieldset>
-        <legend>Netaansluiting</legend>
+        <legend>
+          Netaansluiting{" "}
+          <InfoTip tekst="De capaciteit van je aansluiting op het elektriciteitsnet. Dit staat op je meterkast of energierekening. 1×25A is standaard voor oudere woningen. 3×25A is standaard voor nieuwere woningen en nodig bij een warmtepomp of snellader. 3×63A is voor zware installaties." />
+        </legend>
         <div className="tg">
           {netOpties.map((opt) => (
             <button

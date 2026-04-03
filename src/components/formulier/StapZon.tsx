@@ -1,6 +1,7 @@
 "use client";
 
 import type { StapProps, ZonStatus } from "./types";
+import InfoTip from "@/components/resultaat/InfoTip";
 
 const zonOpties: { value: ZonStatus; label: string }[] = [
   { value: "ja", label: "Ja" },
@@ -69,7 +70,10 @@ export default function StapZon({ form, onChange }: StapProps) {
           </div>
 
           <div className="field">
-            <label className="field-label" htmlFor="in-wp">Wp per paneel</label>
+            <label className="field-label" htmlFor="in-wp">
+              Wp per paneel{" "}
+              <InfoTip tekst="Het piekvermogen van één paneel in Wattpiek. Dit staat op het label van het paneel of in de offerte. Gangbare waarden: 370–440 Wp." />
+            </label>
             <div className="uw">
               <input
                 id="in-wp"

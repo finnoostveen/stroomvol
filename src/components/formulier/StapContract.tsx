@@ -2,6 +2,7 @@
 
 import type { StapProps, ContractType } from "./types";
 import Badkuipmodel from "./Badkuipmodel";
+import InfoTip from "@/components/resultaat/InfoTip";
 
 const contractOpties: { type: ContractType; icon: string; naam: string; beschrijving: string }[] = [
   { type: "vast", icon: "🔒", naam: "Vast", beschrijving: "Vaste kWh-prijs gedurende contractperiode" },
@@ -24,7 +25,8 @@ export default function StapContract({ form, onChange }: StapProps) {
 
       <fieldset>
         <legend>
-          Type energiecontract <span className="req">*</span>
+          Type energiecontract <span className="req">*</span>{" "}
+          <InfoTip tekst="Vast: je betaalt een vaste kWh-prijs gedurende de contractperiode. Variabel: je prijs wordt maandelijks aangepast aan de markt. Dynamisch: je betaalt per uur een andere prijs op basis van de EPEX day-ahead markt — goedkoop 's nachts, duurder 's avonds." />
         </legend>
         <div className="contract-cards">
           {contractOpties.map((opt) => (
@@ -65,7 +67,10 @@ export default function StapContract({ form, onChange }: StapProps) {
               </div>
             </div>
             <div className="field">
-              <label className="field-label" htmlFor="in-terug-vast">Teruglevertarief</label>
+              <label className="field-label" htmlFor="in-terug-vast">
+                Teruglevertarief{" "}
+                <InfoTip tekst="Sommige energieleveranciers rekenen kosten voor het terugleveren van stroom aan het net. Dit staat op je energierekening of in je contractvoorwaarden. Typisch €0,04–€0,10 per kWh." />
+              </label>
               <div className="uw">
                 <input
                   id="in-terug-vast"

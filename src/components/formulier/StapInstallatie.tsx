@@ -1,6 +1,7 @@
 "use client";
 
 import type { StapProps, Locatie, Eigendom, Afstand, Muur } from "./types";
+import InfoTip from "@/components/resultaat/InfoTip";
 
 const locOpties: { value: Locatie; label: string }[] = [
   { value: "binnen", label: "Binnen" },
@@ -35,7 +36,10 @@ export default function StapInstallatie({ form, onChange }: StapProps) {
 
       <div className="r2">
         <fieldset>
-          <legend>Locatie batterij</legend>
+          <legend>
+            Locatie batterij{" "}
+            <InfoTip tekst="Binnen is standaard. Buiten plaatsen kan als er geen ruimte binnen is, maar vereist een weerbestendige behuizing en kan de levensduur beïnvloeden door temperatuurschommelingen." />
+          </legend>
           <div className="tg">
             {locOpties.map((opt) => (
               <button
@@ -52,7 +56,10 @@ export default function StapInstallatie({ form, onChange }: StapProps) {
         </fieldset>
 
         <fieldset>
-          <legend>Eigendom</legend>
+          <legend>
+            Eigendom{" "}
+            <InfoTip tekst="Bij een huurwoning heb je toestemming nodig van de verhuurder voor een vaste installatie. Bij koop ben je vrij om te installeren." />
+          </legend>
           <div className="tg">
             {eigOpties.map((opt) => (
               <button
@@ -71,7 +78,10 @@ export default function StapInstallatie({ form, onChange }: StapProps) {
 
       <div className="r2">
         <fieldset>
-          <legend>Afstand meterkast</legend>
+          <legend>
+            Afstand meterkast{" "}
+            <InfoTip tekst="De afstand tussen de gewenste plek van de batterij en de meterkast. Meer dan 10 meter betekent langere kabels en mogelijk hogere installatiekosten (€100–300 extra)." />
+          </legend>
           <div className="tg">
             {afstOpties.map((opt) => (
               <button
@@ -88,7 +98,10 @@ export default function StapInstallatie({ form, onChange }: StapProps) {
         </fieldset>
 
         <fieldset>
-          <legend>Muren doorboren</legend>
+          <legend>
+            Muren doorboren{" "}
+            <InfoTip tekst="Het aantal muren of vloeren waar kabels doorheen moeten. 3 of meer doorvoeren verhoogt de installatiecomplexiteit en kosten." />
+          </legend>
           <div className="tg">
             {muurOpties.map((opt) => (
               <button
