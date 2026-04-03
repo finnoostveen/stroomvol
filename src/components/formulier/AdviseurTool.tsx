@@ -16,7 +16,6 @@ import SidePanel from "@/components/resultaat/SidePanel";
 import ContentArea from "@/components/resultaat/ContentArea";
 import DoelMetrics from "@/components/resultaat/DoelMetrics";
 import Onafhankelijkheid from "@/components/resultaat/Onafhankelijkheid";
-import ProfielVisualisatie from "@/components/resultaat/ProfielVisualisatie";
 import SalderingImpact from "@/components/resultaat/SalderingImpact";
 import StressTest from "@/components/resultaat/StressTest";
 import FinancieelOverzicht from "@/components/resultaat/FinancieelOverzicht";
@@ -30,7 +29,6 @@ import OmvormerUpgrade from "@/components/resultaat/OmvormerUpgrade";
 import OptiZonnepanelen from "@/components/resultaat/OptiZonnepanelen";
 import OptiNetUpgrade from "@/components/resultaat/OptiNetUpgrade";
 import SpeelMetProfiel from "@/components/resultaat/SpeelMetProfiel";
-import ScenarioTabel from "@/components/resultaat/ScenarioTabel";
 import AdviesSamenvatting from "@/components/resultaat/AdviesSamenvatting";
 import ArbitrageWaarschuwing from "@/components/resultaat/ArbitrageWaarschuwing";
 import AannamesTab from "@/components/resultaat/AannamesTab";
@@ -184,14 +182,12 @@ export default function AdviseurTool() {
               <>
                 <AdviesSamenvatting result={result} />
                 <ArbitrageWaarschuwing show={!result.hasSolar && result.contract === "dynamisch"} />
-                <div id="sectie-scenario" className="section-reveal"><ScenarioTabel result={result} /></div>
                 <div id="sectie-financieel" className="section-reveal"><FinancieelOverzicht result={result} /></div>
-                <div id="sectie-doelen" className="section-reveal"><DoelMetrics result={result} /></div>
-                <div className="section-reveal"><ProfielVisualisatie result={result} /></div>
                 <div id="sectie-onafhankelijkheid" className="section-reveal"><Onafhankelijkheid result={result} /></div>
-                <div id="sectie-spaarrekening" className="section-reveal"><Spaarrekening result={result} /></div>
+                <div id="sectie-doelen" className="section-reveal"><DoelMetrics result={result} /></div>
                 <div className="section-reveal"><SalderingImpact result={result} /></div>
                 <div className="section-reveal"><StressTest result={result} /></div>
+                <div id="sectie-spaarrekening" className="section-reveal"><Spaarrekening result={result} /></div>
                 <div className="section-reveal"><NietsDoen result={result} /></div>
               </>
             }
