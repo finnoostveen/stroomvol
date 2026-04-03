@@ -210,8 +210,8 @@ export default function AdviseurTool() {
       <div className="formulier-container">
         {/* Brand mark */}
         <div className="brand-mark">
-          <span className="brand-dot" />
-          <span>STROOMVOL ADVISEURSTOOL</span>
+          <p className="brand-mark-logo">STROOM<span>VOL</span></p>
+          <p className="brand-mark-tagline">Batterijadvies op maat</p>
         </div>
 
         {/* Progress dots */}

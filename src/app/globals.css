@@ -200,15 +200,27 @@ body {
 }
 
 .sv-adv .brand-mark {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
+  text-align: center;
   margin-bottom: 2rem;
+}
+.sv-adv .brand-mark-logo {
+  font-family: var(--sv-font-heading), 'Syne', sans-serif;
+  font-size: 20px;
+  font-weight: 800;
+  color: #0A0A0A;
+  text-transform: uppercase;
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+.sv-adv .brand-mark-logo span {
+  color: var(--sv-volt);
+}
+.sv-adv .brand-mark-tagline {
+  font-family: var(--sv-font-body), 'DM Sans', sans-serif;
   font-size: 11px;
-  letter-spacing: 0.12em;
-  color: var(--sv-grijs-donker);
-  font-weight: 500;
+  color: #8E8E93;
+  letter-spacing: 0.05em;
+  margin: 2px 0 0;
 }
 
 /* Step dots */
