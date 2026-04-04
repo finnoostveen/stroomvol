@@ -222,8 +222,7 @@ function genereerAdviesTekst(r: CalcResult, form: FormState, params: CalcParams)
         `Op basis van je huidige situatie is de terugverdientijd van een ${r.aanbevolenKwh} kWh batterij ` +
         `langer dan 15 jaar. De financi\u00EBle case wordt sterker als je ${actie}. In dat scenario ` +
         `daalt de terugverdientijd naar ${formatTvt(besteOptimalisatie.nieuweTvt)} en levert de batterij ` +
-        `netto \u20AC${fmtNl(besteOptimalisatie.nieuweCalc.real.nettoWinst)} op over 15 jaar. ` +
-        `Bekijk de analyse onder Verdieping.`
+        `netto \u20AC${fmtNl(besteOptimalisatie.nieuweCalc.real.nettoWinst)} op over 15 jaar.`
       );
     } else {
       alineas.push(
