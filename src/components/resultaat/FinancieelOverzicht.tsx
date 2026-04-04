@@ -22,7 +22,7 @@ export default function FinancieelOverzicht({ result: c }: Props) {
 
   const bdRows: { l: string; v: string; total?: boolean; color?: string; spacer?: boolean }[] = [];
   if (gem.zelf > 0) bdRows.push({ l: "Zelfconsumptie-besparing", v: `\u20AC${fmt(gem.zelf)} /jaar` });
-  if (gem.arb > 0) bdRows.push({ l: "Dynamisch tarief arbitrage", v: `\u20AC${fmt(gem.arb)} /jaar` });
+  if (gem.arb > 0) bdRows.push({ l: c.contract === "dynamisch" ? "Dynamisch tarief arbitrage" : "Slim laden (dal/piek)", v: `\u20AC${fmt(gem.arb)} /jaar` });
   if (gem.ev > 0) bdRows.push({ l: "EV slim laden (dalprijs)", v: `\u20AC${fmt(gem.ev)} /jaar` });
   if (gem.wp > 0) bdRows.push({ l: "Warmtepomp buffering", v: `\u20AC${fmt(gem.wp)} /jaar` });
   if (gem.peak > 0) bdRows.push({ l: "Peak shaving", v: `\u20AC${fmt(gem.peak)} /jaar` });

@@ -344,7 +344,7 @@ export function calc(form: FormState, params: CalcParams = {}): CalcResult {
     const arbCycliJaar = hasSolar ? berekenArbitrageCycliMetSolar(surplusMaand, usableKwh) : 220;
     battKwhPerJaar += arbCycliJaar * usableKwh * eff;
   } else if (dubbelTarief) {
-    battKwhPerJaar += 150 * usableKwh * eff;
+    battKwhPerJaar += 100 * usableKwh * eff;
   }
   const cycliPerJaar = usableKwh > 0 ? battKwhPerJaar / usableKwh : 0;
   const degradatiePerJaarPct = cycliPerJaar * BATTERIJ_LIFECYCLE.lfp.degradatiePerCyclus;
@@ -382,7 +382,7 @@ export function calc(form: FormState, params: CalcParams = {}): CalcResult {
       jaarBesparingArb = effectieveCycli * kwhPerCyclus * huidigSpread * ARBITRAGE_CAPTURE_RATE;
     } else if (dubbelTarief && (contract === "vast" || contract === "variabel")) {
       // Dal/piek arbitrage: laden tijdens daluren, ontladen tijdens piekuren
-      const dalPiekCycli = 150;
+      const dalPiekCycli = 100;
       const huidigDalPiekSpread = dalPiekSpread * prijsFactor;
       const kwhPerCyclus = Math.min(effectiefKwh * eff, maxBattVermogenKw * 2);
       jaarBesparingArb = dalPiekCycli * kwhPerCyclus * huidigDalPiekSpread * ARBITRAGE_CAPTURE_RATE;

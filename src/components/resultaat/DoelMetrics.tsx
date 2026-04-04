@@ -78,21 +78,25 @@ export default function DoelMetrics({ result: c }: Props) {
         </GoalItem>
       )}
 
-      {/* Slim handelen */}
-      {c.doel.has("handel") && (() => {
-        const actief = c.contract === "dynamisch";
+      {/* Slim handelen / dal-piek */}
+      {(c.doel.has("handel") || (c.contract !== "dynamisch" && y1.arb > 0)) && (() => {
+        const isDalPiek = c.contract !== "dynamisch" && y1.arb > 0;
+        const actief = c.contract === "dynamisch" || isDalPiek;
         const arbVal = actief ? y1.arb : 0;
         return (
           <GoalItem
             icon={"\u26A1"}
-            naam="Slim handelen (arbitrage)"
+            naam={isDalPiek ? "Slim laden (dal/piek)" : "Slim handelen (arbitrage)"}
             badgeText={actief ? "Actief" : "Niet mogelijk"}
             badgeClass={actief ? "goal-badge-green" : "goal-badge-gray"}
             value={actief ? `\u20AC${fmt(arbVal)}/jr` : "\u2014"}
             barPct={actief ? Math.min(Math.round((arbVal / 500) * 100), 100) : 0}
             barClass={actief ? "goal-bar-green" : "goal-bar-yellow"}
           >
-            {actief ? (
+            {isDalPiek ? (
+              <>De batterij laadt &apos;s nachts op bij je goedkopere daltarief en ontlaadt overdag bij piektarief. De besparing is beperkt door de kleine spread tussen dal en piek (&euro;{c.spread.toFixed(2)}/kWh).
+              <InfoTip tekst={`De batterij laadt 's nachts op bij je goedkopere daltarief en ontlaadt overdag bij piektarief. De besparing is beperkt door de kleine spread tussen dal en piek (€${c.spread.toFixed(2)}/kWh). Met een dynamisch contract is deze spread groter en de opbrengst hoger.`} /></>
+            ) : actief ? (
               <>Bij een dynamisch contract met een spread van <strong>&euro;{c.spread.toFixed(2)}/kWh</strong> verdient de batterij extra door actief te laden bij dalprijs en te ontladen bij piekprijs.
               <InfoTip tekst="De spread is het verschil tussen piek- en daltarief op de EPEX-markt. De batterij laadt 's nachts goedkoop en ontlaadt overdag duur. Het aantal arbitragecycli varieert per seizoen." /></>
             ) : (

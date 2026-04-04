@@ -43,9 +43,10 @@ export default function ContractSwitch({ result, form, params }: Props) {
 
   const huidigLabel = result.contract === "vast" ? "Vast contract" : "Variabel contract";
 
+  const hHeeftDalPiek = result.real.perJaar[0]?.arb > 0;
   const hComponenten = [
     { label: "Zelfconsumptie", actief: result.hasSolar },
-    { label: "Stroomhandel (arbitrage)", actief: false },
+    { label: hHeeftDalPiek ? "Slim laden (dal/piek)" : "Stroomhandel (arbitrage)", actief: hHeeftDalPiek },
     { label: "Peak shaving", actief: result.peakReductieKw > 0 },
   ];
 
@@ -114,7 +115,7 @@ export default function ContractSwitch({ result, form, params }: Props) {
 
       {/* Doelen die verbeteren */}
       <div className="ov-doelen">
-        <div className="ov-doel ov-doel--actief">&#10003; Stroomhandel: +&euro;{fmt(verschilJaar)}/jaar door arbitrage</div>
+        <div className="ov-doel ov-doel--actief">&#10003; Slim handelen: +&euro;{fmt(verschilJaar)}/jaar door arbitrage</div>
         <div className="ov-doel ov-doel--actief">&#10003; Terugverdientijd: van {formatTvt(hTvt)} naar {formatTvt(dTvt)}</div>
         {result.heeftEv && (
           <div className="ov-doel ov-doel--actief">&#10003; EV slim laden: laden bij de laagste uurprijs</div>

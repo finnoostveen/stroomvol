@@ -863,7 +863,7 @@ function FinancieelPage({ calc: r, form, params }: { calc: CalcResult; form: For
 
   const componenten: { label: string; val: number }[] = [];
   if (gem.zelf > 0) componenten.push({ label: "Zelfconsumptie", val: gem.zelf });
-  if (gem.arb > 0) componenten.push({ label: "Dynamisch tarief arbitrage", val: gem.arb });
+  if (gem.arb > 0) componenten.push({ label: r.contract === "dynamisch" ? "Dynamisch tarief arbitrage" : "Slim laden (dal/piek)", val: gem.arb });
   if (gem.ev > 0) componenten.push({ label: "EV slim laden", val: gem.ev });
   if (gem.wp > 0) componenten.push({ label: "Warmtepomp buffering", val: gem.wp });
   if (gem.peak > 0) componenten.push({ label: "Peak shaving", val: gem.peak });
