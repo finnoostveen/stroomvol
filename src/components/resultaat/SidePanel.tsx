@@ -102,7 +102,7 @@ export default function SidePanel({ result: c, klantNaam, datum, onTerug, onAanp
       {/* Metrics */}
       <div className="side-metric clickable" onClick={() => onScrollToSection("sectie-scenario", "advies")} role="button" tabIndex={0}>
         <p className="side-metric-label">TERUGVERDIENTIJD <span className="side-arrow">&rsaquo;</span></p>
-        <p className="side-metric-value accent">{formatTvt(tvt)}</p>
+        <p className={`side-metric-value ${tvt > 15 ? "amber" : "accent"}`}>{formatTvt(tvt)}</p>
       </div>
 
       <div className="side-metric clickable" onClick={() => onScrollToSection("sectie-financieel", "advies")} role="button" tabIndex={0}>

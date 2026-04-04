@@ -181,6 +181,9 @@ body {
 .adv-sam-val--groen {
   color: var(--sv-groen);
 }
+.adv-sam-val--amber {
+  color: #FF9500;
+}
 
 @media (max-width: 600px) {
   .adv-samenvatting {
@@ -331,6 +334,7 @@ body {
 }
 .sv-adv .side-metric-value.accent { color: var(--sv-volt); }
 .sv-adv .side-metric-value.groen { color: var(--sv-groen); }
+.sv-adv .side-metric-value.amber { color: #FF9500; }
 .sv-adv .side-metric-value.muted { color: rgba(255,255,255,0.5); }
 
 .sv-adv .side-metric.clickable,

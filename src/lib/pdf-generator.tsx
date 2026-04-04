@@ -173,17 +173,68 @@ function fmtNl(n: number): string {
   return n.toLocaleString("nl-NL");
 }
 
-function genereerAdviesTekst(r: CalcResult, form: FormState): string[] {
+function genereerAdviesTekst(r: CalcResult, form: FormState, params: CalcParams): string[] {
   const alineas: string[] = [];
   const tvt = berekenCumulatieveTvt(r.real, r.investering);
   const rendementPct = Math.round((r.real.total15 / 15) / r.investering * 100);
 
-  // Alinea 1: Kernadvies + financieel (altijd)
-  alineas.push(
-    `Met een thuisbatterij van ${r.aanbevolenKwh} kWh verdien je de investering van ` +
-    `\u20AC${fmtNl(r.investering)} terug in ${formatTvt(tvt)}. Over 15 jaar levert dit netto ` +
-    `\u20AC${fmtNl(r.real.nettoWinst)} op \u2014 een gemiddeld rendement van ${rendementPct}% per jaar.`
-  );
+  // Alinea 1: Conditioneel op basis van TVT
+  if (tvt <= 10) {
+    // Variant A: sterke case
+    alineas.push(
+      `Met een thuisbatterij van ${r.aanbevolenKwh} kWh verdien je de investering van ` +
+      `\u20AC${fmtNl(r.investering)} terug in ${formatTvt(tvt)}. Over 15 jaar levert dit netto ` +
+      `\u20AC${fmtNl(r.real.nettoWinst)} op \u2014 een gemiddeld rendement van ${rendementPct}% per jaar.`
+    );
+  } else if (tvt <= 15) {
+    // Variant B: matige case
+    alineas.push(
+      `Met een thuisbatterij van ${r.aanbevolenKwh} kWh verdien je de investering van ` +
+      `\u20AC${fmtNl(r.investering)} terug in ${formatTvt(tvt)}. Het rendement bouwt geleidelijk op ` +
+      `en komt uit op netto \u20AC${fmtNl(r.real.nettoWinst)} over 15 jaar. De batterij biedt ` +
+      `daarnaast comfort en bescherming tegen stijgende energieprijzen.`
+    );
+  } else {
+    // Variant C: zwakke financiële case — check optimalisaties
+    const optimalisaties = bepaalOptimalisaties(r, form, params);
+    const besteOptimalisatie = optimalisaties
+      .map((o) => {
+        const nieuweForm = { ...form };
+        if (o.id === "contract") nieuweForm.contract = "dynamisch";
+        else if (o.id === "omvormer") { nieuweForm.omv = "hybride"; nieuweForm.omvormerMerk = ""; }
+        else if (o.id === "zonnepanelen") { nieuweForm.zon = "ja"; nieuweForm.panelen = 10; }
+        else return null;
+        const nieuweCalc = runCalc(nieuweForm, params);
+        const nieuweTvt = berekenCumulatieveTvt(nieuweCalc.real, nieuweCalc.investering);
+        return { ...o, nieuweTvt, nieuweCalc };
+      })
+      .filter((o): o is NonNullable<typeof o> => o !== null && o.nieuweTvt < 15)
+      .sort((a, b) => a.nieuweTvt - b.nieuweTvt)[0];
+
+    if (besteOptimalisatie) {
+      const labelMap: Record<string, string> = {
+        contract: "overstapt naar een dynamisch contract",
+        omvormer: "kiest voor een hybride omvormer",
+        zonnepanelen: "zonnepanelen plaatst",
+      };
+      const actie = labelMap[besteOptimalisatie.id] || besteOptimalisatie.label.toLowerCase();
+      alineas.push(
+        `Op basis van je huidige situatie is de terugverdientijd van een ${r.aanbevolenKwh} kWh batterij ` +
+        `langer dan 15 jaar. De financi\u00EBle case wordt sterker als je ${actie}. In dat scenario ` +
+        `daalt de terugverdientijd naar ${formatTvt(besteOptimalisatie.nieuweTvt)} en levert de batterij ` +
+        `netto \u20AC${fmtNl(besteOptimalisatie.nieuweCalc.real.nettoWinst)} op over 15 jaar. ` +
+        `Bekijk de analyse onder Verdieping.`
+      );
+    } else {
+      alineas.push(
+        `Op basis van je huidige situatie is de financi\u00EBle terugverdientijd van een ${r.aanbevolenKwh} kWh ` +
+        `batterij langer dan 15 jaar. De batterij is voor jouw profiel vooral waardevol als investering in ` +
+        `comfort en onafhankelijkheid: ${r.hasSolar ? `${r.zelfPctMet}% van je stroom komt van eigen opwek, ` : ""}` +
+        `je hebt ${r.noodstroomUren} uur noodstroom bij een stroomuitval, en je bent beschermd tegen ` +
+        `toekomstige prijsstijgingen.`
+      );
+    }
+  }
 
   // Alinea 2: Energie-onafhankelijkheid (als solar)
   if (r.hasSolar) {
@@ -297,7 +348,7 @@ const c1 = StyleSheet.create({
   optiBold: { fontWeight: 700, color: K.zwart },
 });
 
-function CoverPage({ calc: r, klant, optimalisaties, form }: { calc: CalcResult; klant: PdfData; optimalisaties: Optimalisatie[]; form: FormState }) {
+function CoverPage({ calc: r, klant, optimalisaties, form, params }: { calc: CalcResult; klant: PdfData; optimalisaties: Optimalisatie[]; form: FormState; params: CalcParams }) {
   const tvt = berekenCumulatieveTvt(r.real, r.investering);
   const gemBesparing = Math.round(r.real.total15 / 15);
 
@@ -341,7 +392,7 @@ function CoverPage({ calc: r, klant, optimalisaties, form }: { calc: CalcResult;
         </View>
         <View style={c1.metricCard}>
           <Text style={c1.metricLabel}>TERUGVERDIENTIJD</Text>
-          <Text style={c1.metricTvt}>{formatTvt(tvt)}</Text>
+          <Text style={[c1.metricTvt, tvt > 15 ? { color: K.amber } : {}]}>{formatTvt(tvt)}</Text>
         </View>
         <View style={c1.metricCard}>
           <Text style={c1.metricLabel}>BESPARING PER JAAR</Text>
@@ -358,7 +409,7 @@ function CoverPage({ calc: r, klant, optimalisaties, form }: { calc: CalcResult;
         <View style={c1.adviesBar} />
         <View style={c1.adviesContent}>
           <Text style={c1.adviesTitle}>Ons advies</Text>
-          {genereerAdviesTekst(r, form).map((alinea, i) => (
+          {genereerAdviesTekst(r, form, params).map((alinea, i) => (
             <Text key={i} style={[c1.adviesText, i > 0 ? { marginTop: 6 } : {}]}>{alinea}</Text>
           ))}
         </View>
@@ -1111,7 +1162,7 @@ export function AdviesRapport({ calc, klant, form, params }: { calc: CalcResult;
       title={`Stroomvol Advies - ${klant.klantNaam}`}
       author="Stroomvol"
     >
-      <CoverPage calc={calc} klant={klant} optimalisaties={optis} form={form} />
+      <CoverPage calc={calc} klant={klant} optimalisaties={optis} form={form} params={params} />
       <FinancieelPage calc={calc} form={form} params={params} />
       <DoelenPage calc={calc} />
       <SlotPage notities={klant.notities} calc={calc} />

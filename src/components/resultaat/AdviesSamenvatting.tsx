@@ -23,7 +23,7 @@ export default function AdviesSamenvatting({ result }: Props) {
       </div>
       <div className="adv-sam-card">
         <div className="adv-sam-label">TVT</div>
-        <div className="adv-sam-val adv-sam-val--groen">{formatTvt(tvt)}</div>
+        <div className={`adv-sam-val ${tvt > 15 ? "adv-sam-val--amber" : "adv-sam-val--groen"}`}>{formatTvt(tvt)}</div>
       </div>
       <div className="adv-sam-card">
         <div className="adv-sam-label">Besparing</div>
