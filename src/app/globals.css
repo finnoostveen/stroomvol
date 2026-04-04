@@ -932,6 +932,40 @@ body {
 }
 
 /* ============================================================
+   TOGGLE (dal/piek)
+   ============================================================ */
+
+.sv-adv .toggle-fieldset {
+  border: none;
+  padding: 0;
+  margin: 16px 0 8px;
+}
+
+.sv-adv .toggle-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.sv-adv .toggle-btn {
+  padding: 8px 20px;
+  border-radius: 8px;
+  border: 1.5px solid var(--sv-grijs);
+  background: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: var(--sv-grafiet);
+}
+
+.sv-adv .toggle-btn[aria-pressed="true"] {
+  background: var(--sv-grafiet);
+  color: #fff;
+  border-color: var(--sv-grafiet);
+}
+
+/* ============================================================
    INFO BOX
    ============================================================ */
 

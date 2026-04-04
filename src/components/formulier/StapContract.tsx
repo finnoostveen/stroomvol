@@ -48,43 +48,128 @@ export default function StapContract({ form, onChange }: StapProps) {
       {/* Vast / Variabel velden */}
       {(contract === "vast" || contract === "variabel") && (
         <>
-          <div className="r2">
-            <div className="field">
-              <label className="field-label" htmlFor="in-tarief-vast">
-                Inkooptarief (all-in) <span className="req">*</span>
-              </label>
-              <div className="uw">
-                <input
-                  id="in-tarief-vast"
-                  type="number"
-                  step={0.01}
-                  min={0}
-                  max={1}
-                  value={form.tariefVast}
-                  onChange={(e) => onChange("tariefVast", parseFloat(e.target.value) || 0)}
-                />
-                <span className="us">&euro;/kWh</span>
+          {/* Dubbeltarief toggle */}
+          <fieldset className="toggle-fieldset">
+            <legend className="field-label">
+              Heb je een dal/piek tarief (dubbeltarief)?{" "}
+              <InfoTip tekst="Bij een dubbeltarief (ook wel dag/nacht-tarief) betaal je een lagere prijs tijdens daluren (meestal 's nachts en in het weekend) en een hogere prijs tijdens piekuren. Dit biedt extra arbitragemogelijkheden voor een thuisbatterij." />
+            </legend>
+            <div className="toggle-row">
+              <button
+                type="button"
+                className="toggle-btn"
+                aria-pressed={!form.dubbelTarief}
+                onClick={() => onChange("dubbelTarief", false)}
+              >
+                Nee
+              </button>
+              <button
+                type="button"
+                className="toggle-btn"
+                aria-pressed={form.dubbelTarief}
+                onClick={() => onChange("dubbelTarief", true)}
+              >
+                Ja
+              </button>
+            </div>
+          </fieldset>
+
+          {!form.dubbelTarief && (
+            <div className="r2">
+              <div className="field">
+                <label className="field-label" htmlFor="in-tarief-vast">
+                  Inkooptarief (all-in) <span className="req">*</span>
+                </label>
+                <div className="uw">
+                  <input
+                    id="in-tarief-vast"
+                    type="number"
+                    step={0.01}
+                    min={0}
+                    max={1}
+                    value={form.tariefVast}
+                    onChange={(e) => onChange("tariefVast", parseFloat(e.target.value) || 0)}
+                  />
+                  <span className="us">&euro;/kWh</span>
+                </div>
+              </div>
+              <div className="field">
+                <label className="field-label" htmlFor="in-terug-vast">
+                  Teruglevertarief{" "}
+                  <InfoTip tekst="Sommige energieleveranciers rekenen kosten voor het terugleveren van stroom aan het net. Dit staat op je energierekening of in je contractvoorwaarden. Typisch €0,04–€0,10 per kWh." />
+                </label>
+                <div className="uw">
+                  <input
+                    id="in-terug-vast"
+                    type="number"
+                    step={0.01}
+                    min={0}
+                    max={1}
+                    value={form.terugVast}
+                    onChange={(e) => onChange("terugVast", parseFloat(e.target.value) || 0)}
+                  />
+                  <span className="us">&euro;/kWh</span>
+                </div>
               </div>
             </div>
-            <div className="field">
-              <label className="field-label" htmlFor="in-terug-vast">
-                Teruglevertarief{" "}
-                <InfoTip tekst="Sommige energieleveranciers rekenen kosten voor het terugleveren van stroom aan het net. Dit staat op je energierekening of in je contractvoorwaarden. Typisch €0,04–€0,10 per kWh." />
-              </label>
-              <div className="uw">
-                <input
-                  id="in-terug-vast"
-                  type="number"
-                  step={0.01}
-                  min={0}
-                  max={1}
-                  value={form.terugVast}
-                  onChange={(e) => onChange("terugVast", parseFloat(e.target.value) || 0)}
-                />
-                <span className="us">&euro;/kWh</span>
+          )}
+
+          {form.dubbelTarief && (
+            <div className="r3">
+              <div className="field">
+                <label className="field-label" htmlFor="in-tarief-piek">
+                  Piektarief <span className="req">*</span>
+                </label>
+                <div className="uw">
+                  <input
+                    id="in-tarief-piek"
+                    type="number"
+                    step={0.01}
+                    min={0}
+                    max={1}
+                    value={form.tariefPiek}
+                    onChange={(e) => onChange("tariefPiek", parseFloat(e.target.value) || 0)}
+                  />
+                  <span className="us">&euro;/kWh</span>
+                </div>
+              </div>
+              <div className="field">
+                <label className="field-label" htmlFor="in-tarief-dal">
+                  Daltarief <span className="req">*</span>
+                </label>
+                <div className="uw">
+                  <input
+                    id="in-tarief-dal"
+                    type="number"
+                    step={0.01}
+                    min={0}
+                    max={1}
+                    value={form.tariefDal}
+                    onChange={(e) => onChange("tariefDal", parseFloat(e.target.value) || 0)}
+                  />
+                  <span className="us">&euro;/kWh</span>
+                </div>
+              </div>
+              <div className="field">
+                <label className="field-label" htmlFor="in-terug-vast-dt">
+                  Teruglevertarief{" "}
+                  <InfoTip tekst="Sommige energieleveranciers rekenen kosten voor het terugleveren van stroom aan het net. Dit staat op je energierekening of in je contractvoorwaarden. Typisch €0,04–€0,10 per kWh." />
+                </label>
+                <div className="uw">
+                  <input
+                    id="in-terug-vast-dt"
+                    type="number"
+                    step={0.01}
+                    min={0}
+                    max={1}
+                    value={form.terugVast}
+                    onChange={(e) => onChange("terugVast", parseFloat(e.target.value) || 0)}
+                  />
+                  <span className="us">&euro;/kWh</span>
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
           {contract === "vast" && (
             <div className="info-box">

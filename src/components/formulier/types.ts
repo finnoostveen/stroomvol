@@ -24,6 +24,9 @@ export interface FormState {
   contract: ContractType | null;
   tariefVast: number;
   terugVast: number;
+  dubbelTarief: boolean;
+  tariefPiek: number;
+  tariefDal: number;
   varStijg: number;
   dynDal: number;
   dynPiek: number;
@@ -66,6 +69,9 @@ export const initialFormState: FormState = {
   contract: null,
   tariefVast: 0.28,
   terugVast: 0.07,
+  dubbelTarief: false,
+  tariefPiek: 0.30,
+  tariefDal: 0.22,
   varStijg: 4,
   dynDal: 0.05,
   dynPiek: 0.35,

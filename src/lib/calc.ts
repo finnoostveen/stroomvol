@@ -213,14 +213,19 @@ export function calc(form: FormState, params: CalcParams = {}): CalcResult {
   let tarief: number, terug: number, dynDal: number, dynPiek: number, dynGem: number;
   let spread: number, stijgPct: number;
 
+  const dubbelTarief = form.dubbelTarief ?? false;
+  const dalPiekSpread = dubbelTarief ? (form.tariefPiek - form.tariefDal) : 0;
+
   if (contract === "vast") {
-    tarief = form.tariefVast; terug = form.terugVast;
+    tarief = dubbelTarief ? form.tariefPiek * 0.65 + form.tariefDal * 0.35 : form.tariefVast;
+    terug = form.terugVast;
     dynDal = 0; dynPiek = 0; dynGem = 0;
-    spread = 0; stijgPct = 0;
+    spread = dalPiekSpread; stijgPct = 0;
   } else if (contract === "variabel") {
-    tarief = form.tariefVast; terug = form.terugVast;
+    tarief = dubbelTarief ? form.tariefPiek * 0.65 + form.tariefDal * 0.35 : form.tariefVast;
+    terug = form.terugVast;
     dynDal = 0; dynPiek = 0; dynGem = 0;
-    spread = 0; stijgPct = form.varStijg;
+    spread = dalPiekSpread; stijgPct = form.varStijg;
   } else {
     dynDal = form.dynDal; dynPiek = form.dynPiek; dynGem = form.dynGem;
     tarief = dynGem; terug = dynDal * 0.8;
@@ -338,6 +343,8 @@ export function calc(form: FormState, params: CalcParams = {}): CalcResult {
   if (contract === "dynamisch") {
     const arbCycliJaar = hasSolar ? berekenArbitrageCycliMetSolar(surplusMaand, usableKwh) : 220;
     battKwhPerJaar += arbCycliJaar * usableKwh * eff;
+  } else if (dubbelTarief) {
+    battKwhPerJaar += 150 * usableKwh * eff;
   }
   const cycliPerJaar = usableKwh > 0 ? battKwhPerJaar / usableKwh : 0;
   const degradatiePerJaarPct = cycliPerJaar * BATTERIJ_LIFECYCLE.lfp.degradatiePerCyclus;
@@ -373,6 +380,12 @@ export function calc(form: FormState, params: CalcParams = {}): CalcResult {
       const effectieveCycli = Math.min(arbCycli, 365 * 1.5);
       const kwhPerCyclus = Math.min(effectiefKwh * eff, maxBattVermogenKw * 2);
       jaarBesparingArb = effectieveCycli * kwhPerCyclus * huidigSpread * ARBITRAGE_CAPTURE_RATE;
+    } else if (dubbelTarief && (contract === "vast" || contract === "variabel")) {
+      // Dal/piek arbitrage: laden tijdens daluren, ontladen tijdens piekuren
+      const dalPiekCycli = 150;
+      const huidigDalPiekSpread = dalPiekSpread * prijsFactor;
+      const kwhPerCyclus = Math.min(effectiefKwh * eff, maxBattVermogenKw * 2);
+      jaarBesparingArb = dalPiekCycli * kwhPerCyclus * huidigDalPiekSpread * ARBITRAGE_CAPTURE_RATE;
     } else if (contract === "variabel" && form.doel.has("handel")) {
       jaarBesparingArb = effectiefKwh * 20 * prijsFactor;
     }
